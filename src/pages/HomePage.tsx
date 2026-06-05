@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
       desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.',
       tarot: `${import.meta.env.BASE_URL}tarot_valery.png`,
       path: '/valery',
-      color: '#6ba4ff',
+      color: '#e6e6fa',
       links: [
         { label: 'Личное умение', path: '/valery' },
         { label: 'Род Даркбейнов', path: '/darkbain' },
