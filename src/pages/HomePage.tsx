@@ -42,6 +42,29 @@ const HomePage: React.FC = () => {
         { label: 'Личное умение', path: '/brin' },
       ],
     },
+    {
+      name: 'Талис',
+      title: 'Потомок сильнейшего Авантюриста, носитель тёмного проклятья',
+      desc: 'Паладин смерти, чья кровь связана с силами за гранью жизни. Носитель чёрного знамени и властелин даров Асов.',
+      tarot: `${import.meta.env.BASE_URL}tarot_valery.png`,
+      path: '/valery',
+      color: '#2a5a8a',
+      links: [
+        { label: 'Личное умение', path: '/valery' },
+        { label: 'Род Даркбейнов', path: '/darkbain' },
+      ],
+      {
+      name: 'Стив',
+      title: 'Потомок сильнейшего Авантюриста, носитель тёмного проклятья',
+      desc: 'Паладин смерти, чья кровь связана с силами за гранью жизни. Носитель чёрного знамени и властелин даров Асов.',
+      tarot: `${import.meta.env.BASE_URL}tarot_valery.png`,
+      path: '/valery',
+      color: '#2a5a8a',
+      links: [
+        { label: 'Личное умение', path: '/valery' },
+        { label: 'Род Даркбейнов', path: '/darkbain' },
+      ],
+    },
   ];
 
   const videos = [
