@@ -134,7 +134,7 @@ const DarkbainPage: React.FC = () => {
             }}
           >
             <img
-              src="/tarot_darkbain.png"
+              src="tarot_darkbain.png"
               alt="Герб рода Даркбейн"
               className="w-full h-full object-contain opacity-85"
               onError={(e) => {
@@ -611,7 +611,7 @@ const DarkbainPage: React.FC = () => {
               }}
             >
               <img
-                src="/tarot_darkbain.png"
+                src="tarot_darkbain.png"
                 alt="Знак семьи"
                 className="w-full h-full object-contain opacity-60"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
