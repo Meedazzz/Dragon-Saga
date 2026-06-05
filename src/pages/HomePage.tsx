@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
     {
       name: 'Сакрис из Бергхейма',
       title: 'Следопыт, сосуд древнего духа',
-      desc: 'Амбициозный драконид искатель переросший свой дом, в котором ему было слишком тесно.',
+      desc: 'Амбициозный драконид искатель приключений переросший свой дом, в котором ему было слишком тесно.',
       tarot: `${import.meta.env.BASE_URL}tarot_sakris.png`,
       path: '/sakris',
       color: '#2a5a8a',
@@ -176,7 +176,7 @@ const HomePage: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + idx * 0.1 }}
                 onClick={() => navigate(char.path)}
-                className="group cursor-pointer grid grid-cols-1 md:grid-cols-[200px_1fr] rounded overflow-hidden transition-all duration-400"
+                className="group cursor-pointer grid grid-cols-1 md:grid-cols-[300px_1fr] rounded overflow-hidden transition-all duration-400"
                 style={{
                   background: 'rgba(20,15,10,0.3)',
                   border: `1px solid ${char.color}25`,
@@ -196,7 +196,6 @@ const HomePage: React.FC = () => {
                     src={char.tarot}
                     alt={char.name}
                     className="w-full h-auto object-contain transition-all duration-400 group-hover:scale-105"
-                    style={{ maxHeight: '320px' }}
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none';
                     }}
@@ -206,7 +205,7 @@ const HomePage: React.FC = () => {
                 {/* Character Info */}
                 <div className="p-6 md:p-8 flex flex-col justify-center">
                   <div
-                    className="text-lg md:text-2xl font-bold tracking-[2px] mb-2"
+                    className="text-2xl md:text-4xl font-bold tracking-[2px] mb-2"
                     style={{
                       fontFamily: "'Cinzel Decorative', serif",
                       color: homeTheme.silver,
@@ -215,7 +214,7 @@ const HomePage: React.FC = () => {
                     {char.name}
                   </div>
                   <div
-                    className="text-sm italic mb-4"
+                    className="text-base md:text-lg italic mb-4"
                     style={{
                       fontFamily: "'Cormorant Garamond', serif",
                       color: homeTheme.parchmentDim,
@@ -224,7 +223,7 @@ const HomePage: React.FC = () => {
                     {char.title}
                   </div>
                   <div
-                    className="text-sm md:text-base leading-relaxed mb-5"
+                    className="text-base md:text-lg leading-relaxed mb-5"
                     style={{
                       fontFamily: "'Cormorant Garamond', serif",
                       color: homeTheme.parchment,
