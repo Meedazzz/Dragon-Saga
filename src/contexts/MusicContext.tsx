@@ -25,7 +25,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     if (!initRef.current) {
       initRef.current = true;
-      audioRef.current = new Audio('music/ambient.mp3');
+      audioRef.current = new Audio(`${import.meta.env.BASE_URL}music/ambient.mp3`);
       audioRef.current.loop = true;
       audioRef.current.volume = volume;
     }
