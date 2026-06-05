@@ -10,31 +10,20 @@ const HomePage: React.FC = () => {
   const characters = [
     {
       name: 'Валерий Даркбейн',
-      title: 'Потомок сильнейшего Авантюриста, носитель тёмного проклятья',
-      desc: 'Паладин смерти, чья кровь связана с силами за гранью жизни. Носитель чёрного знамени и властелин даров Асов.',
+      title: 'Потомок сильнейшего Авантюриста',
+      desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.',
       tarot: `${import.meta.env.BASE_URL}tarot_valery.png`,
       path: '/valery',
-      color: '#2a5a8a',
+      color: '#6ba4ff',
       links: [
         { label: 'Личное умение', path: '/valery' },
         { label: 'Род Даркбейнов', path: '/darkbain' },
       ],
     },
     {
-      name: 'Сакрис из Бергхейма',
-      title: 'Следопыт, сосуд древнего духа',
-      desc: 'В глуши, где шепчут вековые дубы, живёт древний и могучий дух эльфа — покровитель следопыта. Дух бесплотный. Единение.',
-      tarot: `${import.meta.env.BASE_URL}tarot_sakris.png`,
-      path: '/sakris',
-      color: '#2a6a3a',
-      links: [
-        { label: 'Личное умение', path: '/sakris' },
-      ],
-    },
-    {
-      name: 'Брин Дель Хасен',
-      title: 'Наследный Лорд, владыка чёрного льда',
-      desc: 'Чародей, черпающий силу из Чёрного льда, что дремлет внутри. Создатель Ледяной крепости — ментального чистилища, огранённого чёрным льдом.',
+      name: 'Брин дель Хессен',
+      title: 'Наследный Принц Астарии',
+      desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда. Создатель Ледяной крепости — ментального чистилища.',
       tarot: `${import.meta.env.BASE_URL}tarot_brin.png`,
       path: '/brin',
       color: '#5a3a7a',
@@ -43,27 +32,36 @@ const HomePage: React.FC = () => {
       ],
     },
     {
-      name: 'Талис',
-      title: 'Потомок сильнейшего Авантюриста, носитель тёмного проклятья',
-      desc: 'Паладин смерти, чья кровь связана с силами за гранью жизни. Носитель чёрного знамени и властелин даров Асов.',
-      tarot: `${import.meta.env.BASE_URL}tarot_talis.png`,
+      name: 'Стив',
+      title: 'Друид отщельник',
+      desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.',
+      tarot: `${import.meta.env.BASE_URL}tarot_stive.png`,
       path: '/valery',
-      color: '#2a5a8a',
+      color: '#2a6a3a',
       links: [
         { label: 'Личное умение', path: '/valery' },
-        { label: 'Род Даркбейнов', path: '/darkbain' },
       ],
     },
     {
-      name: 'Стив',
-      title: 'Потомок сильнейшего Авантюриста, носитель тёмного проклятья',
-      desc: 'Паладин смерти, чья кровь связана с силами за гранью жизни. Носитель чёрного знамени и властелин даров Асов.',
-      tarot: `${import.meta.env.BASE_URL}tarot_stive.png`,
+      name: 'Талис',
+      title: 'Бард-Воин',
+      desc: 'Брадяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.',
+      tarot: `${import.meta.env.BASE_URL}tarot_talis.png`,
       path: '/valery',
-      color: '#2a5a8a',
+      color: '#FF5E00',
       links: [
         { label: 'Личное умение', path: '/valery' },
-        { label: 'Род Даркбейнов', path: '/darkbain' },
+      ],
+    },
+    {
+      name: 'Сакрис из Бергхейма',
+      title: 'Следопыт, сосуд древнего духа',
+      desc: 'Амбициозный драконид искатель переросший свой дом, в котором ему было слишком тесно.',
+      tarot: `${import.meta.env.BASE_URL}tarot_sakris.png`,
+      path: '/sakris',
+      color: '#2a5a8a',
+      links: [
+        { label: 'Личное умение', path: '/sakris' },
       ],
     },
   ];
@@ -106,7 +104,7 @@ const HomePage: React.FC = () => {
               textShadow: '0 0 15px rgba(144,152,160,0.15), 0 2px 4px rgba(0,0,0,0.8)',
             }}
           >
-            Название Кампании
+            Драконья Сага
           </h1>
           <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
             <span>PISE</span>
@@ -119,7 +117,7 @@ const HomePage: React.FC = () => {
               letterSpacing: '1px',
             }}
           >
-            Описание проекта, которое вы сами отредактируете позже.
+            Проект НРИ на базе D&D вдохновенный Сильмариллионом и Песней Льда и Пламени
           </p>
         </motion.header>
 
@@ -143,16 +141,16 @@ const HomePage: React.FC = () => {
             }}
           >
             <p className="mb-4 text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
-              <strong style={{ color: homeTheme.primaryBright }}>Название кампании</strong> — это захватывающее приключение в мире Dungeons & Dragons, где судьбы героев переплетаются с древними тайнами, богами и силами, выходящими за пределы понимания смертных.
+              <strong style={{ color: homeTheme.primaryBright }}>Драконья Сага</strong> — это захватывающее приключение в авторском мире, где судьбы героев переплетаются с древними тайнами, дворцовыми интригами и силами, выходящими за пределы понимания смертных.
             </p>
             <p className="mb-4 text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
-              Наша компания — <strong style={{ color: homeTheme.primaryBright }}>[Название вашей компании]</strong> — объединяет страстных любителей настольных ролевых игр, создающих уникальные истории и миры.
+              Наша компания — <strong style={{ color: homeTheme.primaryBright }}>[Драконья Сага]</strong> — объединяет страстных любителей настольных ролевых игр, вместе создающих уникальные истории.
             </p>
             <p className="mb-4 text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
               В этом проекте мы собрали <strong style={{ color: homeTheme.primaryBright }}>летопись наших героев</strong> — их личные умения, предыстории, связи и тайны.
             </p>
             <p className="text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
-              Присоединяйтесь к нам в этом путешествии. <strong style={{ color: homeTheme.primaryBright }}>Легенда только начинается.</strong>
+              Присоединяйтесь к нам в этом путешествии. <strong style={{ color: homeTheme.primaryBright }}> Наша общая Легенда только начинается.</strong>
             </p>
           </div>
         </motion.section>
