@@ -382,7 +382,7 @@ const HomePage: React.FC = () => {
               color: homeTheme.primary,
             }}
           >
-            LE TO PISE
+            BLOOD ICE
           </div>
         </div>
       </div>
