@@ -1,11 +1,12 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '@/components/Layout';
 import { homeTheme } from '@/types/theme';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
 
   const characters = [
     {
@@ -13,11 +14,12 @@ const HomePage: React.FC = () => {
       title: 'Потомок сильнейшего Авантюриста',
       desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.',
       tarot: `${import.meta.env.BASE_URL}tarot_valery.png`,
-      path: '/valery',
+      lorePath: '/valery-lore',
       color: '#e6e6fa',
       links: [
         { label: 'Личное умение', path: '/valery' },
         { label: 'Род Даркбейнов', path: '/darkbain' },
+        { label: 'Подкласс', path: '/valery-subclass' },
       ],
     },
     {
@@ -25,32 +27,35 @@ const HomePage: React.FC = () => {
       title: 'Наследный Принц Астарии',
       desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда. Создатель Ледяной крепости — ментального чистилища.',
       tarot: `${import.meta.env.BASE_URL}tarot_brin.png`,
-      path: '/brin',
+      lorePath: '/brin-lore',
       color: '#5a3a7a',
       links: [
         { label: 'Личное умение', path: '/brin' },
+        { label: 'Подкласс', path: '/brin-subclass' },
       ],
     },
     {
       name: 'Стив',
-      title: 'Друид отщельник',
+      title: 'Друид отшельник',
       desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.',
       tarot: `${import.meta.env.BASE_URL}tarot_stive.png`,
-      path: '/valery',
+      lorePath: '/stive-lore',
       color: '#2a6a3a',
       links: [
-        { label: 'Личное умение', path: '/valery' },
+        { label: 'Личное умение', path: '/stive-ability' },
+        { label: 'Подкласс', path: '/stive-subclass' },
       ],
     },
     {
-      name: 'Талис',
+      name: 'Таллис',
       title: 'Бард-Воин',
-      desc: 'Брадяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.',
-      tarot: `${import.meta.env.BASE_URL}tarot_talis.png`,
-      path: '/valery',
+      desc: 'Бродяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.',
+      tarot: `${import.meta.env.BASE_URL}tarot_tallis.png`,
+      lorePath: '/talis-lore',
       color: '#FF5E00',
       links: [
-        { label: 'Личное умение', path: '/valery' },
+        { label: 'Личное умение', path: '/tallis-ability' },
+        { label: 'Подкласс', path: '/tallis-subclass' },
       ],
     },
     {
@@ -58,20 +63,21 @@ const HomePage: React.FC = () => {
       title: 'Следопыт, сосуд древнего духа',
       desc: 'Амбициозный драконид искатель приключений переросший свой дом, в котором ему было слишком тесно.',
       tarot: `${import.meta.env.BASE_URL}tarot_sakris.png`,
-      path: '/sakris',
+      lorePath: '/sakris-lore',
       color: '#2a5a8a',
       links: [
         { label: 'Личное умение', path: '/sakris' },
+        { label: 'Подкласс', path: '/sakris-subclass' },
       ],
     },
   ];
 
   const videos = [
-    { part: 'Часть 1', title: 'Начало путешествия' },
-    { part: 'Часть 2', title: 'Тени Бергхейма' },
-    { part: 'Часть 3', title: 'Ледяная крепость' },
-    { part: 'Часть 4', title: 'Духи древности' },
-    { part: 'Часть 5', title: 'Кровь и честь' },
+    { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
+    { part: 'Часть 2', title: 'Тени Бергхейма', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
+    { part: 'Часть 3', title: 'Ледяная крепость', url: 'https://www.youtube.com/embed/VIDEO_ID_3' },
+    { part: 'Часть 4', title: 'Духи древности', url: 'https://www.youtube.com/embed/VIDEO_ID_4' },
+    { part: 'Часть 5', title: 'Кровь и честь', url: 'https://www.youtube.com/embed/VIDEO_ID_5' },
   ];
 
   return (
@@ -175,7 +181,7 @@ const HomePage: React.FC = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + idx * 0.1 }}
-                onClick={() => navigate(char.path)}
+                onClick={() => navigate(char.lorePath)}
                 className="group cursor-pointer grid grid-cols-1 md:grid-cols-[300px_1fr] rounded overflow-hidden transition-all duration-400"
                 style={{
                   background: 'rgba(20,15,10,0.3)',
@@ -187,7 +193,7 @@ const HomePage: React.FC = () => {
                   x: 10,
                 }}
               >
-                {/* Tarot Card - Full size, no crop */}
+                {/* Tarot Card */}
                 <div
                   className="relative overflow-hidden flex items-center justify-center"
                   style={{ background: `linear-gradient(135deg, ${char.color}30 0%, ${char.color}10 100%)` }}
@@ -265,7 +271,7 @@ const HomePage: React.FC = () => {
           </div>
         </motion.section>
 
-        {/* Videos */}
+        {/* Videos with modal player */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -295,6 +301,7 @@ const HomePage: React.FC = () => {
                   y: -3,
                   boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
                 }}
+                onClick={() => setSelectedVideo(video)}
               >
                 <div
                   className="w-full h-40 flex items-center justify-center relative"
@@ -338,6 +345,41 @@ const HomePage: React.FC = () => {
           </div>
         </motion.section>
 
+        {/* Modal for video */}
+        <AnimatePresence>
+          {selectedVideo && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => setSelectedVideo(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                className="relative w-full max-w-4xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <iframe
+                  src={selectedVideo.url}
+                  title={selectedVideo.title}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+                <button
+                  className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 text-white text-2xl flex items-center justify-center hover:bg-black/80 transition-colors"
+                  onClick={() => setSelectedVideo(null)}
+                >
+                  &times;
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Social Links */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -346,30 +388,106 @@ const HomePage: React.FC = () => {
           className="flex justify-center gap-4 mt-10 pt-8 flex-wrap"
           style={{ borderTop: '1px solid rgba(80,70,50,0.1)' }}
         >
-          {['YouTube', 'VK', 'Telegram', 'Discord'].map((social) => (
-            <span
-              key={social}
-              className="px-5 py-2.5 rounded text-xs tracking-[2px] transition-all duration-200 cursor-pointer"
-              style={{
-                fontFamily: "'Cinzel', serif",
-                background: 'rgba(30,25,15,0.3)',
-                border: '1px solid rgba(80,70,50,0.2)',
-                color: homeTheme.parchmentDim,
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLElement).style.borderColor = 'rgba(106,84,48,0.35)';
-                (e.target as HTMLElement).style.color = homeTheme.parchment;
-                (e.target as HTMLElement).style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.2)';
-                (e.target as HTMLElement).style.color = homeTheme.parchmentDim;
-                (e.target as HTMLElement).style.transform = 'translateY(0)';
-              }}
-            >
-              {social}
-            </span>
-          ))}
+          <a
+            href="https://youtube.com/@ваш_канал"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded text-xs tracking-[2px] transition-all duration-200 cursor-pointer inline-block"
+            style={{
+              fontFamily: "'Cinzel', serif",
+              background: 'rgba(30,25,15,0.3)',
+              border: '1px solid rgba(80,70,50,0.2)',
+              color: homeTheme.parchmentDim,
+              textDecoration: 'none',
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(106,84,48,0.35)';
+              (e.target as HTMLElement).style.color = homeTheme.parchment;
+              (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.2)';
+              (e.target as HTMLElement).style.color = homeTheme.parchmentDim;
+              (e.target as HTMLElement).style.transform = 'translateY(0)';
+            }}
+          >
+            YouTube
+          </a>
+          <a
+            href="https://vk.com/ваш_паблик"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded text-xs tracking-[2px] transition-all duration-200 cursor-pointer inline-block"
+            style={{
+              fontFamily: "'Cinzel', serif",
+              background: 'rgba(30,25,15,0.3)',
+              border: '1px solid rgba(80,70,50,0.2)',
+              color: homeTheme.parchmentDim,
+              textDecoration: 'none',
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(106,84,48,0.35)';
+              (e.target as HTMLElement).style.color = homeTheme.parchment;
+              (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.2)';
+              (e.target as HTMLElement).style.color = homeTheme.parchmentDim;
+              (e.target as HTMLElement).style.transform = 'translateY(0)';
+            }}
+          >
+            VK
+          </a>
+          <a
+            href="https://t.me/ваш_телеграм"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded text-xs tracking-[2px] transition-all duration-200 cursor-pointer inline-block"
+            style={{
+              fontFamily: "'Cinzel', serif",
+              background: 'rgba(30,25,15,0.3)',
+              border: '1px solid rgba(80,70,50,0.2)',
+              color: homeTheme.parchmentDim,
+              textDecoration: 'none',
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(106,84,48,0.35)';
+              (e.target as HTMLElement).style.color = homeTheme.parchment;
+              (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.2)';
+              (e.target as HTMLElement).style.color = homeTheme.parchmentDim;
+              (e.target as HTMLElement).style.transform = 'translateY(0)';
+            }}
+          >
+            Telegram
+          </a>
+          <a
+            href="https://discord.gg/ваш_сервер"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded text-xs tracking-[2px] transition-all duration-200 cursor-pointer inline-block"
+            style={{
+              fontFamily: "'Cinzel', serif",
+              background: 'rgba(30,25,15,0.3)',
+              border: '1px solid rgba(80,70,50,0.2)',
+              color: homeTheme.parchmentDim,
+              textDecoration: 'none',
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(106,84,48,0.35)';
+              (e.target as HTMLElement).style.color = homeTheme.parchment;
+              (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.2)';
+              (e.target as HTMLElement).style.color = homeTheme.parchmentDim;
+              (e.target as HTMLElement).style.transform = 'translateY(0)';
+            }}
+          >
+            Discord
+          </a>
         </motion.div>
 
         {/* Footer */}
