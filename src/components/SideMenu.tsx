@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, BookOpen, Globe, Scroll, Swords } from 'lucide-react';
+import { Menu, X, Home, User, BookOpen, Globe, Scroll } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 
@@ -11,10 +11,11 @@ interface SideMenuProps {
 const menuItems = [
   { path: '/', label: 'Главная', icon: Home },
   { path: '/lor', label: 'Мир Игры', icon: Globe },
-  { path: '/valery', label: 'Валерий Даркбейн', icon: User },
-  { path: '/sakris', label: 'Сакрис из Бергхейма', icon: Swords },
-  { path: '/brin', label: 'Брин Дель Хасен', icon: User },
-  { path: '/darkbain', label: 'Род Даркбейнов', icon: BookOpen },
+  { path: '/valery-lore', label: 'Валерий Даркбейн', icon: User },
+  { path: '/sakris-lore', label: 'Сакрис из Бергхейма', icon: User },
+  { path: '/brin-lore', label: 'Брин Дель Хасен', icon: User },
+  { path: '/stive-lore', label: 'Стив', icon: User },
+  { path: '/talis-lore', label: 'Таллис', icon: User },
   { path: '/letopis', label: 'Летопись мира', icon: Scroll },
 ];
 
