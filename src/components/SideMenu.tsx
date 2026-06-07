@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, BookOpen, Globe, Scroll } from 'lucide-react';
+import { Menu, X, Home, User, Globe, Scroll } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 
@@ -11,11 +11,11 @@ interface SideMenuProps {
 const menuItems = [
   { path: '/', label: 'Главная', icon: Home },
   { path: '/lor', label: 'Мир Игры', icon: Globe },
-  { path: '/valery-lore', label: 'Валерий Даркбейн', icon: User },
-  { path: '/sakris-lore', label: 'Сакрис из Бергхейма', icon: User },
-  { path: '/brin-lore', label: 'Брин Дель Хасен', icon: User },
-  { path: '/stive-lore', label: 'Стив', icon: User },
-  { path: '/talis-lore', label: 'Таллис', icon: User },
+  { path: '/valery', label: 'Валерий Даркбейн', icon: User },
+  { path: '/sakris', label: 'Сакрис из Бергхейма', icon: User },
+  { path: '/brin', label: 'Брин Дель Хасен', icon: User },
+  { path: '/stive', label: 'Стив', icon: User },
+  { path: '/talis', label: 'Таллис', icon: User },
   { path: '/letopis', label: 'Летопись мира', icon: Scroll },
 ];
 
@@ -31,7 +31,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
 
   return (
     <>
-      {/* Menu Button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -47,7 +46,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
         {isOpen ? <X size={22} /> : <Menu size={22} />}
       </motion.button>
 
-      {/* Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -62,7 +60,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
         )}
       </AnimatePresence>
 
-      {/* Side Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -77,7 +74,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               backdropFilter: 'blur(20px)',
             }}
           >
-            {/* Header */}
             <div className="pt-20 pb-6 px-6 text-center">
               <div
                 className="text-2xl font-bold tracking-[6px] uppercase"
@@ -103,7 +99,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               />
             </div>
 
-            {/* Menu Items */}
             <nav className="flex-1 px-4 overflow-y-auto">
               {menuItems.map((item, index) => {
                 const isActive = location.pathname === item.path;
@@ -138,7 +133,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               })}
             </nav>
 
-            {/* Footer */}
             <div className="p-4 text-center">
               <div
                 className="h-px w-full mb-4"
