@@ -8,69 +8,65 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
 
-  const characters = [
-    {
-      name: 'Валерий Даркбейн',
-      title: 'Потомок сильнейшего Авантюриста',
-      desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.',
-      tarot: `${import.meta.env.BASE_URL}tarot_valery.png`,
-      lorePath: '/valery-lore',
-      color: '#e6e6fa',
-      links: [
-        { label: 'Личное умение', path: '/valery' },
-        { label: 'Род Даркбейнов', path: '/darkbain' },
-        { label: 'Подкласс', path: '/valery-subclass' },
-      ],
-    },
-    {
-      name: 'Брин дель Хессен',
-      title: 'Наследный Принц Астарии',
-      desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда. Создатель Ледяной крепости — ментального чистилища.',
-      tarot: `${import.meta.env.BASE_URL}tarot_brin.png`,
-      lorePath: '/brin-lore',
-      color: '#5a3a7a',
-      links: [
-        { label: 'Личное умение', path: '/brin' },
-        { label: 'Подкласс', path: '/brin-subclass' },
-      ],
-    },
-    {
-      name: 'Стив',
-      title: 'Друид отшельник',
-      desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.',
-      tarot: `${import.meta.env.BASE_URL}tarot_stive.png`,
-      lorePath: '/stive-lore',
-      color: '#2a6a3a',
-      links: [
-        { label: 'Личное умение', path: '/stive-ability' },
-        { label: 'Подкласс', path: '/stive-subclass' },
-      ],
-    },
-    {
-      name: 'Таллис',
-      title: 'Бард-Воин',
-      desc: 'Бродяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.',
-      tarot: `${import.meta.env.BASE_URL}tarot_tallis.png`,
-      lorePath: '/talis-lore',
-      color: '#FF5E00',
-      links: [
-        { label: 'Личное умение', path: '/tallis-ability' },
-        { label: 'Подкласс', path: '/tallis-subclass' },
-      ],
-    },
-    {
-      name: 'Сакрис из Бергхейма',
-      title: 'Следопыт, сосуд древнего духа',
-      desc: 'Амбициозный драконид искатель приключений переросший свой дом, в котором ему было слишком тесно.',
-      tarot: `${import.meta.env.BASE_URL}tarot_sakris.png`,
-      lorePath: '/sakris-lore',
-      color: '#2a5a8a',
-      links: [
-        { label: 'Личное умение', path: '/sakris' },
-        { label: 'Подкласс', path: '/sakris-subclass' },
-      ],
-    },
-  ];
+const characters = [
+  {
+    name: 'Валерий Даркбейн',
+    title: 'Потомок сильнейшего Авантюриста',
+    desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.',
+    tarot: `${import.meta.env.BASE_URL}tarot_valery.png`,
+    lorePath: '/lore/valery',     // изменено
+    color: '#e6e6fa',
+    links: [
+      { label: 'Личное умение', path: '/valery' },
+      { label: 'Род Даркбейнов', path: '/darkbain' },
+      // { label: 'Подкласс', path: '/valery-subclass' }, // временно убрали
+    ],
+  },
+  {
+    name: 'Брин дель Хессен',
+    title: 'Наследный Принц Астарии',
+    desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда.',
+    tarot: `${import.meta.env.BASE_URL}tarot_brin.png`,
+    lorePath: '/lore/brin',
+    color: '#5a3a7a',
+    links: [
+      { label: 'Личное умение', path: '/brin' },
+    ],
+  },
+  {
+    name: 'Стив',
+    title: 'Друид отшельник',
+    desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.',
+    tarot: `${import.meta.env.BASE_URL}tarot_stive.png`,
+    lorePath: '/lore/stive',
+    color: '#2a6a3a',
+    links: [
+      { label: 'Личное умение', path: '/stive' }, // теперь ведёт на созданную заглушку
+    ],
+  },
+  {
+    name: 'Таллис',
+    title: 'Бард-Воин',
+    desc: 'Бродяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.',
+    tarot: `${import.meta.env.BASE_URL}tarot_talis.png`,
+    lorePath: '/lore/talis',
+    color: '#FF5E00',
+    links: [
+      { label: 'Личное умение', path: '/talis' }, // заглушка
+    ],
+  },
+  {
+    name: 'Сакрис из Бергхейма',
+    title: 'Следопыт, сосуд древнего духа',
+    desc: 'Амбициозный драконид искатель приключений переросший свой дом, в котором ему было слишком тесно.',
+    tarot: `${import.meta.env.BASE_URL}tarot_sakris.png`,
+    lorePath: '/lore/sakris',
+    color: '#2a5a8a',
+    links: [
+      { label: 'Личное умение', path: '/sakris' },
+    ],
+  },
+];
 
   const videos = [
     { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
