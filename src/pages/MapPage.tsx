@@ -70,18 +70,21 @@ const MapPage: React.FC = () => {
     return () => el.removeEventListener('wheel', handleInlineWheel);
   }, [handleInlineWheel]);
 
-  /* ── Инлайн: ЛКМ — сбрасывает зум до 1 (если приближено) ── */
+  /* ── Инлайн: ЛКМ — открывает модалку (если не зумнуто) или сбрасывает зум ── */
   const handleInlineClick = useCallback(() => {
     if (inlineDrag.current.isDragging) return;
     if (inlineScale > 1) {
       setInlineScale(1);
       setInlinePos({ x: 0, y: 0 });
+    } else {
+      setIsZoomed(true);
     }
   }, [inlineScale]);
 
-  /* ── Инлайн: перетаскивание при зуме ── */
+  /* ── Инлайн: перетаскивание при зуме (только ЛКМ) ── */
   const handleInlineMouseDown = useCallback(
     (e: React.MouseEvent) => {
+      if (e.button !== 0) return; // только ЛКМ
       if (inlineScale <= 1) return;
       e.preventDefault();
       inlineDrag.current = {
@@ -201,7 +204,7 @@ const MapPage: React.FC = () => {
               letterSpacing: '1px',
             }}
           >
-            Колёсико мыши — приблизить · ЛКМ — сбросить приближение
+            Колёсико мыши — приблизить · ЛКМ — открыть / сбросить
           </p>
         </motion.header>
 
@@ -222,6 +225,7 @@ const MapPage: React.FC = () => {
           onMouseMove={handleInlineMouseMove}
           onMouseUp={handleInlineMouseUp}
           onMouseLeave={handleInlineMouseUp}
+          onContextMenu={(e) => e.preventDefault()}
         >
           <img
             src={mapData.image}

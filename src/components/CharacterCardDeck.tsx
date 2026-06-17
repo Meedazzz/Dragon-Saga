@@ -40,7 +40,7 @@ function useCardTilt(maxTilt = 10) {
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!ref.current || event.pointerType === 'touch') return;
+    if (!ref.current || event.pointerType === 'touch' || maxTilt === 0) return;
     const rect = ref.current.getBoundingClientRect();
     const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
@@ -71,11 +71,11 @@ function useCardTilt(maxTilt = 10) {
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === 'touch') void enableGyro();
+    if (event.pointerType === 'touch' && maxTilt > 0) void enableGyro();
   };
 
   useEffect(() => {
-    if (!gyroEnabled) return undefined;
+    if (!gyroEnabled || maxTilt === 0) return undefined;
     const onOrientation = (event: DeviceOrientationEvent) => {
       const beta = event.beta ?? 0;
       const gamma = event.gamma ?? 0;
@@ -322,6 +322,80 @@ const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char
   </div>
 );
 
+/* ── Мобильные карточки (статичная сетка, без 3D-веера) ── */
+interface MobileCardProps {
+  char: CharacterConfig;
+  index: number;
+  onOpen: (char: CharacterConfig, flipped: boolean) => void;
+}
+
+const MobileCard: React.FC<MobileCardProps> = ({ char, index, onOpen }) => {
+  return (
+    <motion.div
+      className="relative cursor-pointer select-none overflow-hidden rounded-[12px]"
+      style={{
+        background: `linear-gradient(145deg, rgba(255,255,255,0.05), ${char.color}18 34%, rgba(8,6,5,0.96))`,
+        border: `1px solid ${char.color}55`,
+        boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 28px ${char.color}18`,
+      }}
+      whileTap={{ scale: 0.95 }}
+      onClick={() => onOpen(char, false)}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.08 }}
+    >
+      <div className="relative w-full" style={{ aspectRatio: '768 / 1376' }}>
+        <img
+          src={char.tarot.replace('/optimized/', '/optimized/mobile/')}
+          alt={char.name}
+          className="h-full w-full object-cover"
+          loading={index < 2 ? 'eager' : 'lazy'}
+          decoding="async"
+          draggable={false}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: 'linear-gradient(110deg, rgba(255,255,255,0.2), transparent 26%, transparent 70%, rgba(255,255,255,0.09))',
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-0 right-0 p-2 text-center"
+          style={{
+            background: 'linear-gradient(transparent, rgba(0,0,0,0.85))',
+          }}
+        >
+          <span
+            className="text-[10px] uppercase tracking-[2px]"
+            style={{ fontFamily: "'Cinzel', serif", color: char.color, textShadow: `0 0 8px ${char.color}80` }}
+          >
+            {char.name}
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+interface MobileDeckProps {
+  onOpen: (char: CharacterConfig, flipped: boolean) => void;
+}
+
+const MobileDeck: React.FC<MobileDeckProps> = ({ onOpen }) => {
+  return (
+    <div className="flex flex-col items-center gap-4 w-full max-w-[420px] mx-auto px-2">
+      <div className="grid grid-cols-2 gap-3 w-full">
+        {characters.slice(0, 4).map((char, index) => (
+          <MobileCard key={char.id} char={char} index={index} onOpen={onOpen} />
+        ))}
+      </div>
+      <div className="w-[44vw] max-w-[180px]">
+        <MobileCard key={characters[4].id} char={characters[4]} index={4} onOpen={onOpen} />
+      </div>
+    </div>
+  );
+};
+
 interface ExpandedCardOverlayProps {
   char: CharacterConfig | null;
   initialFlipped: boolean;
@@ -332,7 +406,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isFlipped, setIsFlipped] = useState(initialFlipped);
-  const { ref, tilt, gyroEnabled, enableGyro, tiltHandlers } = useCardTilt(isMobile ? 5 : 8);
+  const { ref, tilt, tiltHandlers } = useCardTilt(isMobile ? 0 : 8);
 
   /* ── Переворот карты на 180° (вверх ногами) через прокрутку колёсика ── */
   const [upsideDown, setUpsideDown] = useState(0); // 0..180 градусов
@@ -340,6 +414,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
   const cardWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (isMobile) return;
     const el = cardWrapperRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
@@ -350,7 +425,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, []);
+  }, [isMobile]);
 
   // Сброс при смене карты
   useEffect(() => {
@@ -463,15 +538,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
             {upsideDown >= 90 ? '↻ Вернуть' : '↺ Перевернуть'}
           </button>
 
-          {isMobile && !gyroEnabled && (
-            <button
-              onClick={() => void enableGyro()}
-              className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5"
-              style={{ fontFamily: "'Cinzel', serif", background: `${char.color}18`, border: `1px solid ${char.color}55`, color: homeTheme.parchment }}
-            >
-              ◇ Mobile tilt
-            </button>
-          )}
+          {/* Mobile tilt disabled — removed for performance */}
 
           <button
             onClick={() => goTo(char.lorePath)}
@@ -530,20 +597,24 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
   return (
     <div className="relative min-h-[340px] md:min-h-[620px]">
       <div className="flex min-h-[300px] flex-col items-center justify-center overflow-visible py-4 md:min-h-[560px] md:py-6">
-        <div
-          className="relative w-full max-w-[1040px]"
-          style={{ height: isMobile ? 240 : 440, perspective: 1500 }}
-        >
-          {characters.map((char, index) => (
-            <FanCard
-              key={char.id}
-              char={char}
-              index={index}
-              isMobile={isMobile}
-              onOpen={openCard}
-            />
-          ))}
-        </div>
+        {isMobile ? (
+          <MobileDeck onOpen={openCard} />
+        ) : (
+          <div
+            className="relative w-full max-w-[1040px]"
+            style={{ height: 440, perspective: 1500 }}
+          >
+            {characters.map((char, index) => (
+              <FanCard
+                key={char.id}
+                char={char}
+                index={index}
+                isMobile={false}
+                onOpen={openCard}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="mt-10 md:mt-14 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
           <button
