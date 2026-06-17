@@ -1,12 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
+import HeroNav from '@/components/HeroNav';
 import { sakrisTheme } from '@/types/theme';
 
 const SakrisPage: React.FC = () => {
   return (
     <Layout theme={sakrisTheme} particleVariant="mixed" particleCount={36}>
       <div className="max-w-[900px] mx-auto px-6 md:px-10 pb-20 pt-16">
+        <HeroNav theme={sakrisTheme} characterId="sakris" />
+
         {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: 20 }}
@@ -34,7 +37,7 @@ const SakrisPage: React.FC = () => {
               textShadow: `0 0 20px rgba(192,200,208,0.3), 0 0 40px rgba(42,138,42,0.2), 0 0 60px rgba(144,208,255,0.1), 0 2px 4px rgba(0,0,0,0.8)`,
             }}
           >
-            Личное умение<br />Сакриса из Бергхейма
+            Личное умение<br />Сакриса Ульриаша
           </h1>
           <div className="rune-divider" style={{ '--divider-color': sakrisTheme.primaryGlow, '--divider-text': sakrisTheme.parchment } as React.CSSProperties}>
             <span>&#9856;&#9857;&#9858;&#9859;</span>

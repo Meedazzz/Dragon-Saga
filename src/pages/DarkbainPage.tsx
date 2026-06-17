@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
+import HeroNav from '@/components/HeroNav';
 import { darkbainTheme } from '@/types/theme';
 
 const DarkbainPage: React.FC = () => {
@@ -79,6 +80,10 @@ const DarkbainPage: React.FC = () => {
           boxShadow: `0 0 80px rgba(0,0,0,0.95), inset 0 0 120px rgba(0,0,0,0.6), 0 0 40px rgba(74,63,42,0.1)`,
         }}
       >
+        {/* HeroNav at the very top */}
+        <div className="pt-4">
+          <HeroNav theme={darkbainTheme} characterId="valery" />
+        </div>
         {/* Inner Border */}
         <div
           className="absolute top-3 left-3 right-3 bottom-3 pointer-events-none z-10"

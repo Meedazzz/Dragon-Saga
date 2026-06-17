@@ -3,45 +3,57 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { lorTheme } from '@/types/theme';
+import { characters } from '@/data/characters';
 
 const LorPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState<'heroes' | 'lore'>('heroes');
-
-  const characters = [
-    {
-      name: 'Валерий Даркбейн',
-      title: 'Потомок сильнейшего Авантюриста, носитель тёмного проклятья',
-      ability: 'Личное умение — Ас',
-      path: '/valery',
-      color: '#2a5a8a',
-    },
-    {
-      name: 'Сакрис из Бергхейма',
-      title: 'Следопыт, сосуд древнего духа',
-      ability: 'Личное умение — Дух бесплотный',
-      path: '/sakris',
-      color: '#2a6a3a',
-    },
-    {
-      name: 'Брин дель Хессен',
-      title: 'Наследный Принц Астарии, владыка Чёрного льда',
-      ability: 'Личное умение — Ледяная крепость',
-      path: '/brin',
-      color: '#5a3a7a',
-    },
-  ];
+  const [activeSection, setActiveSection] = useState<'heroes' | 'lore' | 'maps'>('heroes');
 
   const loreCards = [
     {
       title: 'Род Даркбейнов',
       desc: 'Древний род, чья кровь связана с силами за гранью жизни и смерти. Тайны, передаваемые из поколения в поколение.',
       path: '/darkbain',
+      icon: '⚔️',
+    },
+    {
+      title: 'Дом Хессен',
+      desc: 'Великий Дом Астарии, чья кровь хранит тайны Чёрного льда.',
+      path: '/hessen',
+      icon: '❄️',
+    },
+    {
+      title: 'Бергхейм',
+      desc: 'Суровый горный край на севере, где духи предков бродят по перевалам.',
+      path: '/berghheim',
+      icon: '🏔️',
+    },
+    {
+      title: 'Клан Арантир',
+      desc: 'Последние Драконоборцы, чьи песни пережили века.',
+      path: '/arantir',
+      icon: '🎵',
     },
     {
       title: 'Летопись мира',
       desc: 'Сказание о мире: от Музыки Айнур до 425 года Третьей Эпохи. История, расы, календарь и глоссарий.',
       path: '/letopis',
+      icon: '📜',
+    },
+  ];
+
+  const mapCards = [
+    {
+      title: 'Карта Севера',
+      desc: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.',
+      path: '/map/sever',
+      icon: '🗺️',
+    },
+    {
+      title: 'Карта Нортвинда',
+      desc: 'Карта Нортвинда — оплота севера и его окрестностей.',
+      path: '/map/northwind',
+      icon: '🗺️',
     },
   ];
 
@@ -100,8 +112,9 @@ const LorPage: React.FC = () => {
           className="flex justify-center gap-2 mb-10 flex-wrap"
         >
           {[
-            { id: 'heroes' as const, label: 'Игровые персонажи', icon: '⚔' },
+            { id: 'heroes' as const, label: 'Персонажи', icon: '⚔' },
             { id: 'lore' as const, label: 'Лор', icon: '📜' },
+            { id: 'maps' as const, label: 'Карты', icon: '🗺️' },
           ].map((btn) => (
             <button
               key={btn.id}
@@ -142,7 +155,7 @@ const LorPage: React.FC = () => {
             }}
           >
             <span className="mr-2">🌍</span>
-            Мир Игры
+            Летопись
           </button>
         </motion.nav>
 
@@ -155,18 +168,18 @@ const LorPage: React.FC = () => {
           >
             <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
               <span className="section-icon">&#9876;</span>
-              <h2 className="section-title">Игровые персонажи</h2>
+              <h2 className="section-title">Персонажи</h2>
               <div className="section-line" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {characters.map((char, idx) => (
                 <motion.div
-                  key={char.name}
+                  key={char.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + idx * 0.1 }}
-                  onClick={() => navigate(char.path)}
+                  onClick={() => navigate(char.lorePath)}
                   className="rounded-md p-6 relative overflow-hidden cursor-pointer transition-all duration-300"
                   style={{
                     background: 'linear-gradient(180deg, rgba(20,15,10,0.6) 0%, rgba(10,8,5,0.4) 100%)',
@@ -201,17 +214,34 @@ const LorPage: React.FC = () => {
                   >
                     {char.title}
                   </div>
-                  <div
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-sm text-xs tracking-[1px] transition-all duration-200"
-                    style={{
-                      fontFamily: "'Cinzel', serif",
-                      background: 'rgba(30,25,15,0.3)',
-                      border: '1px solid rgba(80,70,50,0.2)',
-                      color: lorTheme.parchmentDim,
-                    }}
-                  >
-                    <span style={{ color: lorTheme.primaryGlow, fontSize: '0.7rem' }}>&#9670;</span>
-                    {char.ability}
+                  <div className="flex flex-wrap gap-1.5">
+                    {char.pages.slice(0, 3).map((page) => (
+                      <span
+                        key={page.path}
+                        className="px-2 py-1 rounded text-[10px] tracking-[1px]"
+                        style={{
+                          fontFamily: "'Cinzel', serif",
+                          background: 'rgba(30,25,15,0.3)',
+                          border: '1px solid rgba(80,70,50,0.15)',
+                          color: lorTheme.parchmentDim,
+                        }}
+                      >
+                        {page.label}
+                      </span>
+                    ))}
+                    {char.pages.length > 3 && (
+                      <span
+                        className="px-2 py-1 rounded text-[10px] tracking-[1px]"
+                        style={{
+                          fontFamily: "'Cinzel', serif",
+                          background: 'rgba(30,25,15,0.3)',
+                          border: '1px solid rgba(80,70,50,0.15)',
+                          color: lorTheme.parchmentDim,
+                        }}
+                      >
+                        +{char.pages.length - 3}
+                      </span>
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -254,6 +284,7 @@ const LorPage: React.FC = () => {
                     className="absolute top-0 left-0 right-0 h-0.5"
                     style={{ background: `linear-gradient(90deg, transparent, ${lorTheme.primaryGlow}, transparent)` }}
                   />
+                  <div className="text-2xl mb-2">{card.icon}</div>
                   <div
                     className="text-base md:text-lg tracking-[2px] mb-2"
                     style={{
@@ -290,6 +321,86 @@ const LorPage: React.FC = () => {
                     }}
                   >
                     Открыть
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+        )}
+
+        {/* Maps Section */}
+        {activeSection === 'maps' && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
+              <span className="section-icon">&#128506;</span>
+              <h2 className="section-title">Карты</h2>
+              <div className="section-line" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {mapCards.map((card, idx) => (
+                <motion.div
+                  key={card.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + idx * 0.1 }}
+                  onClick={() => navigate(card.path)}
+                  className="rounded-md p-6 relative cursor-pointer transition-all duration-300"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(20,15,10,0.5) 0%, rgba(10,8,5,0.3) 100%)',
+                    border: '1px solid rgba(138,106,42,0.2)',
+                  }}
+                  whileHover={{
+                    borderColor: 'rgba(184,144,58,0.3)',
+                    y: -2,
+                    boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
+                  }}
+                >
+                  <div
+                    className="absolute top-0 left-0 right-0 h-0.5"
+                    style={{ background: `linear-gradient(90deg, transparent, ${lorTheme.primaryGlow}, transparent)` }}
+                  />
+                  <div className="text-3xl mb-3">{card.icon}</div>
+                  <div
+                    className="text-base md:text-lg tracking-[2px] mb-2"
+                    style={{
+                      fontFamily: "'Cinzel Decorative', serif",
+                      color: lorTheme.primaryGlow,
+                    }}
+                  >
+                    {card.title}
+                  </div>
+                  <div
+                    className="text-sm leading-relaxed mb-4"
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      color: lorTheme.parchmentDim,
+                    }}
+                  >
+                    {card.desc}
+                  </div>
+                  <span
+                    className="inline-block px-5 py-2.5 rounded-sm text-xs tracking-[2px] uppercase transition-all duration-200 cursor-pointer"
+                    style={{
+                      fontFamily: "'Cinzel', serif",
+                      background: 'linear-gradient(180deg, rgba(30,25,15,0.4) 0%, rgba(15,12,8,0.3) 100%)',
+                      border: '1px solid rgba(80,70,50,0.25)',
+                      color: lorTheme.parchmentDim,
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.target as HTMLElement).style.borderColor = lorTheme.primary;
+                      (e.target as HTMLElement).style.color = lorTheme.parchment;
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.25)';
+                      (e.target as HTMLElement).style.color = lorTheme.parchmentDim;
+                    }}
+                  >
+                    Открыть карту
                   </span>
                 </motion.div>
               ))}

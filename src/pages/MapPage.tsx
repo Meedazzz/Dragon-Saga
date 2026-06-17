@@ -1,0 +1,145 @@
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import Layout from '@/components/Layout';
+import { lorTheme } from '@/types/theme';
+
+const BASE = import.meta.env.BASE_URL;
+
+const mapsData: Record<string, { title: string; image: string; description: string }> = {
+  sever: {
+    title: 'Карта Севера',
+    image: `${BASE}map_sever.png`,
+    description: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.',
+  },
+  northwind: {
+    title: 'Карта Нортвинда',
+    image: `${BASE}map_northwind.png`,
+    description: 'Карта Нортвинда — оплота севера и его окрестностей.',
+  },
+};
+
+const MapPage: React.FC = () => {
+  const { mapId } = useParams<{ mapId: string }>();
+  const [isZoomed, setIsZoomed] = useState(false);
+  const mapData = mapId ? mapsData[mapId] : undefined;
+
+  if (!mapData) {
+    return (
+      <Layout theme={lorTheme}>
+        <div className="max-w-3xl mx-auto px-6 py-24 text-center">
+          <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: "'Cinzel Decorative', serif", color: lorTheme.parchment }}>
+            Карта не найдена
+          </h1>
+          <p className="text-lg italic" style={{ fontFamily: "'Cormorant Garamond', serif", color: lorTheme.parchmentDim }}>
+            По этому пути ещё не проложено летописи.
+          </p>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout theme={lorTheme} particleCount={15}>
+      <div className="max-w-[1000px] mx-auto px-6 md:px-8 pb-20 pt-16">
+        {/* Header */}
+        <motion.header
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center pb-8 mb-8"
+        >
+          <h1
+            className="text-2xl md:text-4xl font-bold tracking-[3px] mb-3"
+            style={{
+              fontFamily: "'Cinzel Decorative', serif",
+              color: lorTheme.parchment,
+              textShadow: '0 0 20px rgba(160,150,130,0.2), 0 2px 6px rgba(0,0,0,0.9)',
+            }}
+          >
+            🗺️ {mapData.title}
+          </h1>
+          <p
+            className="text-sm md:text-base italic max-w-[500px] mx-auto leading-relaxed"
+            style={{ fontFamily: "'Cormorant Garamond', serif", color: lorTheme.parchmentDim }}
+          >
+            {mapData.description}
+          </p>
+          <p
+            className="text-xs mt-3"
+            style={{ fontFamily: "'Cinzel', serif", color: lorTheme.parchmentDim, letterSpacing: '1px' }}
+          >
+            Нажмите на карту, чтобы увеличить
+          </p>
+        </motion.header>
+
+        {/* Map Image */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="cursor-zoom-in"
+          onClick={() => setIsZoomed(true)}
+        >
+          <div
+            className="rounded overflow-hidden"
+            style={{
+              border: `2px solid ${lorTheme.primaryGlow}40`,
+              boxShadow: `0 8px 40px rgba(0,0,0,0.5)`,
+            }}
+          >
+            <img
+              src={mapData.image}
+              alt={mapData.title}
+              className="w-full h-auto"
+              style={{ display: 'block' }}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;min-height:400px;background:rgba(20,15,10,0.4);color:#706850;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;padding:40px;text-align:center;">
+                      🗺️ Изображение карты будет добавлено позже.<br/>
+                      Ожидаемый файл: <code style="color:#8a7040">public/map_${mapId}.png</code>
+                    </div>
+                  `;
+                }
+              }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Zoomed Modal */}
+        <AnimatePresence>
+          {isZoomed && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/90 z-[700] flex items-center justify-center p-4 cursor-zoom-out"
+              onClick={() => setIsZoomed(false)}
+            >
+              <motion.img
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                src={mapData.image}
+                alt={mapData.title}
+                className="max-w-full max-h-full object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <button
+                className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/60 text-white text-3xl flex items-center justify-center hover:bg-black/80 transition-colors cursor-pointer"
+                onClick={() => setIsZoomed(false)}
+              >
+                &times;
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </Layout>
+  );
+};
+
+export default MapPage;

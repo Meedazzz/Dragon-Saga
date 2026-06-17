@@ -1,33 +1,80 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Globe, Scroll } from 'lucide-react';
+import { Menu, X, Home, User, Globe, Scroll, ChevronDown, ChevronRight, Map } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
+import { characters } from '@/data/characters';
 
 interface SideMenuProps {
   theme: ColorTheme;
 }
 
-const menuItems = [
-  { path: '/', label: 'Главная', icon: Home },
-  { path: '/lor', label: 'Мир Игры', icon: Globe },
-  { path: '/valery', label: 'Валерий Даркбейн', icon: User },
-  { path: '/sakris', label: 'Сакрис из Бергхейма', icon: User },
-  { path: '/brin', label: 'Брин дель Хессен', icon: User },
-  { path: '/stive', label: 'Стив', icon: User },
-  { path: '/talis', label: 'Таллис', icon: User },
-  { path: '/letopis', label: 'Летопись мира', icon: Scroll },
-];
+interface MenuItemGroup {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+  path?: string;
+  children?: { label: string; path: string; children?: { label: string; path: string }[] }[];
+}
 
 const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedChars, setExpandedChars] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const location = useLocation();
+
+  const menuGroups: MenuItemGroup[] = [
+    {
+      id: 'letopis',
+      label: 'Летопись',
+      icon: Scroll,
+      path: '/letopis',
+    },
+    {
+      id: 'characters',
+      label: 'Персонажи',
+      icon: User,
+      children: characters.map(char => ({
+        label: char.name,
+        path: char.lorePath,
+        children: char.pages.map(page => ({
+          label: page.label,
+          path: page.path,
+        })),
+      })),
+    },
+    {
+      id: 'world',
+      label: 'Мир игры',
+      icon: Globe,
+      children: [
+        { label: 'Обзор мира', path: '/lor' },
+        { label: 'Летопись мира', path: '/letopis' },
+        { label: 'Карта Севера', path: '/map/sever' },
+        { label: 'Карта Нортвинда', path: '/map/northwind' },
+        { label: 'Род Даркбейнов', path: '/darkbain' },
+        { label: 'Дом Хессен', path: '/hessen' },
+        { label: 'Бергхейм', path: '/berghheim' },
+        { label: 'Клан Арантир', path: '/arantir' },
+      ],
+    },
+  ];
 
   const handleNavigate = (path: string) => {
     setIsOpen(false);
     setTimeout(() => navigate(path), 200);
   };
+
+  const toggleGroup = (id: string) => {
+    setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleChar = (charName: string) => {
+    setExpandedChars(prev => ({ ...prev, [charName]: !prev[charName] }));
+  };
+
+  const isPathActive = (path: string) => location.pathname === path;
 
   return (
     <>
@@ -67,13 +114,14 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
             animate={{ x: 0 }}
             exit={{ x: -320 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 left-0 bottom-0 w-72 z-[550] flex flex-col"
+            className="fixed top-0 left-0 bottom-0 w-80 z-[550] flex flex-col"
             style={{
               background: theme.menuBg,
               borderRight: `1px solid ${theme.buttonBorder}`,
               backdropFilter: 'blur(20px)',
             }}
           >
+            {/* Header */}
             <div className="pt-20 pb-6 px-6 text-center">
               <div
                 className="text-2xl font-bold tracking-[6px] uppercase"
@@ -99,40 +147,185 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               />
             </div>
 
-            <nav className="flex-1 px-4 overflow-y-auto">
-              {menuItems.map((item, index) => {
-                const isActive = location.pathname === item.path;
-                const Icon = item.icon;
-                return (
+            {/* Nav */}
+            <nav className="flex-1 px-4 overflow-y-auto pb-4">
+              {/* Home link */}
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => handleNavigate('/')}
+                className="w-full flex items-center gap-3 px-4 py-3 mb-1 rounded-lg text-left transition-all duration-300 cursor-pointer"
+                style={{
+                  background: isPathActive('/') ? `${theme.menuAccent}20` : 'transparent',
+                  border: `1px solid ${isPathActive('/') ? theme.menuAccent : 'transparent'}`,
+                  color: isPathActive('/') ? theme.menuAccent : theme.menuText,
+                }}
+                whileHover={{
+                  x: 4,
+                  background: `${theme.menuAccent}15`,
+                }}
+              >
+                <Home size={16} />
+                <span className="text-sm tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                  Главная
+                </span>
+              </motion.button>
+
+              {/* Menu Groups */}
+              {menuGroups.map((group, gIdx) => (
+                <div key={group.id} className="mb-1">
                   <motion.button
-                    key={item.path}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => handleNavigate(item.path)}
-                    className="w-full flex items-center gap-4 px-4 py-3 mb-2 rounded-lg text-left transition-all duration-300 cursor-pointer"
+                    transition={{ delay: (gIdx + 1) * 0.05 }}
+                    onClick={() => {
+                      if (group.path) {
+                        handleNavigate(group.path);
+                      } else {
+                        toggleGroup(group.id);
+                      }
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-300 cursor-pointer"
                     style={{
-                      background: isActive ? `${theme.menuAccent}20` : 'transparent',
-                      border: `1px solid ${isActive ? theme.menuAccent : 'transparent'}`,
-                      color: isActive ? theme.menuAccent : theme.menuText,
+                      background: expandedGroups[group.id] ? `${theme.menuAccent}15` : 'transparent',
+                      color: theme.menuAccent,
                     }}
                     whileHover={{
                       x: 4,
                       background: `${theme.menuAccent}15`,
                     }}
                   >
-                    <Icon size={18} />
+                    <group.icon size={16} />
                     <span
-                      className="text-sm tracking-[1px]"
-                      style={{ fontFamily: theme.fontFamily }}
+                      className="text-sm tracking-[1px] flex-1"
+                      style={{ fontFamily: theme.fontFamily, fontWeight: 700 }}
                     >
-                      {item.label}
+                      {group.label}
                     </span>
+                    {group.children && (
+                      expandedGroups[group.id]
+                        ? <ChevronDown size={14} />
+                        : <ChevronRight size={14} />
+                    )}
                   </motion.button>
-                );
-              })}
+
+                  {/* Expanded children */}
+                  <AnimatePresence>
+                    {group.children && expandedGroups[group.id] && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        {group.id === 'characters' ? (
+                          // Character sub-items with expandable sub-pages
+                          group.children.map((charItem) => (
+                            <div key={charItem.path} className="ml-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleChar(charItem.label);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded text-left transition-all duration-200 cursor-pointer"
+                                style={{ color: theme.menuText }}
+                                onMouseEnter={(e) => {
+                                  (e.currentTarget as HTMLElement).style.background = `${theme.menuAccent}10`;
+                                }}
+                                onMouseLeave={(e) => {
+                                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                                }}
+                              >
+                                {expandedChars[charItem.label] ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                                <span className="text-xs tracking-[1px] flex-1" style={{ fontFamily: theme.fontFamily }}>
+                                  {charItem.label}
+                                </span>
+                              </button>
+                              <AnimatePresence>
+                                {expandedChars[charItem.label] && charItem.children && (
+                                  <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="ml-5"
+                                  >
+                                    {charItem.children.map((subPage) => (
+                                      <button
+                                        key={subPage.path}
+                                        onClick={() => handleNavigate(subPage.path)}
+                                        className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left transition-all duration-200 cursor-pointer"
+                                        style={{
+                                          color: isPathActive(subPage.path) ? theme.menuAccent : theme.parchmentDim,
+                                          background: isPathActive(subPage.path) ? `${theme.menuAccent}15` : 'transparent',
+                                          borderLeft: isPathActive(subPage.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                          if (!isPathActive(subPage.path)) {
+                                            (e.currentTarget as HTMLElement).style.color = theme.menuText;
+                                            (e.currentTarget as HTMLElement).style.borderLeftColor = `${theme.menuAccent}40`;
+                                          }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                          if (!isPathActive(subPage.path)) {
+                                            (e.currentTarget as HTMLElement).style.color = theme.parchmentDim;
+                                            (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                                          }
+                                        }}
+                                      >
+                                        <span className="text-[11px] tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                                          {subPage.label}
+                                        </span>
+                                      </button>
+                                    ))}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          ))
+                        ) : (
+                          // Simple sub-items (world section)
+                          group.children.map((item) => {
+                            const isMapItem = item.path.startsWith('/map');
+                            return (
+                              <button
+                                key={item.path}
+                                onClick={() => handleNavigate(item.path)}
+                                className="w-full flex items-center gap-2 px-4 py-2 ml-2 rounded text-left transition-all duration-200 cursor-pointer"
+                                style={{
+                                  color: isPathActive(item.path) ? theme.menuAccent : theme.parchmentDim,
+                                  background: isPathActive(item.path) ? `${theme.menuAccent}15` : 'transparent',
+                                  borderLeft: isPathActive(item.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!isPathActive(item.path)) {
+                                    (e.currentTarget as HTMLElement).style.color = theme.menuText;
+                                    (e.currentTarget as HTMLElement).style.borderLeftColor = `${theme.menuAccent}40`;
+                                  }
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!isPathActive(item.path)) {
+                                    (e.currentTarget as HTMLElement).style.color = theme.parchmentDim;
+                                    (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                                  }
+                                }}
+                              >
+                                {isMapItem && <Map size={12} style={{ opacity: 0.6, flexShrink: 0 }} />}
+                                <span className="text-xs tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                                  {item.label}
+                                </span>
+                              </button>
+                            );
+                          })
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
             </nav>
 
+            {/* Footer */}
             <div className="p-4 text-center">
               <div
                 className="h-px w-full mb-4"

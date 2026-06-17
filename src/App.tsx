@@ -8,8 +8,13 @@ import BrinPage from '@/pages/BrinPage';
 import DarkbainPage from '@/pages/DarkbainPage';
 import LetopisPage from '@/pages/LetopisPage';
 import LorPage from '@/pages/LorPage';
+import SubclassPage from '@/pages/SubclassPage';
+import HessenPage from '@/pages/HessenPage';
+import BerghheimPage from '@/pages/BerghheimPage';
+import ArantirPage from '@/pages/ArantirPage';
+import MapPage from '@/pages/MapPage';
 
-// Страницы-заглушки для Стива и Таллиса (личные умения пока пустые)
+// Страницы-заглушки для Стива и Таллиса
 import StivePlaceholder from '@/pages/StivePlaceholder';
 import TalisPlaceholder from '@/pages/TalisPlaceholder';
 
@@ -19,18 +24,29 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         
-        {/* Лор персонажей – универсальный компонент */}
+        {/* Лор персонажей */}
         <Route path="/lore/:characterId" element={<LorePage />} />
 
-        {/* Личные умения существующие */}
+        {/* Личные умения */}
         <Route path="/valery" element={<ValeryPage />} />
         <Route path="/sakris" element={<SakrisPage />} />
         <Route path="/brin" element={<BrinPage />} />
         <Route path="/darkbain" element={<DarkbainPage />} />
 
-        {/* Временные страницы для Стива и Таллиса (личные умения) */}
+        {/* Страницы для Стива и Таллиса */}
         <Route path="/stive" element={<StivePlaceholder />} />
         <Route path="/talis" element={<TalisPlaceholder />} />
+
+        {/* Подклассы */}
+        <Route path="/subclass/:characterId" element={<SubclassPage />} />
+
+        {/* Связанный лор */}
+        <Route path="/hessen" element={<HessenPage />} />
+        <Route path="/berghheim" element={<BerghheimPage />} />
+        <Route path="/arantir" element={<ArantirPage />} />
+
+        {/* Карты */}
+        <Route path="/map/:mapId" element={<MapPage />} />
 
         {/* Летопись и мир игры */}
         <Route path="/letopis" element={<LetopisPage />} />
