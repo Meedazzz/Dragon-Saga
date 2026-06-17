@@ -140,7 +140,7 @@ const cardBios: Record<string, string[]> = {
   ],
 };
 
-// Увеличенный размах веера (коэффициент 1.4)
+// Увеличенный размах веера (коэффициент 1.4) для десктопа
 const desktopFan = [
   { x: -340 * 1.4, y: 48, rotate: -24 },
   { x: -170 * 1.4, y: 14, rotate: -12 },
@@ -149,6 +149,7 @@ const desktopFan = [
   { x: 340 * 1.4, y: 48, rotate: 24 },
 ];
 
+// Мобильный веер с меньшим размахом, чтобы влезало на экран
 const mobileFan = [
   { x: -90, y: 30, rotate: -20 },
   { x: -45, y: 10, rotate: -10 },
@@ -168,11 +169,8 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const [isHovered, setIsHovered] = useState(false);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-<<<<<<< HEAD
-  const cardWidth = isMobile ? 100 : 206;
-=======
+  // Для мобильных используем ширину 118 (чуть больше, чем было 100)
   const cardWidth = isMobile ? 118 : 206;
->>>>>>> 2e99705329375e88bb92fc1667e54afda30a3b55
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = 1; // всегда раскрыт
   const isFlipped = isHovered;
@@ -252,6 +250,7 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
 };
 
 const CardFront: React.FC<{ char: CharacterConfig; isMobile?: boolean }> = ({ char, isMobile }) => {
+  // Для мобильных подгружаем оптимизированные изображения, если путь содержит '/optimized/'
   const imgSrc = isMobile ? char.tarot.replace('/optimized/', '/optimized/mobile/') : char.tarot;
   return (
     <div
@@ -463,11 +462,6 @@ interface CharacterCardDeckProps {
 const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-<<<<<<< HEAD
-=======
-  const deckRef = useRef<HTMLDivElement | null>(null);
-  const [progress, setProgress] = useState(1.0);
->>>>>>> 2e99705329375e88bb92fc1667e54afda30a3b55
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
 
