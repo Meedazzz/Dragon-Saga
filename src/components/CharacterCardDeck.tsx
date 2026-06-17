@@ -169,7 +169,7 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const [isHovered, setIsHovered] = useState(false);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-  // Для мобильных используем ширину 118 (чуть больше, чем было 100)
+  // Для мобильных используем ширину 118, для десктопа 206
   const cardWidth = isMobile ? 118 : 206;
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = 1; // всегда раскрыт
@@ -383,13 +383,13 @@ interface MobileDeckProps {
 
 const MobileDeck: React.FC<MobileDeckProps> = ({ onOpen }) => {
   return (
-    <div className="flex flex-col items-center gap-4 w-full max-w-[420px] mx-auto px-2">
-      <div className="grid grid-cols-2 gap-3 w-full">
+    <div className="flex flex-col items-center gap-3 w-full max-w-[340px] mx-auto px-2">
+      <div className="grid grid-cols-2 gap-2.5 w-full">
         {characters.slice(0, 4).map((char, index) => (
           <MobileCard key={char.id} char={char} index={index} onOpen={onOpen} />
         ))}
       </div>
-      <div className="w-[44vw] max-w-[180px]">
+      <div className="w-[40vw] max-w-[150px]">
         <MobileCard key={characters[4].id} char={characters[4]} index={4} onOpen={onOpen} />
       </div>
     </div>
@@ -408,8 +408,8 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
   const [isFlipped, setIsFlipped] = useState(initialFlipped);
   const { ref, tilt, tiltHandlers } = useCardTilt(isMobile ? 0 : 8);
 
-  /* ── Переворот карты на 180° (вверх ногами) через прокрутку колёсика ── */
-  const [upsideDown, setUpsideDown] = useState(0); // 0..180 градусов
+  /* ── Вращение карты на 360° без ограничения через прокрутку колёсика ── */
+  const [upsideDown, setUpsideDown] = useState(0);
   const scrollAccum = useRef(0);
   const cardWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -421,7 +421,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
       e.preventDefault();
       e.stopPropagation();
       scrollAccum.current += e.deltaY * 0.25;
-      setUpsideDown(clamp(scrollAccum.current, 0, 180));
+      setUpsideDown(scrollAccum.current);
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
@@ -459,7 +459,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
       onClick={onClose}
     >
       <motion.div
-        className="relative flex flex-col items-center"
+        className="relative flex flex-col items-center justify-center max-h-[95vh] my-auto"
         initial={{ opacity: 0, scale: 0.72, y: 32 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.72, y: 32 }}
@@ -469,7 +469,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
       >
         <button
           onClick={onClose}
-          className="absolute -right-2 -top-12 z-20 flex h-9 w-9 items-center justify-center rounded-full text-xl transition-transform hover:scale-110"
+          className="absolute -right-2 -top-12 z-20 flex h-9 w-9 items-center justify-center rounded-full text-xl transition-transform hover:scale-110 cursor-pointer"
           style={{ background: 'rgba(10,8,6,0.92)', border: `1px solid ${char.color}70`, color: homeTheme.parchment }}
           aria-label="Закрыть карту"
         >
@@ -482,7 +482,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
             {...tiltHandlers}
             className="relative rounded-[18px]"
             style={{
-              width: isMobile ? 'min(82vw, 330px)' : '360px',
+              width: isMobile ? 'min(70vw, 240px)' : '360px',
               aspectRatio: '768 / 1376',
               transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) rotateZ(${upsideDown}deg)`,
               transformStyle: 'preserve-3d',
@@ -493,10 +493,11 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
             }}
           >
             <motion.div
-              className="relative h-full w-full rounded-[18px]"
+              className="relative h-full w-full rounded-[18px] cursor-pointer"
               style={{ transformStyle: 'preserve-3d' }}
               animate={{ rotateY: isFlipped ? 180 : 0 }}
               transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+              onClick={() => setIsFlipped(!isFlipped)}
             >
               <CardFront char={char} />
               <CardBack char={char} />
@@ -516,7 +517,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
           <button
             onClick={() => setIsFlipped((value) => !value)}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5"
+            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5 cursor-pointer"
             style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.92)', border: `1px solid ${char.color}55`, color: homeTheme.parchment }}
           >
             {isFlipped ? '↩ Лицевая сторона' : '↕ Краткий лор'}
@@ -524,25 +525,23 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
 
           <button
             onClick={() => {
-              if (upsideDown < 90) {
-                setUpsideDown(180);
-                scrollAccum.current = 180;
-              } else {
+              if (Math.abs(upsideDown % 360) > 5) {
                 setUpsideDown(0);
                 scrollAccum.current = 0;
+              } else {
+                setUpsideDown(180);
+                scrollAccum.current = 180;
               }
             }}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5"
+            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5 cursor-pointer"
             style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.92)', border: `1px solid ${char.color}55`, color: homeTheme.parchment }}
           >
-            {upsideDown >= 90 ? '↻ Вернуть' : '↺ Перевернуть'}
+            {Math.abs(upsideDown % 360) > 5 ? '↻ Вернуть' : '↺ Перевернуть'}
           </button>
-
-          {/* Mobile tilt disabled — removed for performance */}
 
           <button
             onClick={() => goTo(char.lorePath)}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5"
+            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5 cursor-pointer"
             style={{ fontFamily: "'Cinzel', serif", background: `${char.color}22`, border: `1px solid ${char.color}65`, color: homeTheme.parchment }}
           >
             📜 Читать лор →
@@ -551,24 +550,26 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
 
         {!isMobile && (
           <div
-            className="mt-2 text-center text-[10px] tracking-[1.5px] opacity-50"
+            className="mt-2 text-center text-[10px] tracking-[1.5px] opacity-60"
             style={{ fontFamily: "'Cinzel', serif", color: homeTheme.parchmentDim }}
           >
-            Колёсико мыши — перевернуть карту
+            Клик по карте — перевернуть рубашкой · Колёсико мыши — вращать 360°
           </div>
         )}
 
         <div className="mt-3 flex max-w-[520px] flex-wrap items-center justify-center gap-2">
-          {char.pages.map((page) => (
-            <button
-              key={page.path}
-              onClick={() => goTo(page.path)}
-              className="rounded px-3 py-1.5 text-[10px] tracking-[1px] transition-colors"
-              style={{ fontFamily: "'Cinzel', serif", background: 'rgba(30,25,15,0.65)', border: '1px solid rgba(120,100,70,0.25)', color: homeTheme.parchmentDim }}
-            >
-              {pageIcons[page.label] || '📄'} {page.label}
-            </button>
-          ))}
+          {char.pages
+            .filter((page) => page.label !== 'Лор')
+            .map((page) => (
+              <button
+                key={page.path}
+                onClick={() => goTo(page.path)}
+                className="rounded px-3 py-1.5 text-[10px] tracking-[1px] transition-colors cursor-pointer"
+                style={{ fontFamily: "'Cinzel', serif", background: 'rgba(30,25,15,0.65)', border: '1px solid rgba(120,100,70,0.25)', color: homeTheme.parchmentDim }}
+              >
+                {pageIcons[page.label] || '📄'} {page.label}
+              </button>
+            ))}
         </div>
       </motion.div>
     </motion.div>
@@ -619,7 +620,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
         <div className="mt-10 md:mt-14 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
           <button
             onClick={() => navigate('/letopis')}
-            className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5"
+            className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5 cursor-pointer"
             style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.72)', border: `1px solid ${homeTheme.primary}55`, color: homeTheme.parchment }}
           >
             📖 Открыть летопись мира

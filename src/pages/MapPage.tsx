@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
 import { lorTheme } from '@/types/theme';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -21,41 +22,39 @@ const mapsData: Record<string, { title: string; image: string; description: stri
 
 const MapPage: React.FC = () => {
   const { mapId } = useParams<{ mapId: string }>();
+  const isMobile = useIsMobile();
+  const mapData = mapId ? mapsData[mapId] : undefined;
 
-  /* ── Состояние для модального окна ── */
-  const [isZoomed, setIsZoomed] = useState(false);
+  /* ── Состояние интерактивной карты ── */
   const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const dragState = useRef<{
-    isDragging: boolean;
-    startX: number;
-    startY: number;
-    originX: number;
-    originY: number;
-    moved: boolean;
-  }>({ isDragging: false, startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  /* ── Состояние для инлайн-карты (зум колёсиком) ── */
-  const [inlineScale, setInlineScale] = useState(1);
-  const [inlinePos, setInlinePos] = useState({ x: 0, y: 0 });
-  const inlineDrag = useRef<{
+  // Ссылки для перетаскивания (мышь)
+  const dragRef = useRef<{
     isDragging: boolean;
     startX: number;
     startY: number;
     originX: number;
     originY: number;
   }>({ isDragging: false, startX: 0, startY: 0, originX: 0, originY: 0 });
-  const inlineContainerRef = useRef<HTMLDivElement>(null);
 
-  const mapData = mapId ? mapsData[mapId] : undefined;
+  // Ссылки для touch-событий (пинч-зум и тач-пан)
+  const pinchRef = useRef<{
+    isPinching: boolean;
+    startDist: number;
+    startScale: number;
+  }>({ isPinching: false, startDist: 0, startScale: 1 });
 
-  /* ── Инлайн: колёсико мыши — приближение/отдаление ── */
-  const handleInlineWheel = useCallback((e: WheelEvent) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  /* ── Колёсико мыши — только зум (отдаление на 1x возвращает в центр) ── */
+  const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-    setInlineScale((prev) => {
-      const next = Math.min(5, Math.max(1, prev - e.deltaY * 0.002));
+    setScale((prev) => {
+      const next = Math.min(7, Math.max(1, prev - e.deltaY * 0.002));
       if (next <= 1) {
-        setInlinePos({ x: 0, y: 0 });
+        setPos({ x: 0, y: 0 });
         return 1;
       }
       return next;
@@ -64,81 +63,127 @@ const MapPage: React.FC = () => {
 
   /* Подключаем нативный wheel-listener с { passive: false } */
   useEffect(() => {
-    const el = inlineContainerRef.current;
+    const el = containerRef.current;
     if (!el) return;
-    el.addEventListener('wheel', handleInlineWheel, { passive: false });
-    return () => el.removeEventListener('wheel', handleInlineWheel);
-  }, [handleInlineWheel]);
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, [handleWheel, isFullscreen]);
 
-  /* ── Инлайн: ЛКМ — открывает модалку (если не зумнуто) или сбрасывает зум ── */
-  const handleInlineClick = useCallback(() => {
-    if (inlineDrag.current.isDragging) return;
-    if (inlineScale > 1) {
-      setInlineScale(1);
-      setInlinePos({ x: 0, y: 0 });
-    } else {
-      setIsZoomed(true);
-    }
-  }, [inlineScale]);
+  /* ── Управление мышью (Только ЛКМ для перемещения) ── */
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Только ЛКМ
+    e.preventDefault();
+    dragRef.current = {
+      isDragging: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      originX: pos.x,
+      originY: pos.y,
+    };
+  }, [pos]);
 
-  /* ── Инлайн: перетаскивание при зуме (только ЛКМ) ── */
-  const handleInlineMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.button !== 0) return; // только ЛКМ
-      if (inlineScale <= 1) return;
-      e.preventDefault();
-      inlineDrag.current = {
-        isDragging: true,
-        startX: e.clientX,
-        startY: e.clientY,
-        originX: inlinePos.x,
-        originY: inlinePos.y,
-      };
-    },
-    [inlineScale, inlinePos],
-  );
-
-  const handleInlineMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!inlineDrag.current.isDragging) return;
-      const dx = e.clientX - inlineDrag.current.startX;
-      const dy = e.clientY - inlineDrag.current.startY;
-      setInlinePos({
-        x: inlineDrag.current.originX + dx,
-        y: inlineDrag.current.originY + dy,
-      });
-    },
-    [],
-  );
-
-  const handleInlineMouseUp = useCallback(() => {
-    inlineDrag.current.isDragging = false;
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!dragRef.current.isDragging) return;
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+    setPos({
+      x: dragRef.current.originX + dx,
+      y: dragRef.current.originY + dy,
+    });
   }, []);
 
-  /* ── Модалка: колёсико ── */
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
+  const handleMouseUp = useCallback(() => {
+    dragRef.current.isDragging = false;
+  }, []);
+
+  /* ── Управление Touch (мобильная браузерная версия) ── */
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      // Одиночное касание — перетаскивание карты
+      if (scale <= 1 && !isFullscreen) return; // Разрешаем скролл страницы, если не приближено
+      dragRef.current = {
+        isDragging: true,
+        startX: e.touches[0].clientX,
+        startY: e.touches[0].clientY,
+        originX: pos.x,
+        originY: pos.y,
+      };
+    } else if (e.touches.length === 2) {
+      // Два касания — пинч-зум
+      e.preventDefault();
+      dragRef.current.isDragging = false;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      pinchRef.current = {
+        isPinching: true,
+        startDist: dist,
+        startScale: scale,
+      };
+    }
+  }, [scale, pos, isFullscreen]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (pinchRef.current.isPinching && e.touches.length === 2) {
+      e.preventDefault();
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      const newScale = Math.min(7, Math.max(1, pinchRef.current.startScale * (dist / pinchRef.current.startDist)));
+      setScale(newScale);
+      if (newScale <= 1) {
+        setPos({ x: 0, y: 0 });
+      }
+    } else if (dragRef.current.isDragging && e.touches.length === 1) {
+      if (scale > 1 || isFullscreen) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - dragRef.current.startX;
+        const dy = e.touches[0].clientY - dragRef.current.startY;
+        setPos({
+          x: dragRef.current.originX + dx,
+          y: dragRef.current.originY + dy,
+        });
+      }
+    }
+  }, [scale, isFullscreen]);
+
+  const handleTouchEnd = useCallback(() => {
+    dragRef.current.isDragging = false;
+    pinchRef.current.isPinching = false;
+  }, []);
+
+  /* ── Функции тулбара ── */
+  const resetMap = useCallback(() => {
+    setScale(1);
+    setPos({ x: 0, y: 0 });
+  }, []);
+
+  const zoomIn = useCallback(() => {
+    setScale((prev) => Math.min(7, prev + 0.6));
+  }, []);
+
+  const zoomOut = useCallback(() => {
     setScale((prev) => {
-      const next = Math.min(5, Math.max(1, prev - e.deltaY * 0.002));
-      if (next === 1) setPosition({ x: 0, y: 0 });
+      const next = Math.max(1, prev - 0.6);
+      if (next <= 1) {
+        setPos({ x: 0, y: 0 });
+        return 1;
+      }
       return next;
     });
   }, []);
 
-  const toggleZoom = useCallback(() => {
-    if (scale > 1) {
-      setScale(1);
-      setPosition({ x: 0, y: 0 });
+  // Блокируем скролл тела страницы в полноэкранном режиме
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
     } else {
-      setScale(2.5);
+      document.body.style.overflow = 'auto';
     }
-  }, [scale]);
-
-  const closeModal = useCallback(() => {
-    setIsZoomed(false);
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-  }, []);
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isFullscreen]);
 
   if (!mapData) {
     return (
@@ -168,76 +213,82 @@ const MapPage: React.FC = () => {
   }
 
   return (
-    <Layout theme={lorTheme} particleCount={15} overlayMode={isZoomed}>
-      <div className="max-w-[1000px] mx-auto px-6 md:px-8 pb-20 pt-16">
-        {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center pb-8 mb-8"
-        >
-          <h1
-            className="text-2xl md:text-4xl font-bold tracking-[3px] mb-3"
-            style={{
-              fontFamily: "'Cinzel Decorative', serif",
-              color: lorTheme.parchment,
-              textShadow:
-                '0 0 20px rgba(160,150,130,0.2), 0 2px 6px rgba(0,0,0,0.9)',
-            }}
+    <Layout theme={lorTheme} particleCount={15} overlayMode={isFullscreen}>
+      <div className={isFullscreen ? 'p-0' : 'max-w-[1200px] mx-auto px-4 md:px-8 pb-20 pt-16'}>
+        {/* Header (только если не в полноэкранном режиме) */}
+        {!isFullscreen && (
+          <motion.header
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center pb-6 mb-6"
           >
-            {mapData.title}
-          </h1>
-          <p
-            className="text-sm md:text-base italic max-w-[500px] mx-auto leading-relaxed"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              color: lorTheme.parchmentDim,
-            }}
-          >
-            {mapData.description}
-          </p>
-          <p
-            className="text-xs mt-3"
-            style={{
-              fontFamily: "'Cinzel', serif",
-              color: lorTheme.parchmentDim,
-              letterSpacing: '1px',
-            }}
-          >
-            Колёсико мыши — приблизить · ЛКМ — открыть / сбросить
-          </p>
-        </motion.header>
+            <h1
+              className="text-2xl md:text-4xl font-bold tracking-[3px] mb-3"
+              style={{
+                fontFamily: "'Cinzel Decorative', serif",
+                color: lorTheme.parchment,
+                textShadow: '0 0 20px rgba(160,150,130,0.2), 0 2px 6px rgba(0,0,0,0.9)',
+              }}
+            >
+              {mapData.title}
+            </h1>
+            <p
+              className="text-sm md:text-base italic max-w-[560px] mx-auto leading-relaxed"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                color: lorTheme.parchmentDim,
+              }}
+            >
+              {mapData.description}
+            </p>
+            <p
+              className="text-xs mt-3 opacity-80"
+              style={{
+                fontFamily: "'Cinzel', serif",
+                color: lorTheme.parchmentDim,
+                letterSpacing: '1px',
+              }}
+            >
+              {isMobile
+                ? 'Кнопки + / - или щипок для масштаба · Свайп для перемещения'
+                : 'Колёсико мыши — масштаб · ЛКМ (удержание) — перемещение карты'}
+            </p>
+          </motion.header>
+        )}
 
-        {/* Inline Map Image (with scroll-zoom + LMB reset) */}
+        {/* Главный контейнер карты */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          ref={inlineContainerRef}
-          className="overflow-hidden rounded"
+          ref={containerRef}
+          className={
+            isFullscreen
+              ? 'fixed inset-0 z-[850] w-screen h-screen overflow-hidden bg-[#0c0a08] flex items-center justify-center select-none'
+              : 'relative w-full aspect-[16/10] md:aspect-[21/10] min-h-[440px] max-h-[78vh] overflow-hidden rounded-xl border-2 shadow-2xl bg-[#0c0a08] select-none cursor-grab active:cursor-grabbing'
+          }
           style={{
-            border: `2px solid ${lorTheme.primaryGlow}40`,
-            boxShadow: `0 8px 40px rgba(0,0,0,0.5)`,
-            cursor: inlineScale > 1 ? 'grab' : 'zoom-in',
+            borderColor: isFullscreen ? 'transparent' : `${lorTheme.primaryGlow}50`,
           }}
-          onClick={handleInlineClick}
-          onMouseDown={handleInlineMouseDown}
-          onMouseMove={handleInlineMouseMove}
-          onMouseUp={handleInlineMouseUp}
-          onMouseLeave={handleInlineMouseUp}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           onContextMenu={(e) => e.preventDefault()}
         >
+          {/* Изображение карты */}
           <img
             src={mapData.image}
             alt={mapData.title}
-            className="w-full h-auto select-none"
+            className="w-full h-full object-contain select-none pointer-events-none"
             draggable={false}
             style={{
               display: 'block',
-              transform: `translate(${inlinePos.x}px, ${inlinePos.y}px) scale(${inlineScale})`,
-              transition: inlineDrag.current.isDragging
-                ? 'none'
-                : 'transform 0.2s ease-out',
+              transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+              transition: dragRef.current.isDragging ? 'none' : 'transform 0.15s ease-out',
               transformOrigin: 'center center',
             }}
             onError={(e) => {
@@ -245,93 +296,71 @@ const MapPage: React.FC = () => {
               target.style.display = 'none';
               const parent = target.parentElement;
               if (parent) {
-                parent.innerHTML = `
-                  <div style="display:flex;align-items:center;justify-content:center;min-height:400px;background:rgba(20,15,10,0.4);color:#706850;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;padding:40px;text-align:center;">
-                    🗺️ Изображение карты будет добавлено позже.<br/>
-                    Ожидаемый файл: <code style="color:#8a7040">public/map_${mapId}.png</code>
-                  </div>
-                `;
+                const placeholder = document.createElement('div');
+                placeholder.className = 'absolute inset-0 flex items-center justify-center bg-[#140f0a]/80 text-[#706850] italic p-8 text-center font-serif text-lg z-10';
+                placeholder.innerHTML = `🗺️ Изображение карты будет добавлено позже.<br/>Ожидаемый файл: <code style="color:#8a7040">public/map_${mapId}.png</code>`;
+                parent.appendChild(placeholder);
               }
             }}
           />
-        </motion.div>
 
-        {/* Zoomed Modal */}
-        <AnimatePresence>
-          {isZoomed && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 z-[700] flex items-center justify-center p-4 overflow-hidden"
-              onClick={() => {
-                if (dragState.current.moved) {
-                  dragState.current.moved = false;
-                  return;
-                }
-                closeModal();
-              }}
-              onWheel={handleWheel}
-              onMouseDown={(e) => {
-                if (e.button !== 0) return;
-                dragState.current = {
-                  isDragging: true,
-                  startX: e.clientX,
-                  startY: e.clientY,
-                  originX: position.x,
-                  originY: position.y,
-                  moved: false,
-                };
-              }}
-              onMouseMove={(e) => {
-                if (!dragState.current.isDragging) return;
-                const dx = e.clientX - dragState.current.startX;
-                const dy = e.clientY - dragState.current.startY;
-                if (Math.abs(dx) > 3 || Math.abs(dy) > 3)
-                  dragState.current.moved = true;
-                setPosition({
-                  x: dragState.current.originX + dx,
-                  y: dragState.current.originY + dy,
-                });
-              }}
-              onMouseUp={() => {
-                dragState.current.isDragging = false;
-              }}
-              onMouseLeave={() => {
-                dragState.current.isDragging = false;
-              }}
+          {/* Плавающая панель управления (Тулбар) */}
+          <div
+            className="absolute bottom-4 right-4 z-30 flex items-center gap-1.5 bg-[#0c0a08]/92 p-2 rounded-xl border shadow-2xl backdrop-blur-md"
+            style={{ borderColor: `${lorTheme.primary}60` }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={resetMap}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-xs font-semibold tracking-wider transition-all border cursor-pointer"
+              style={{ fontFamily: "'Cinzel', serif", borderColor: `${lorTheme.primary}40` }}
+              title="Сбросить масштаб и позицию"
             >
-              <motion.img
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                src={mapData.image}
-                alt={mapData.title}
-                className="max-w-full max-h-full object-contain select-none"
-                style={{
-                  transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                  transition: dragState.current.isDragging
-                    ? 'none'
-                    : 'transform 0.2s ease-out',
-                  cursor: scale > 1 ? 'grab' : 'zoom-in',
-                }}
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (!dragState.current.moved) toggleZoom();
-                  dragState.current.moved = false;
-                }}
-                draggable={false}
-              />
-              <button
-                className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/60 text-white text-3xl flex items-center justify-center hover:bg-black/80 transition-colors cursor-pointer"
-                onClick={closeModal}
-              >
-                &times;
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <span className="text-sm">🔄</span>
+              <span className="hidden sm:inline">Сбросить</span>
+            </button>
+
+            <div className="h-4 w-[1px] mx-1" style={{ background: `${lorTheme.primary}40` }} />
+
+            <button
+              onClick={zoomOut}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-base font-bold transition-all border cursor-pointer"
+              style={{ borderColor: `${lorTheme.primary}40` }}
+              title="Отдалить"
+            >
+              -
+            </button>
+
+            <span
+              className="text-xs font-mono px-1 min-w-[40px] text-center font-bold"
+              style={{ color: lorTheme.primaryGlow }}
+            >
+              {Math.round(scale * 100)}%
+            </span>
+
+            <button
+              onClick={zoomIn}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-base font-bold transition-all border cursor-pointer"
+              style={{ borderColor: `${lorTheme.primary}40` }}
+              title="Приблизить"
+            >
+              +
+            </button>
+
+            <div className="h-4 w-[1px] mx-1" style={{ background: `${lorTheme.primary}40` }} />
+
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-xs font-semibold tracking-wider transition-all border cursor-pointer"
+              style={{ fontFamily: "'Cinzel', serif", borderColor: `${lorTheme.primary}40` }}
+              title={isFullscreen ? 'Свернуть' : 'На весь экран'}
+            >
+              <span className="text-sm">{isFullscreen ? '✕' : '⛶'}</span>
+              <span className="hidden sm:inline">{isFullscreen ? 'Свернуть' : 'На весь экран'}</span>
+            </button>
+          </div>
+        </motion.div>
       </div>
     </Layout>
   );
