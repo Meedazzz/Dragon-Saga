@@ -13,7 +13,7 @@ const menuItems = [
   { path: '/lor', label: 'Мир Игры', icon: Globe },
   { path: '/valery', label: 'Валерий Даркбейн', icon: User },
   { path: '/sakris', label: 'Сакрис из Бергхейма', icon: User },
-  { path: '/brin', label: 'Брин Дель Хасен', icon: User },
+  { path: '/brin', label: 'Брин дель Хессен', icon: User },
   { path: '/stive', label: 'Стив', icon: User },
   { path: '/talis', label: 'Таллис', icon: User },
   { path: '/letopis', label: 'Летопись мира', icon: Scroll },

@@ -34,7 +34,7 @@ const BrinPage: React.FC = () => {
               textShadow: `0 0 20px rgba(200,192,208,0.3), 0 0 40px rgba(138,42,90,0.2), 0 0 60px rgba(176,106,240,0.1), 0 2px 4px rgba(0,0,0,0.8)`,
             }}
           >
-            Личное умение<br />Брина Дель Хасена
+            Личное умение<br />Брина дель Хессена
           </h1>
           <div className="rune-divider" style={{ '--divider-color': brinTheme.primaryGlow, '--divider-text': brinTheme.parchment } as React.CSSProperties}>
             <span>&#9840;&#9857;</span>
@@ -75,7 +75,7 @@ const BrinPage: React.FC = () => {
               <strong style={{ color: brinTheme.parchment }}>Компоненты:</strong> —
             </p>
             <p className="mb-4 leading-7" style={{ fontFamily: "'Cormorant Garamond', serif", color: brinTheme.parchment }}>
-              Черпая силу из <strong style={{ color: brinTheme.parchment }}>Чёрного льда</strong>, что дремлет внутри Брина Дель Хасена, чародей создаёт портал в ментальное чистилище внутри него — и перемещает в него сознание другого существа.
+              Черпая силу из <strong style={{ color: brinTheme.parchment }}>Чёрного льда</strong>, что дремлет внутри Брина дель Хессена, чародей создаёт портал в ментальное чистилище внутри него — и перемещает в него сознание другого существа.
             </p>
             <p className="mb-4 leading-7" style={{ fontFamily: "'Cormorant Garamond', serif", color: brinTheme.parchment }}>
               Брин выбирает видимое существо, которое должно совершить <strong style={{ color: brinTheme.parchment }}>спасбросок Интеллекта</strong>. В случае провала, цель перемещается в чистилище — ментальное пространство, огранённое чёрным льдом.
