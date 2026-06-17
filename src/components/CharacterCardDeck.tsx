@@ -140,7 +140,7 @@ const cardBios: Record<string, string[]> = {
   ],
 };
 
-// Увеличенный размах веера (коэффициент 1.4)
+// Увеличенный размах веера (коэффициент 1.4) для десктопа
 const desktopFan = [
   { x: -340 * 1.4, y: 48, rotate: -24 },
   { x: -170 * 1.4, y: 14, rotate: -12 },
@@ -149,6 +149,7 @@ const desktopFan = [
   { x: 340 * 1.4, y: 48, rotate: 24 },
 ];
 
+// Мобильный веер с меньшим размахом, чтобы влезало на экран
 const mobileFan = [
   { x: -90, y: 30, rotate: -20 },
   { x: -45, y: 10, rotate: -10 },
@@ -168,11 +169,8 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const [isHovered, setIsHovered] = useState(false);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-<<<<<<< HEAD
-  const cardWidth = isMobile ? 100 : 206;
-=======
+  // Для мобильных используем ширину 118 (чуть больше, чем было 100)
   const cardWidth = isMobile ? 118 : 206;
->>>>>>> 2e99705329375e88bb92fc1667e54afda30a3b55
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = 1; // всегда раскрыт
   const isFlipped = isHovered;
@@ -252,6 +250,7 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
 };
 
 const CardFront: React.FC<{ char: CharacterConfig; isMobile?: boolean }> = ({ char, isMobile }) => {
+  // Для мобильных подгружаем оптимизированные изображения, если путь содержит '/optimized/'
   const imgSrc = isMobile ? char.tarot.replace('/optimized/', '/optimized/mobile/') : char.tarot;
   return (
     <div
@@ -335,6 +334,30 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
   const [isFlipped, setIsFlipped] = useState(initialFlipped);
   const { ref, tilt, gyroEnabled, enableGyro, tiltHandlers } = useCardTilt(isMobile ? 5 : 8);
 
+  /* ── Переворот карты на 180° (вверх ногами) через прокрутку колёсика ── */
+  const [upsideDown, setUpsideDown] = useState(0); // 0..180 градусов
+  const scrollAccum = useRef(0);
+  const cardWrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = cardWrapperRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      scrollAccum.current += e.deltaY * 0.25;
+      setUpsideDown(clamp(scrollAccum.current, 0, 180));
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
+  // Сброс при смене карты
+  useEffect(() => {
+    setUpsideDown(0);
+    scrollAccum.current = 0;
+  }, [char]);
+
   if (!char) return null;
 
   const goTo = (path: string) => {
@@ -378,37 +401,41 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
           ×
         </button>
 
-        <div
-          ref={ref}
-          {...tiltHandlers}
-          className="relative rounded-[18px]"
-          style={{
-            width: isMobile ? 'min(82vw, 330px)' : '360px',
-            aspectRatio: '768 / 1376',
-            transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
-            transformStyle: 'preserve-3d',
-            transition: tilt.glareOpacity === 0 ? 'transform 560ms cubic-bezier(.2,.8,.2,1)' : 'none',
-            filter: `drop-shadow(0 34px 48px rgba(0,0,0,0.72)) drop-shadow(0 0 36px ${char.color}30)`,
-          }}
-        >
-          <motion.div
-            className="relative h-full w-full rounded-[18px]"
-            style={{ transformStyle: 'preserve-3d' }}
-            animate={{ rotateY: isFlipped ? 180 : 0 }}
-            transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-          >
-            <CardFront char={char} />
-            <CardBack char={char} />
-          </motion.div>
-
+        <div ref={cardWrapperRef} className="relative" style={{ perspective: 1400 }}>
           <div
-            className="pointer-events-none absolute inset-0 rounded-[18px] mix-blend-screen"
+            ref={ref}
+            {...tiltHandlers}
+            className="relative rounded-[18px]"
             style={{
-              opacity: tilt.glareOpacity,
-              background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.62), rgba(255,255,255,0.13) 24%, transparent 58%)`,
-              transform: 'translateZ(50px)',
+              width: isMobile ? 'min(82vw, 330px)' : '360px',
+              aspectRatio: '768 / 1376',
+              transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) rotateZ(${upsideDown}deg)`,
+              transformStyle: 'preserve-3d',
+              transition: tilt.glareOpacity === 0
+                ? 'transform 560ms cubic-bezier(.2,.8,.2,1)'
+                : `transform 80ms linear`,
+              filter: `drop-shadow(0 34px 48px rgba(0,0,0,0.72)) drop-shadow(0 0 36px ${char.color}30)`,
             }}
-          />
+          >
+            <motion.div
+              className="relative h-full w-full rounded-[18px]"
+              style={{ transformStyle: 'preserve-3d' }}
+              animate={{ rotateY: isFlipped ? 180 : 0 }}
+              transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+            >
+              <CardFront char={char} />
+              <CardBack char={char} />
+            </motion.div>
+
+            <div
+              className="pointer-events-none absolute inset-0 rounded-[18px] mix-blend-screen"
+              style={{
+                opacity: tilt.glareOpacity,
+                background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.62), rgba(255,255,255,0.13) 24%, transparent 58%)`,
+                transform: 'translateZ(50px)',
+              }}
+            />
+          </div>
         </div>
 
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
@@ -418,6 +445,22 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
             style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.92)', border: `1px solid ${char.color}55`, color: homeTheme.parchment }}
           >
             {isFlipped ? '↩ Лицевая сторона' : '↕ Краткий лор'}
+          </button>
+
+          <button
+            onClick={() => {
+              if (upsideDown < 90) {
+                setUpsideDown(180);
+                scrollAccum.current = 180;
+              } else {
+                setUpsideDown(0);
+                scrollAccum.current = 0;
+              }
+            }}
+            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5"
+            style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.92)', border: `1px solid ${char.color}55`, color: homeTheme.parchment }}
+          >
+            {upsideDown >= 90 ? '↻ Вернуть' : '↺ Перевернуть'}
           </button>
 
           {isMobile && !gyroEnabled && (
@@ -438,6 +481,15 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
             📜 Читать лор →
           </button>
         </div>
+
+        {!isMobile && (
+          <div
+            className="mt-2 text-center text-[10px] tracking-[1.5px] opacity-50"
+            style={{ fontFamily: "'Cinzel', serif", color: homeTheme.parchmentDim }}
+          >
+            Колёсико мыши — перевернуть карту
+          </div>
+        )}
 
         <div className="mt-3 flex max-w-[520px] flex-wrap items-center justify-center gap-2">
           {char.pages.map((page) => (
@@ -463,11 +515,6 @@ interface CharacterCardDeckProps {
 const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-<<<<<<< HEAD
-=======
-  const deckRef = useRef<HTMLDivElement | null>(null);
-  const [progress, setProgress] = useState(1.0);
->>>>>>> 2e99705329375e88bb92fc1667e54afda30a3b55
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
 
@@ -498,7 +545,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
           ))}
         </div>
 
-        <div className="mt-2 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
+        <div className="mt-10 md:mt-14 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
           <button
             onClick={() => navigate('/letopis')}
             className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5"

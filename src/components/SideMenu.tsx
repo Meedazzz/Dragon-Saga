@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Map, Youtube, Send, MessageCircle, Users } from 'lucide-react';
+import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Youtube, Send, MessageCircle, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
@@ -287,7 +287,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                         ) : (
                           // Simple sub-items (world section)
                           group.children.map((item) => {
-                            const isMapItem = item.path.startsWith('/map');
                             return (
                               <button
                                 key={item.path}
@@ -311,7 +310,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                   }
                                 }}
                               >
-                                {isMapItem && <Map size={12} style={{ opacity: 0.6, flexShrink: 0 }} />}
                                 <span className="text-xs tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
                                   {item.label}
                                 </span>
