@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
             DND
           </div>
           <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
-            <span>LETO</span>
+            <span>ᛚᛟᚾᛖ ᚹᛟᛚᚠ</span>
           </div>
           <h1
             className="text-xl md:text-3xl font-bold tracking-[3px] leading-tight my-3"
@@ -47,7 +47,7 @@ const HomePage: React.FC = () => {
             Драконья Сага
           </h1>
           <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
-            <span>PISE</span>
+            <span>ᛚᛟᚾᛖ ᚹᛟᛚᚠ</span>
           </div>
           <p
             className="text-sm md:text-base italic max-w-[500px] mx-auto leading-relaxed mt-4"
