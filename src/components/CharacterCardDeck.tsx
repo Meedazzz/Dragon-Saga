@@ -462,8 +462,13 @@ const CharacterCardDeck: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const deckRef = useRef<HTMLDivElement | null>(null);
+<<<<<<< HEAD
   // Начальный прогресс выше, чтобы веер карт был виден сразу на главной.
   const [progress, setProgress] = useState(0.38);
+=======
+  // Начальный прогресс 0.15, чтобы карты были видны сразу
+  const [progress, setProgress] = useState(0.15);
+>>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
   const { scrollYProgress } = useScroll({
