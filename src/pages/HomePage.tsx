@@ -569,10 +569,10 @@ const HomePage: React.FC = () => {
           style={{ borderTop: '1px solid rgba(80,70,50,0.1)' }}
         >
           {[
-            { label: 'YouTube', href: 'https://youtube.com/@ваш_канал' },
-            { label: 'VK', href: 'https://vk.com/ваш_паблик' },
-            { label: 'Telegram', href: 'https://t.me/ваш_телеграм' },
-            { label: 'Discord', href: 'https://discord.gg/ваш_сервер' },
+            { label: 'YouTube', href: 'https://www.youtube.com/@Sigmarillion' },
+            { label: 'VK', href: 'https://vk.com/sigmarillion' },
+            { label: 'Telegram', href: 'https://t.me/SigmarillionDnD' },
+            { label: 'Discord', href: 'https://discord.gg/vyhKQTKhsw' },
           ].map(link => (
             <a
               key={link.label}
