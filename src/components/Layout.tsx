@@ -33,7 +33,7 @@ const Layout: React.FC<LayoutProps> = ({
     setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, isMobile ? 300 : 900);
+    }, isMobile ? 100 : 300);
     return () => clearTimeout(timer);
   }, [location.pathname, isMobile]);
 

@@ -175,13 +175,17 @@ interface FanCardProps {
 
 const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
+  const [isHovered, setIsHovered] = useState(false);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
   const cardWidth = isMobile ? 118 : 206; // увеличенный размер для десктопа
   const cardHeight = Math.round(cardWidth * 1.79);
-  const spread = clamp(progress / 0.24, 0, 1);
-  const flipThreshold = 0.34 + index * 0.075;
-  const isFlipped = progress > flipThreshold;
-  const revealAmount = clamp((progress - flipThreshold) / 0.2, 0, 1);
+  
+  // Всегда веером (spread = 1) или плавно раскрываемся при скролле?
+  // Пользователь просил "изначально веером", поэтому сделаем spread=1 сразу, 
+  // но оставим небольшую зависимость от progress для мягкости появления.
+  const spread = 1;
+  const isFlipped = isHovered;
+  const revealAmount = isHovered ? 1 : 0;
 
   return (
     <motion.div
@@ -191,16 +195,18 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOp
         height: cardHeight,
         marginLeft: -cardWidth / 2,
         marginTop: -cardHeight / 2,
-        zIndex: 20 + index,
+        zIndex: isHovered ? 100 : 20 + index,
         perspective: 1200,
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       initial={{ opacity: 0, y: 80, scale: 0.88 }}
       animate={{
         opacity: 1,
         x: fan.x * spread,
         y: 34 - fan.y * spread,
         rotateZ: fan.rotate * spread,
-        scale: 0.94 + spread * 0.06,
+        scale: isHovered ? 1.05 : (0.94 + spread * 0.06),
       }}
       transition={{ type: 'spring', stiffness: 120, damping: 19, mass: 0.8 }}
     >
@@ -460,8 +466,8 @@ const CharacterCardDeck: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const deckRef = useRef<HTMLDivElement | null>(null);
-  // Начальный прогресс 0.38, чтобы веер был сразу раскрыт
-  const [progress, setProgress] = useState(0.38);
+  // Начальный прогресс 1.0, чтобы веер был сразу раскрыт
+  const [progress, setProgress] = useState(1.0);
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
   const { scrollYProgress } = useScroll({

@@ -18,9 +18,9 @@ const HomePage: React.FC = () => {
     { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
     { part: 'Часть 2', title: 'Тени Бергхейма', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
     { part: 'Часть 3', title: 'Ледяная крепость', url: 'https://www.youtube.com/embed/VIDEO_ID_3' },
-    { part: 'Часть 4', title: 'Духи древности', url: 'https://www.youtube.com/embed/VIDEO_ID_4' },
-    { part: 'Часть 5', title: 'Кровь и честь', url: 'https://www.youtube.com/embed/VIDEO_ID_5' },
   ];
+
+  const BASE = import.meta.env.BASE_URL;
 
   return (
     <Layout theme={homeTheme} particleCount={24}>
@@ -74,7 +74,6 @@ const HomePage: React.FC = () => {
           className="mb-5 md:mb-6"
         >
           <div className="section-header !mt-3 !mb-2" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
-            <span className="section-icon">🎴</span>
             <h2 className="section-title">Карты Таро</h2>
             <div className="section-line" />
           </div>
@@ -89,7 +88,6 @@ const HomePage: React.FC = () => {
           className="mb-5 md:mb-6"
         >
           <div className="section-header !mt-3 !mb-3" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
-            <span className="section-icon">📖</span>
             <h2 className="section-title">О игре</h2>
             <div className="section-line" />
           </div>
@@ -117,7 +115,6 @@ const HomePage: React.FC = () => {
           className="mb-12"
         >
           <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
-            <span className="section-icon">🎥</span>
             <h2 className="section-title">Видео</h2>
             <div className="section-line" />
           </div>
@@ -142,13 +139,20 @@ const HomePage: React.FC = () => {
                 onClick={() => setSelectedVideo(video)}
               >
                 <div
-                  className="w-full h-40 flex items-center justify-center relative"
+                  className="w-full h-40 flex items-center justify-center relative overflow-hidden"
                   style={{
                     background: 'linear-gradient(135deg, rgba(30,25,20,0.5) 0%, rgba(15,12,8,0.3) 100%)',
                   }}
                 >
+                  <img
+                    src={`${BASE}videos/thumbnail.jpg`}
+                    alt={video.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 transition-opacity group-hover:opacity-80"
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-lg"
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-lg z-10"
                     style={{
                       background: 'rgba(0,0,0,0.6)',
                       border: `2px solid ${homeTheme.primaryGlow}`,

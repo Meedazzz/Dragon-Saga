@@ -20,9 +20,9 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
             clearInterval(interval);
             return 100;
           }
-          return prev + Math.random() * 15 + 5;
+          return prev + Math.random() * 25 + 15;
         });
-      }, 150);
+      }, 60);
       return () => clearInterval(interval);
     }
   }, [isLoading]);
