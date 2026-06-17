@@ -41,11 +41,7 @@ const HomePage: React.FC = () => {
           >
             DND
           </div>
-<<<<<<< HEAD
           <div className="rune-divider my-2" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
-=======
-          <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
->>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
             <span>ᛚᛟᚾᛖ ᚹᛟᛚᚠ</span>
           </div>
           <h1
@@ -58,12 +54,6 @@ const HomePage: React.FC = () => {
           >
             Драконья Сага
           </h1>
-<<<<<<< HEAD
-=======
-          <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
-            <span>ᛚᛟᚾᛖ ᚹᛟᛚᚠ</span>
-          </div>
->>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
           <p
             className="text-sm md:text-base italic max-w-[640px] mx-auto leading-relaxed mt-3"
             style={{
@@ -76,15 +66,30 @@ const HomePage: React.FC = () => {
           </p>
         </motion.header>
 
-        {/* About compact */}
+        {/* Карты Таро – теперь сразу после хедера */}
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
           className="mb-5 md:mb-6"
         >
+          <div className="section-header !mt-3 !mb-2" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
+            <span className="section-icon">🎴</span>
+            <h2 className="section-title">Карты Таро</h2>
+            <div className="section-line" />
+          </div>
+          <CharacterCardDeck />
+        </motion.section>
+
+        {/* О игре – теперь ниже карт */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="mb-5 md:mb-6"
+        >
           <div className="section-header !mt-3 !mb-3" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
-            <span className="section-icon">&#128220;</span>
+            <span className="section-icon">📖</span>
             <h2 className="section-title">О игре</h2>
             <div className="section-line" />
           </div>
@@ -104,22 +109,6 @@ const HomePage: React.FC = () => {
           </div>
         </motion.section>
 
-        {/* Characters with Tarot Cards */}
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="mb-10 md:mb-12"
-        >
-          <div className="section-header !mt-3 !mb-2" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
-            <span className="section-icon">&#127183;</span>
-            <h2 className="section-title">Карты Таро</h2>
-            <div className="section-line" />
-          </div>
-
-          <CharacterCardDeck />
-        </motion.section>
-
         {/* Videos with modal player */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -128,7 +117,7 @@ const HomePage: React.FC = () => {
           className="mb-12"
         >
           <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
-            <span className="section-icon">&#127916;</span>
+            <span className="section-icon">🎥</span>
             <h2 className="section-title">Видео</h2>
             <div className="section-line" />
           </div>
@@ -166,7 +155,7 @@ const HomePage: React.FC = () => {
                       color: homeTheme.primaryGlow,
                     }}
                   >
-                    &#9654;
+                    ▶
                   </div>
                 </div>
                 <div className="p-4">
@@ -223,7 +212,7 @@ const HomePage: React.FC = () => {
                   className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 text-white text-2xl flex items-center justify-center hover:bg-black/80 transition-colors"
                   onClick={() => setSelectedVideo(null)}
                 >
-                  &times;
+                  ×
                 </button>
               </motion.div>
             </motion.div>
