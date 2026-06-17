@@ -41,7 +41,11 @@ const HomePage: React.FC = () => {
           >
             DND
           </div>
+<<<<<<< HEAD
           <div className="rune-divider my-2" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
+=======
+          <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
+>>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
             <span>ᛚᛟᚾᛖ ᚹᛟᛚᚠ</span>
           </div>
           <h1
@@ -54,6 +58,12 @@ const HomePage: React.FC = () => {
           >
             Драконья Сага
           </h1>
+<<<<<<< HEAD
+=======
+          <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
+            <span>ᛚᛟᚾᛖ ᚹᛟᛚᚠ</span>
+          </div>
+>>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
           <p
             className="text-sm md:text-base italic max-w-[640px] mx-auto leading-relaxed mt-3"
             style={{

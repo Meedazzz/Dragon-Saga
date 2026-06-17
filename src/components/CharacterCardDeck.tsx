@@ -468,7 +468,11 @@ const CharacterCardDeck: React.FC = () => {
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
   const { scrollYProgress } = useScroll({
     target: deckRef,
+<<<<<<< HEAD
     offset: ['start 85%', 'end 20%'],
+=======
+    offset: ['start 60%', 'end 20%'], // изменён offset
+>>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
   });
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
@@ -481,8 +485,13 @@ const CharacterCardDeck: React.FC = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div ref={deckRef} className="relative min-h-[440px] md:min-h-[620px]">
       <div className="flex min-h-[400px] flex-col items-center justify-center overflow-visible py-4 md:min-h-[560px] md:py-6">
+=======
+    <div ref={deckRef} className="relative min-h-[780px] md:min-h-[920px]">
+      <div className="flex min-h-[620px] flex-col items-center justify-center overflow-visible py-8 md:min-h-[720px]">
+>>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
         {/* Убрал пояснительный блок */}
 
         <div
