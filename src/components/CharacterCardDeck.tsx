@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { characters, type CharacterConfig } from '@/data/characters';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -41,11 +41,9 @@ function useCardTilt(maxTilt = 10) {
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!ref.current || event.pointerType === 'touch') return;
-
     const rect = ref.current.getBoundingClientRect();
     const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-
     scheduleTilt({
       rotateX: (0.5 - y) * maxTilt * 2,
       rotateY: (x - 0.5) * maxTilt * 2,
@@ -57,13 +55,10 @@ function useCardTilt(maxTilt = 10) {
 
   const enableGyro = async () => {
     if (typeof window === 'undefined' || !('DeviceOrientationEvent' in window)) return;
-
     type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
       requestPermission?: () => Promise<PermissionState>;
     };
-
     const orientationEvent = window.DeviceOrientationEvent as unknown as DeviceOrientationWithPermission;
-
     try {
       if (typeof orientationEvent.requestPermission === 'function') {
         const permission = await orientationEvent.requestPermission();
@@ -81,13 +76,11 @@ function useCardTilt(maxTilt = 10) {
 
   useEffect(() => {
     if (!gyroEnabled) return undefined;
-
     const onOrientation = (event: DeviceOrientationEvent) => {
       const beta = event.beta ?? 0;
       const gamma = event.gamma ?? 0;
       const rotateX = clamp((beta - 45) / 45, -1, 1) * maxTilt;
       const rotateY = clamp(gamma / 35, -1, 1) * maxTilt;
-
       scheduleTilt({
         rotateX,
         rotateY,
@@ -96,7 +89,6 @@ function useCardTilt(maxTilt = 10) {
         glareOpacity: 0.2,
       });
     };
-
     window.addEventListener('deviceorientation', onOrientation, true);
     return () => window.removeEventListener('deviceorientation', onOrientation, true);
   }, [gyroEnabled, maxTilt]);
@@ -158,32 +150,27 @@ const desktopFan = [
 ];
 
 const mobileFan = [
-  { x: -104 * 1.4, y: 46, rotate: -23 },
-  { x: -52 * 1.4, y: 12, rotate: -12 },
+  { x: -90, y: 30, rotate: -20 },
+  { x: -45, y: 10, rotate: -10 },
   { x: 0, y: 0, rotate: 0 },
-  { x: 52 * 1.4, y: 12, rotate: 12 },
-  { x: 104 * 1.4, y: 46, rotate: 23 },
+  { x: 45, y: 10, rotate: 10 },
+  { x: 90, y: 30, rotate: 20 },
 ];
 
 interface FanCardProps {
   char: CharacterConfig;
   index: number;
-  progress: number;
   isMobile: boolean;
   onOpen: (char: CharacterConfig, flipped: boolean) => void;
 }
 
-const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOpen }) => {
+const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const [isHovered, setIsHovered] = useState(false);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-  const cardWidth = isMobile ? 118 : 206; // увеличенный размер для десктопа
+  const cardWidth = isMobile ? 100 : 206;
   const cardHeight = Math.round(cardWidth * 1.79);
-  
-  // Всегда веером (spread = 1) или плавно раскрываемся при скролле?
-  // Пользователь просил "изначально веером", поэтому сделаем spread=1 сразу, 
-  // но оставим небольшую зависимость от progress для мягкости появления.
-  const spread = 1;
+  const spread = 1; // всегда раскрыт
   const isFlipped = isHovered;
   const revealAmount = isHovered ? 1 : 0;
 
@@ -234,7 +221,7 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOp
           animate={{ rotateY: isFlipped ? 180 : 0 }}
           transition={{ duration: 0.75, ease: [0.2, 0.8, 0.2, 1] }}
         >
-          <CardFront char={char} />
+          <CardFront char={char} isMobile={isMobile} />
           <CardBack char={char} compact />
         </motion.div>
 
@@ -260,36 +247,39 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOp
   );
 };
 
-const CardFront: React.FC<{ char: CharacterConfig }> = ({ char }) => (
-  <div
-    className="absolute inset-0 overflow-hidden rounded-[14px]"
-    style={{
-      backfaceVisibility: 'hidden',
-      WebkitBackfaceVisibility: 'hidden',
-      background: `linear-gradient(145deg, rgba(255,255,255,0.05), ${char.color}18 34%, rgba(8,6,5,0.96))`,
-      border: `1px solid ${char.color}55`,
-      boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 28px rgba(0,0,0,0.38), 0 0 36px ${char.color}18`,
-    }}
-  >
-    <img
-      src={char.tarot}
-      alt={char.name}
-      className="h-full w-full object-cover"
-      loading="eager"
-      decoding="async"
-      draggable={false}
-      onError={(event) => {
-        (event.target as HTMLImageElement).style.display = 'none';
-      }}
-    />
+const CardFront: React.FC<{ char: CharacterConfig; isMobile?: boolean }> = ({ char, isMobile }) => {
+  const imgSrc = isMobile ? char.tarot.replace('/optimized/', '/optimized/mobile/') : char.tarot;
+  return (
     <div
-      className="pointer-events-none absolute inset-0"
+      className="absolute inset-0 overflow-hidden rounded-[14px]"
       style={{
-        background: 'linear-gradient(110deg, rgba(255,255,255,0.2), transparent 26%, transparent 70%, rgba(255,255,255,0.09))',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+        background: `linear-gradient(145deg, rgba(255,255,255,0.05), ${char.color}18 34%, rgba(8,6,5,0.96))`,
+        border: `1px solid ${char.color}55`,
+        boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 28px rgba(0,0,0,0.38), 0 0 36px ${char.color}18`,
       }}
-    />
-  </div>
-);
+    >
+      <img
+        src={imgSrc}
+        alt={char.name}
+        className="h-full w-full object-cover"
+        loading={isMobile ? 'lazy' : 'eager'}
+        decoding="async"
+        draggable={false}
+        onError={(event) => {
+          (event.target as HTMLImageElement).style.display = 'none';
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'linear-gradient(110deg, rgba(255,255,255,0.2), transparent 26%, transparent 70%, rgba(255,255,255,0.09))',
+        }}
+      />
+    </div>
+  );
+};
 
 const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char, compact = false }) => (
   <div
@@ -360,7 +350,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
 
   return (
     <motion.div
-      className="fixed inset-0 z-[450] flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-[650] flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -462,22 +452,19 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
   );
 };
 
-const CharacterCardDeck: React.FC = () => {
+interface CharacterCardDeckProps {
+  onExpandedChange?: (char: CharacterConfig | null) => void;
+}
+
+const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const deckRef = useRef<HTMLDivElement | null>(null);
-  // Начальный прогресс 1.0, чтобы веер был сразу раскрыт
-  const [progress, setProgress] = useState(1.0);
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
-  const { scrollYProgress } = useScroll({
-    target: deckRef,
-    offset: ['start 85%', 'end 20%'],
-  });
 
-  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    setProgress(clamp(Math.max(latest, 0.32), 0, 1));
-  });
+  useEffect(() => {
+    onExpandedChange?.(expanded);
+  }, [expanded, onExpandedChange]);
 
   const openCard = (char: CharacterConfig, flipped: boolean) => {
     setOverlayStartsFlipped(flipped);
@@ -485,18 +472,17 @@ const CharacterCardDeck: React.FC = () => {
   };
 
   return (
-    <div ref={deckRef} className="relative min-h-[440px] md:min-h-[620px]">
-      <div className="flex min-h-[400px] flex-col items-center justify-center overflow-visible py-4 md:min-h-[560px] md:py-6">
+    <div className="relative min-h-[340px] md:min-h-[620px]">
+      <div className="flex min-h-[300px] flex-col items-center justify-center overflow-visible py-4 md:min-h-[560px] md:py-6">
         <div
           className="relative w-full max-w-[1040px]"
-          style={{ height: isMobile ? 300 : 440, perspective: 1500 }}
+          style={{ height: isMobile ? 240 : 440, perspective: 1500 }}
         >
           {characters.map((char, index) => (
             <FanCard
               key={char.id}
               char={char}
               index={index}
-              progress={progress}
               isMobile={isMobile}
               onOpen={openCard}
             />
@@ -504,16 +490,6 @@ const CharacterCardDeck: React.FC = () => {
         </div>
 
         <div className="mt-2 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
-          <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ background: 'rgba(80,70,50,0.18)' }}>
-            <motion.div
-              className="h-full rounded-full"
-              style={{
-                width: `${progress * 100}%`,
-                background: `linear-gradient(90deg, ${homeTheme.primary}, ${homeTheme.primaryGlow}, ${homeTheme.silver})`,
-                boxShadow: `0 0 18px ${homeTheme.primaryGlow}45`,
-              }}
-            />
-          </div>
           <button
             onClick={() => navigate('/letopis')}
             className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5"

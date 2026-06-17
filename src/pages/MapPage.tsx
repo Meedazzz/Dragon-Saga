@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '@/components/Layout';
@@ -22,7 +22,36 @@ const mapsData: Record<string, { title: string; image: string; description: stri
 const MapPage: React.FC = () => {
   const { mapId } = useParams<{ mapId: string }>();
   const [isZoomed, setIsZoomed] = useState(false);
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const dragState = useRef<{ isDragging: boolean; startX: number; startY: number; originX: number; originY: number; moved: boolean }>({ isDragging: false, startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
   const mapData = mapId ? mapsData[mapId] : undefined;
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    setScale((prev) => {
+      const next = Math.min(5, Math.max(1, prev - e.deltaY * 0.002));
+      if (next === 1) setPosition({ x: 0, y: 0 });
+      return next;
+    });
+  }, []);
+
+
+
+  const toggleZoom = useCallback(() => {
+    if (scale > 1) {
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+    } else {
+      setScale(2.5);
+    }
+  }, [scale]);
+
+  const closeModal = useCallback(() => {
+    setIsZoomed(false);
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, []);
 
   if (!mapData) {
     return (
@@ -40,7 +69,7 @@ const MapPage: React.FC = () => {
   }
 
   return (
-    <Layout theme={lorTheme} particleCount={15}>
+    <Layout theme={lorTheme} particleCount={15} overlayMode={isZoomed}>
       <div className="max-w-[1000px] mx-auto px-6 md:px-8 pb-20 pt-16">
         {/* Header */}
         <motion.header
@@ -78,7 +107,11 @@ const MapPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="cursor-zoom-in"
-          onClick={() => setIsZoomed(true)}
+          onClick={() => {
+            setIsZoomed(true);
+            setScale(1);
+            setPosition({ x: 0, y: 0 });
+          }}
         >
           <div
             className="rounded overflow-hidden"
@@ -116,8 +149,28 @@ const MapPage: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/90 z-[700] flex items-center justify-center p-4 cursor-zoom-out"
-              onClick={() => setIsZoomed(false)}
+              className="fixed inset-0 bg-black/90 z-[700] flex items-center justify-center p-4 overflow-hidden"
+              onClick={() => {
+                if (dragState.current.moved) {
+                  dragState.current.moved = false;
+                  return;
+                }
+                closeModal();
+              }}
+              onWheel={handleWheel}
+              onMouseDown={(e) => {
+                if (e.button !== 0) return;
+                dragState.current = { isDragging: true, startX: e.clientX, startY: e.clientY, originX: position.x, originY: position.y, moved: false };
+              }}
+              onMouseMove={(e) => {
+                if (!dragState.current.isDragging) return;
+                const dx = e.clientX - dragState.current.startX;
+                const dy = e.clientY - dragState.current.startY;
+                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragState.current.moved = true;
+                setPosition({ x: dragState.current.originX + dx, y: dragState.current.originY + dy });
+              }}
+              onMouseUp={() => { dragState.current.isDragging = false; }}
+              onMouseLeave={() => { dragState.current.isDragging = false; }}
             >
               <motion.img
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -125,12 +178,23 @@ const MapPage: React.FC = () => {
                 exit={{ scale: 0.8, opacity: 0 }}
                 src={mapData.image}
                 alt={mapData.title}
-                className="max-w-full max-h-full object-contain"
-                onClick={(e) => e.stopPropagation()}
+                className="max-w-full max-h-full object-contain select-none"
+                style={{
+                  transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                  transition: dragState.current.isDragging ? 'none' : 'transform 0.2s ease-out',
+                  cursor: scale > 1 ? 'grab' : 'zoom-in',
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!dragState.current.moved) toggleZoom();
+                  dragState.current.moved = false;
+                }}
+                draggable={false}
               />
               <button
                 className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/60 text-white text-3xl flex items-center justify-center hover:bg-black/80 transition-colors cursor-pointer"
-                onClick={() => setIsZoomed(false)}
+                onClick={closeModal}
               >
                 &times;
               </button>

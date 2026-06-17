@@ -15,6 +15,7 @@ interface LayoutProps {
   particleVariant?: 'default' | 'lightning' | 'arcane' | 'crimson' | 'mixed';
   particleCount?: number;
   showBack?: boolean;
+  overlayMode?: boolean;
 }
 
 const Layout: React.FC<LayoutProps> = ({
@@ -23,6 +24,7 @@ const Layout: React.FC<LayoutProps> = ({
   particleVariant = 'default',
   particleCount = 30,
   showBack = true,
+  overlayMode = false,
 }) => {
   const location = useLocation();
   const theme = customTheme || getThemeByPath(location.pathname);
@@ -69,7 +71,7 @@ const Layout: React.FC<LayoutProps> = ({
       {!isMobile && <Particles theme={theme} count={particleCount} variant={particleVariant} />}
       <SideMenu theme={theme} />
       <MusicButton theme={theme} />
-      {showBack && <BackButton theme={theme} />}
+      {showBack && !overlayMode && <BackButton theme={theme} />}
       <LoadingScreen theme={theme} isLoading={isLoading} />
 
       <div className="relative z-[1]">

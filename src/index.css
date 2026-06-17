@@ -33,12 +33,17 @@
     padding: 0;
     min-height: 100vh;
     overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 2L18 14H14L12 22L10 14H6L12 2Z' fill='%23C9A86C' stroke='%236A5430' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 12 22, auto;
   }
 
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  }
+
+  a, button, [role='button'], input, textarea, select, label, .cursor-pointer, summary, [aria-expanded] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 2L18 14H14L12 22L10 14H6L12 2Z' fill='%23FFD700' stroke='%23B8860B' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 12 22, pointer;
   }
 
   ::-webkit-scrollbar {

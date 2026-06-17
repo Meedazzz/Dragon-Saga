@@ -4,6 +4,7 @@ import { Youtube, Send, MessageCircle, Users } from 'lucide-react';
 import Layout from '@/components/Layout';
 import CharacterCardDeck from '@/components/CharacterCardDeck';
 import { homeTheme } from '@/types/theme';
+import type { CharacterConfig } from '@/data/characters';
 
 const socialLinks = [
   { label: 'YouTube', href: 'https://www.youtube.com/@Sigmarillion', icon: Youtube },
@@ -14,6 +15,7 @@ const socialLinks = [
 
 const HomePage: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
+  const [expandedCard, setExpandedCard] = useState<CharacterConfig | null>(null);
   const videos = [
     { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
     { part: 'Часть 2', title: 'Тени Бергхейма', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
@@ -23,7 +25,7 @@ const HomePage: React.FC = () => {
   const BASE = import.meta.env.BASE_URL;
 
   return (
-    <Layout theme={homeTheme} particleCount={24}>
+    <Layout theme={homeTheme} particleCount={24} overlayMode={!!expandedCard}>
       <div className="max-w-[1120px] mx-auto px-4 md:px-8 pb-14 pt-7 md:pt-8">
         {/* Header */}
         <motion.header
@@ -77,7 +79,7 @@ const HomePage: React.FC = () => {
             <h2 className="section-title">Карты Таро</h2>
             <div className="section-line" />
           </div>
-          <CharacterCardDeck />
+          <CharacterCardDeck onExpandedChange={setExpandedCard} />
         </motion.section>
 
         {/* О игре – теперь ниже карт */}
