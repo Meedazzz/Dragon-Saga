@@ -472,14 +472,6 @@ const CharacterCardDeck: React.FC = () => {
             className="mb-2 text-xs uppercase tracking-[4px]"
             style={{ fontFamily: "'Cinzel', serif", color: homeTheme.primaryGlow }}
           >
-            Scroll reveal · 3D tilt · lore cards
-          </div>
-          <p
-            className="mx-auto max-w-[620px] text-sm leading-relaxed md:text-base"
-            style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchmentDim }}
-          >
-            Прокручивайте вниз: колода раскрывается веером, а затем карты по очереди переворачиваются и показывают краткий лор каждого героя. Наведите мышь или наклоните телефон для живого 3D-поворота.
-          </p>
         </div>
 
         <div
