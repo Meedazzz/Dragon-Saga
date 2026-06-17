@@ -33,7 +33,6 @@ export const characters: CharacterConfig[] = [
     avatar: `${BASE}avatar_valery.png`,
     lorePath: '/lore/valery',
     pages: [
-      { label: 'Лор', path: '/lore/valery' },
       { label: 'Личное умение', path: '/valery' },
       { label: 'Подкласс', path: '/subclass/valery' },
       { label: 'Род Даркбейнов', path: '/darkbain' },
@@ -49,7 +48,6 @@ export const characters: CharacterConfig[] = [
     avatar: `${BASE}avatar_brin.png`,
     lorePath: '/lore/brin',
     pages: [
-      { label: 'Лор', path: '/lore/brin' },
       { label: 'Личное умение', path: '/brin' },
       { label: 'Подкласс', path: '/subclass/brin' },
       { label: 'Дом Хессен', path: '/hessen' },
@@ -65,7 +63,6 @@ export const characters: CharacterConfig[] = [
     avatar: `${BASE}avatar_sakris.png`,
     lorePath: '/lore/sakris',
     pages: [
-      { label: 'Лор', path: '/lore/sakris' },
       { label: 'Личное умение', path: '/sakris' },
       { label: 'Подкласс', path: '/subclass/sakris' },
       { label: 'Бергхейм', path: '/berghheim' },
@@ -81,7 +78,6 @@ export const characters: CharacterConfig[] = [
     avatar: `${BASE}avatar_tallis.png`,
     lorePath: '/lore/talis',
     pages: [
-      { label: 'Лор', path: '/lore/talis' },
       { label: 'Подкласс', path: '/subclass/talis' },
       { label: 'Клан Арантир', path: '/arantir' },
     ],
@@ -96,7 +92,6 @@ export const characters: CharacterConfig[] = [
     avatar: `${BASE}avatar_stive.png`,
     lorePath: '/lore/stive',
     pages: [
-      { label: 'Лор', path: '/lore/stive' },
       { label: 'Личное умение', path: '/stive' },
       { label: 'Подкласс', path: '/subclass/stive' },
     ],

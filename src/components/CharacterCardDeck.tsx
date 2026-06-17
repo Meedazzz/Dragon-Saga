@@ -151,11 +151,11 @@ const desktopFan = [
 
 // Мобильный веер с меньшим размахом, чтобы влезало на экран
 const mobileFan = [
-  { x: -90, y: 30, rotate: -20 },
-  { x: -45, y: 10, rotate: -10 },
+  { x: -70, y: 24, rotate: -20 },
+  { x: -35, y: 8, rotate: -10 },
   { x: 0, y: 0, rotate: 0 },
-  { x: 45, y: 10, rotate: 10 },
-  { x: 90, y: 30, rotate: 20 },
+  { x: 35, y: 8, rotate: 10 },
+  { x: 70, y: 24, rotate: 20 },
 ];
 
 interface FanCardProps {
@@ -169,8 +169,8 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const [isHovered, setIsHovered] = useState(false);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-  // Для мобильных используем ширину 118, для десктопа 206
-  const cardWidth = isMobile ? 118 : 206;
+  // Для мобильных используем ширину 95, для десктопа 206
+  const cardWidth = isMobile ? 95 : 206;
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = 1; // всегда раскрыт
   const isFlipped = isHovered;
@@ -332,7 +332,7 @@ interface MobileCardProps {
 const MobileCard: React.FC<MobileCardProps> = ({ char, index, onOpen }) => {
   return (
     <motion.div
-      className="relative cursor-pointer select-none overflow-hidden rounded-[12px]"
+      className="relative cursor-pointer select-none overflow-hidden rounded-[10px]"
       style={{
         background: `linear-gradient(145deg, rgba(255,255,255,0.05), ${char.color}18 34%, rgba(8,6,5,0.96))`,
         border: `1px solid ${char.color}55`,
@@ -360,13 +360,13 @@ const MobileCard: React.FC<MobileCardProps> = ({ char, index, onOpen }) => {
           }}
         />
         <div
-          className="absolute bottom-0 left-0 right-0 p-2 text-center"
+          className="absolute bottom-0 left-0 right-0 p-1.5 text-center"
           style={{
             background: 'linear-gradient(transparent, rgba(0,0,0,0.85))',
           }}
         >
           <span
-            className="text-[10px] uppercase tracking-[2px]"
+            className="text-[8px] uppercase tracking-[1.5px]"
             style={{ fontFamily: "'Cinzel', serif", color: char.color, textShadow: `0 0 8px ${char.color}80` }}
           >
             {char.name}
@@ -383,13 +383,13 @@ interface MobileDeckProps {
 
 const MobileDeck: React.FC<MobileDeckProps> = ({ onOpen }) => {
   return (
-    <div className="flex flex-col items-center gap-3 w-full max-w-[340px] mx-auto px-2">
-      <div className="grid grid-cols-2 gap-2.5 w-full">
+    <div className="flex flex-col items-center gap-2 w-full max-w-[280px] mx-auto px-2">
+      <div className="grid grid-cols-2 gap-2 w-full">
         {characters.slice(0, 4).map((char, index) => (
           <MobileCard key={char.id} char={char} index={index} onOpen={onOpen} />
         ))}
       </div>
-      <div className="w-[40vw] max-w-[150px]">
+      <div className="w-[36vw] max-w-[130px]">
         <MobileCard key={characters[4].id} char={characters[4]} index={4} onOpen={onOpen} />
       </div>
     </div>
@@ -482,7 +482,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
             {...tiltHandlers}
             className="relative rounded-[18px]"
             style={{
-              width: isMobile ? 'min(70vw, 240px)' : '360px',
+              width: isMobile ? 'min(55vw, 190px)' : '360px',
               aspectRatio: '768 / 1376',
               transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) rotateZ(${upsideDown}deg)`,
               transformStyle: 'preserve-3d',
@@ -558,9 +558,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
         )}
 
         <div className="mt-3 flex max-w-[520px] flex-wrap items-center justify-center gap-2">
-          {char.pages
-            .filter((page) => page.label !== 'Лор')
-            .map((page) => (
+          {char.pages.map((page) => (
               <button
                 key={page.path}
                 onClick={() => goTo(page.path)}
@@ -596,8 +594,8 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
   };
 
   return (
-    <div className="relative min-h-[340px] md:min-h-[620px]">
-      <div className="flex min-h-[300px] flex-col items-center justify-center overflow-visible py-4 md:min-h-[560px] md:py-6">
+    <div className="relative min-h-[280px] md:min-h-[620px]">
+      <div className="flex min-h-[240px] flex-col items-center justify-center overflow-visible py-3 md:min-h-[560px] md:py-6">
         {isMobile ? (
           <MobileDeck onOpen={openCard} />
         ) : (
@@ -617,7 +615,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
           </div>
         )}
 
-        <div className="mt-10 md:mt-14 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
+        <div className="mt-6 md:mt-14 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
           <button
             onClick={() => navigate('/letopis')}
             className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5 cursor-pointer"

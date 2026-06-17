@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Youtube, Send, MessageCircle, Users } from 'lucide-react';
+import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Youtube, Send, MessageCircle, Users, Search } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
@@ -15,12 +15,15 @@ interface MenuItemGroup {
   icon: React.ElementType;
   path?: string;
   children?: { label: string; path: string; children?: { label: string; path: string }[] }[];
+  /** Sub-groups within this menu group (e.g. Лор / Карты inside Мир игры) */
+  subGroups?: { id: string; label: string; items: { label: string; path: string }[] }[];
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [expandedChars, setExpandedChars] = useState<Record<string, boolean>>({});
+  const [expandedSubGroups, setExpandedSubGroups] = useState<Record<string, boolean>>({ lore: true, maps: false });
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,15 +52,27 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
       id: 'world',
       label: 'Мир игры',
       icon: Globe,
-      children: [
-        { label: 'Обзор мира', path: '/lor' },
-        { label: 'Летопись мира', path: '/letopis' },
-        { label: 'Карта Севера', path: '/map/sever' },
-        { label: 'Карта Нортвинда', path: '/map/northwind' },
-        { label: 'Род Даркбейнов', path: '/darkbain' },
-        { label: 'Дом Хессен', path: '/hessen' },
-        { label: 'Бергхейм', path: '/berghheim' },
-        { label: 'Клан Арантир', path: '/arantir' },
+      path: '/lor',
+      subGroups: [
+        {
+          id: 'lore',
+          label: 'Лор',
+          items: [
+            { label: 'Летопись мира', path: '/letopis' },
+            { label: 'Род Даркбейнов', path: '/darkbain' },
+            { label: 'Дом Хессен', path: '/hessen' },
+            { label: 'Бергхейм', path: '/berghheim' },
+            { label: 'Клан Арантир', path: '/arantir' },
+          ],
+        },
+        {
+          id: 'maps',
+          label: 'Карты',
+          items: [
+            { label: 'Карта Севера', path: '/map/sever' },
+            { label: 'Карта Нортвинда', path: '/map/northwind' },
+          ],
+        },
       ],
     },
   ];
@@ -73,6 +88,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
 
   const toggleChar = (charName: string) => {
     setExpandedChars(prev => ({ ...prev, [charName]: !prev[charName] }));
+  };
+
+  const toggleSubGroup = (id: string) => {
+    setExpandedSubGroups(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const isPathActive = (path: string) => location.pathname === path;
@@ -180,7 +199,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: (gIdx + 1) * 0.05 }}
                     onClick={() => {
-                      if (group.path) {
+                      if (group.path && !group.children && !group.subGroups) {
                         handleNavigate(group.path);
                       } else {
                         toggleGroup(group.id);
@@ -203,7 +222,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                     >
                       {group.label}
                     </span>
-                    {group.children && (
+                    {(group.children || group.subGroups) && (
                       expandedGroups[group.id]
                         ? <ChevronDown size={14} />
                         : <ChevronRight size={14} />
@@ -212,7 +231,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
 
                   {/* Expanded children */}
                   <AnimatePresence>
-                    {group.children && expandedGroups[group.id] && (
+                    {(group.children || group.subGroups) && expandedGroups[group.id] && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
@@ -220,7 +239,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden"
                       >
-                        {group.id === 'characters' ? (
+                        {group.id === 'characters' && group.children ? (
                           // Character sub-items with expandable sub-pages
                           group.children.map((charItem) => (
                             <div key={charItem.path} className="ml-2">
@@ -284,39 +303,134 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                               </AnimatePresence>
                             </div>
                           ))
-                        ) : (
-                          // Simple sub-items (world section)
-                          group.children.map((item) => {
-                            return (
+                        ) : group.subGroups ? (
+                          // Sub-groups (Лор, Карты) within "Мир игры"
+                          <div className="ml-2">
+                            {/* Direct link to Обзор мира */}
+                            {(() => {
+                              const overviewPath = group.path;
+                              if (!overviewPath) return null;
+                              const isActive = isPathActive(overviewPath);
+                              return (
                               <button
-                                key={item.path}
-                                onClick={() => handleNavigate(item.path)}
-                                className="w-full flex items-center gap-2 px-4 py-2 ml-2 rounded text-left transition-all duration-200 cursor-pointer"
+                                onClick={() => handleNavigate(overviewPath)}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded text-left transition-all duration-200 cursor-pointer"
                                 style={{
-                                  color: isPathActive(item.path) ? theme.menuAccent : theme.parchmentDim,
-                                  background: isPathActive(item.path) ? `${theme.menuAccent}15` : 'transparent',
-                                  borderLeft: isPathActive(item.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+                                  color: isActive ? theme.menuAccent : theme.parchmentDim,
+                                  background: isActive ? `${theme.menuAccent}15` : 'transparent',
+                                  borderLeft: isActive ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
                                 }}
                                 onMouseEnter={(e) => {
-                                  if (!isPathActive(item.path)) {
+                                  if (!isActive) {
                                     (e.currentTarget as HTMLElement).style.color = theme.menuText;
                                     (e.currentTarget as HTMLElement).style.borderLeftColor = `${theme.menuAccent}40`;
                                   }
                                 }}
                                 onMouseLeave={(e) => {
-                                  if (!isPathActive(item.path)) {
+                                  if (!isActive) {
                                     (e.currentTarget as HTMLElement).style.color = theme.parchmentDim;
                                     (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
                                   }
                                 }}
                               >
+                                <Search size={12} />
                                 <span className="text-xs tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
-                                  {item.label}
+                                  Обзор мира
                                 </span>
                               </button>
-                            );
-                          })
-                        )}
+                              );
+                            })()}
+                            {group.subGroups.map((subGroup) => (
+                              <div key={subGroup.id} className="mt-1">
+                                <button
+                                  onClick={() => toggleSubGroup(subGroup.id)}
+                                  className="w-full flex items-center gap-2 px-3 py-2 rounded text-left transition-all duration-200 cursor-pointer"
+                                  style={{ color: theme.menuText }}
+                                  onMouseEnter={(e) => {
+                                    (e.currentTarget as HTMLElement).style.background = `${theme.menuAccent}10`;
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                                  }}
+                                >
+                                  {expandedSubGroups[subGroup.id] ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                                  <span className="text-xs tracking-[1px] flex-1" style={{ fontFamily: theme.fontFamily, fontWeight: 600 }}>
+                                    {subGroup.label}
+                                  </span>
+                                </button>
+                                <AnimatePresence>
+                                  {expandedSubGroups[subGroup.id] && (
+                                    <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                      className="ml-4"
+                                    >
+                                      {subGroup.items.map((item) => (
+                                        <button
+                                          key={item.path}
+                                          onClick={() => handleNavigate(item.path)}
+                                          className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left transition-all duration-200 cursor-pointer"
+                                          style={{
+                                            color: isPathActive(item.path) ? theme.menuAccent : theme.parchmentDim,
+                                            background: isPathActive(item.path) ? `${theme.menuAccent}15` : 'transparent',
+                                            borderLeft: isPathActive(item.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+                                          }}
+                                          onMouseEnter={(e) => {
+                                            if (!isPathActive(item.path)) {
+                                              (e.currentTarget as HTMLElement).style.color = theme.menuText;
+                                              (e.currentTarget as HTMLElement).style.borderLeftColor = `${theme.menuAccent}40`;
+                                            }
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            if (!isPathActive(item.path)) {
+                                              (e.currentTarget as HTMLElement).style.color = theme.parchmentDim;
+                                              (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                                            }
+                                          }}
+                                        >
+                                          <span className="text-[11px] tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                                            {item.label}
+                                          </span>
+                                        </button>
+                                      ))}
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
+                            ))}
+                          </div>
+                        ) : group.children ? (
+                          // Simple sub-items (fallback)
+                          group.children.map((item) => (
+                            <button
+                              key={item.path}
+                              onClick={() => handleNavigate(item.path)}
+                              className="w-full flex items-center gap-2 px-4 py-2 ml-2 rounded text-left transition-all duration-200 cursor-pointer"
+                              style={{
+                                color: isPathActive(item.path) ? theme.menuAccent : theme.parchmentDim,
+                                background: isPathActive(item.path) ? `${theme.menuAccent}15` : 'transparent',
+                                borderLeft: isPathActive(item.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isPathActive(item.path)) {
+                                  (e.currentTarget as HTMLElement).style.color = theme.menuText;
+                                  (e.currentTarget as HTMLElement).style.borderLeftColor = `${theme.menuAccent}40`;
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isPathActive(item.path)) {
+                                  (e.currentTarget as HTMLElement).style.color = theme.parchmentDim;
+                                  (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                                }
+                              }}
+                            >
+                              <span className="text-xs tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                                {item.label}
+                              </span>
+                            </button>
+                          ))
+                        ) : null}
                       </motion.div>
                     )}
                   </AnimatePresence>
