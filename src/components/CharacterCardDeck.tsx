@@ -71,7 +71,7 @@ function useCardTilt(maxTilt = 10) {
       }
       setGyroEnabled(true);
     } catch {
-      // Если браузер не дал доступ к датчикам — остаётся обычный pointer tilt.
+      // ignore
     }
   };
 
@@ -148,7 +148,7 @@ const cardBios: Record<string, string[]> = {
   ],
 };
 
-// Увеличил размах веера в 1.4 раза
+// Увеличенный размах веера (коэффициент 1.4)
 const desktopFan = [
   { x: -340 * 1.4, y: 48, rotate: -24 },
   { x: -170 * 1.4, y: 14, rotate: -12 },
@@ -176,7 +176,7 @@ interface FanCardProps {
 const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-  const cardWidth = isMobile ? 118 : 206;
+  const cardWidth = isMobile ? 118 : 206; // увеличенный размер для десктопа
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = clamp(progress / 0.24, 0, 1);
   const flipThreshold = 0.34 + index * 0.075;
@@ -342,7 +342,6 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
     navigate(path);
   };
 
-  // Эмодзи для страниц персонажей (по смыслу)
   const pageIcons: Record<string, string> = {
     'Летопись': '📜',
     'Биография': '👤',
@@ -351,7 +350,6 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
     'Оружие': '🗡️',
     'Магия': '🔮',
     'Путь': '🗺️',
-    // можно добавить свои
   };
 
   return (
@@ -462,22 +460,13 @@ const CharacterCardDeck: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const deckRef = useRef<HTMLDivElement | null>(null);
-<<<<<<< HEAD
-  // Начальный прогресс выше, чтобы веер карт был виден сразу на главной.
+  // Начальный прогресс 0.38, чтобы веер был сразу раскрыт
   const [progress, setProgress] = useState(0.38);
-=======
-  // Начальный прогресс 0.15, чтобы карты были видны сразу
-  const [progress, setProgress] = useState(0.15);
->>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
   const { scrollYProgress } = useScroll({
     target: deckRef,
-<<<<<<< HEAD
     offset: ['start 85%', 'end 20%'],
-=======
-    offset: ['start 60%', 'end 20%'], // изменён offset
->>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
   });
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
@@ -490,15 +479,8 @@ const CharacterCardDeck: React.FC = () => {
   };
 
   return (
-<<<<<<< HEAD
     <div ref={deckRef} className="relative min-h-[440px] md:min-h-[620px]">
       <div className="flex min-h-[400px] flex-col items-center justify-center overflow-visible py-4 md:min-h-[560px] md:py-6">
-=======
-    <div ref={deckRef} className="relative min-h-[780px] md:min-h-[920px]">
-      <div className="flex min-h-[620px] flex-col items-center justify-center overflow-visible py-8 md:min-h-[720px]">
->>>>>>> 496cc31444debe39e0e97f9e7c69fd4cbae9fc1e
-        {/* Убрал пояснительный блок */}
-
         <div
           className="relative w-full max-w-[1040px]"
           style={{ height: isMobile ? 300 : 440, perspective: 1500 }}
