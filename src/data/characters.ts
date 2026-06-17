@@ -29,7 +29,7 @@ export const characters: CharacterConfig[] = [
     title: 'Потомок сильнейшего Авантюриста',
     desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.',
     color: '#e6e6fa',
-    tarot: `${BASE}tarot_valery.png`,
+    tarot: `${BASE}optimized/tarot_valery.webp`,
     avatar: `${BASE}avatar_valery.png`,
     lorePath: '/lore/valery',
     pages: [
@@ -45,7 +45,7 @@ export const characters: CharacterConfig[] = [
     title: 'Наследный Принц Астарии',
     desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда.',
     color: '#5a3a7a',
-    tarot: `${BASE}tarot_brin.png`,
+    tarot: `${BASE}optimized/tarot_brin.webp`,
     avatar: `${BASE}avatar_brin.png`,
     lorePath: '/lore/brin',
     pages: [
@@ -61,7 +61,7 @@ export const characters: CharacterConfig[] = [
     title: 'Следопыт, сосуд древнего духа',
     desc: 'Амбициозный драконид искатель приключений переросший свой дом, в котором ему было слишком тесно.',
     color: '#2a5a8a',
-    tarot: `${BASE}tarot_sakris.png`,
+    tarot: `${BASE}optimized/tarot_sakris.webp`,
     avatar: `${BASE}avatar_sakris.png`,
     lorePath: '/lore/sakris',
     pages: [
@@ -77,7 +77,7 @@ export const characters: CharacterConfig[] = [
     title: 'Бард-Воин',
     desc: 'Бродяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.',
     color: '#FF5E00',
-    tarot: `${BASE}tarot_tallis.png`,
+    tarot: `${BASE}optimized/tarot_tallis.webp`,
     avatar: `${BASE}avatar_tallis.png`,
     lorePath: '/lore/talis',
     pages: [
@@ -92,7 +92,7 @@ export const characters: CharacterConfig[] = [
     title: 'Друид отшельник',
     desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.',
     color: '#2a6a3a',
-    tarot: `${BASE}tarot_stive.png`,
+    tarot: `${BASE}optimized/tarot_stive.webp`,
     avatar: `${BASE}avatar_stive.png`,
     lorePath: '/lore/stive',
     pages: [

@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Youtube, Send, MessageCircle, Users } from 'lucide-react';
 import Layout from '@/components/Layout';
 import CharacterCardDeck from '@/components/CharacterCardDeck';
 import { homeTheme } from '@/types/theme';
+
+const socialLinks = [
+  { label: 'YouTube', href: 'https://www.youtube.com/@Sigmarillion', icon: Youtube },
+  { label: 'VK', href: 'https://vk.com/sigmarillion', icon: Users },
+  { label: 'Telegram', href: 'https://t.me/SigmarillionDnD', icon: Send },
+  { label: 'Discord', href: 'https://discord.gg/vyhKQTKhsw', icon: MessageCircle },
+];
 
 const HomePage: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
@@ -15,16 +23,16 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <Layout theme={homeTheme} particleCount={40}>
-      <div className="max-w-[1100px] mx-auto px-6 md:px-8 pb-16 pt-12">
+    <Layout theme={homeTheme} particleCount={24}>
+      <div className="max-w-[1120px] mx-auto px-4 md:px-8 pb-14 pt-7 md:pt-8">
         {/* Header */}
         <motion.header
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center pb-8 mb-8"
+          className="text-center pb-3 md:pb-4 mb-3 md:mb-4"
         >
           <div
-            className="text-4xl md:text-6xl font-black tracking-[12px] uppercase mb-3"
+            className="text-3xl md:text-5xl font-black tracking-[8px] md:tracking-[12px] uppercase mb-2"
             style={{
               fontFamily: "'Cinzel Decorative', serif",
               color: homeTheme.parchment,
@@ -33,11 +41,11 @@ const HomePage: React.FC = () => {
           >
             DND
           </div>
-          <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
-            <span>LETO</span>
+          <div className="rune-divider my-2" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
+            <span>ᛚᛟᚾᛖ ᚹᛟᛚᚠ</span>
           </div>
           <h1
-            className="text-xl md:text-3xl font-bold tracking-[3px] leading-tight my-3"
+            className="text-xl md:text-3xl font-bold tracking-[3px] leading-tight my-2"
             style={{
               fontFamily: "'Cinzel Decorative', serif",
               color: homeTheme.silver,
@@ -46,65 +54,56 @@ const HomePage: React.FC = () => {
           >
             Драконья Сага
           </h1>
-          <div className="rune-divider" style={{ '--divider-color': homeTheme.primary, '--divider-text': homeTheme.primaryGlow } as React.CSSProperties}>
-            <span>PISE</span>
-          </div>
           <p
-            className="text-sm md:text-base italic max-w-[500px] mx-auto leading-relaxed mt-4"
+            className="text-sm md:text-base italic max-w-[640px] mx-auto leading-relaxed mt-3"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               color: homeTheme.parchmentDim,
               letterSpacing: '1px',
             }}
           >
-            Проект НРИ на базе D&D вдохновенный Сильмариллионом и Песней Льда и Пламени
+            Авторская НРИ на базе D&D: древние тайны, дворцовые интриги и герои, чьи судьбы уже легли на карты Таро.
           </p>
         </motion.header>
 
-        {/* About */}
+        {/* About compact */}
         <motion.section
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-12"
+          transition={{ delay: 0.15 }}
+          className="mb-5 md:mb-6"
         >
-          <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
+          <div className="section-header !mt-3 !mb-3" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
             <span className="section-icon">&#128220;</span>
-            <h2 className="section-title">О проекте</h2>
+            <h2 className="section-title">О игре</h2>
             <div className="section-line" />
           </div>
           <div
-            className="p-6 rounded"
+            className="p-4 md:p-5 rounded grid gap-3 md:grid-cols-[1.25fr_1fr] md:items-center"
             style={{
-              background: 'rgba(20,15,10,0.3)',
+              background: 'rgba(20,15,10,0.28)',
               border: '1px solid rgba(80,70,50,0.15)',
             }}
           >
-            <p className="mb-4 text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
-              <strong style={{ color: homeTheme.primaryBright }}>Драконья Сага</strong> — это захватывающее приключение в авторском мире, где судьбы героев переплетаются с древними тайнами, дворцовыми интригами и силами, выходящими за пределы понимания смертных.
+            <p className="text-left md:text-justify leading-7" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
+              <strong style={{ color: homeTheme.primaryBright }}>Драконья Сага</strong> — приключение в авторском мире, где личные истории героев переплетаются с древними тайнами и силами за пределами понимания смертных.
             </p>
-            <p className="mb-4 text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
-              Наша компания — <strong style={{ color: homeTheme.primaryBright }}>[Драконья Сага]</strong> — объединяет страстных любителей настольных ролевых игр, вместе создающих уникальные истории.
-            </p>
-            <p className="mb-4 text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
-              В этом проекте мы собрали <strong style={{ color: homeTheme.primaryBright }}>летопись наших героев</strong> — их личные умения, предыстории, связи и тайны.
-            </p>
-            <p className="text-justify leading-8" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
-              Присоединяйтесь к нам в этом путешествии. <strong style={{ color: homeTheme.primaryBright }}> Наша общая Легенда только начинается.</strong>
+            <p className="text-left md:text-justify leading-7" style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}>
+              Наша компания <strong style={{ color: homeTheme.primaryBright }}>[Драконья Сага]</strong> объединяет любителей настольных ролевых игр, вместе создающих общую легенду.
             </p>
           </div>
         </motion.section>
 
         {/* Characters with Tarot Cards */}
         <motion.section
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-12"
+          transition={{ delay: 0.25 }}
+          className="mb-10 md:mb-12"
         >
-          <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
-            <span className="section-icon">&#9876;</span>
-            <h2 className="section-title">Персонажи</h2>
+          <div className="section-header !mt-3 !mb-2" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
+            <span className="section-icon">&#127183;</span>
+            <h2 className="section-title">Карты Таро</h2>
             <div className="section-line" />
           </div>
 
@@ -115,7 +114,7 @@ const HomePage: React.FC = () => {
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.45 }}
           className="mb-12"
         >
           <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': homeTheme.primaryGlow, '--section-title-color': homeTheme.primaryGlow, '--section-line-color': homeTheme.primary } as React.CSSProperties}>
@@ -130,7 +129,7 @@ const HomePage: React.FC = () => {
                 key={video.part}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + idx * 0.1 }}
+                transition={{ delay: 0.55 + idx * 0.08 }}
                 className="rounded overflow-hidden cursor-pointer transition-all duration-300"
                 style={{
                   background: 'rgba(20,15,10,0.3)',
@@ -206,6 +205,7 @@ const HomePage: React.FC = () => {
                   src={selectedVideo.url}
                   title={selectedVideo.title}
                   className="w-full h-full"
+                  loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
@@ -224,22 +224,19 @@ const HomePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="flex justify-center gap-4 mt-10 pt-8 flex-wrap"
+          transition={{ delay: 0.6 }}
+          className="flex justify-center gap-3 mt-10 pt-8 flex-wrap"
           style={{ borderTop: '1px solid rgba(80,70,50,0.1)' }}
         >
-          {[
-            { label: 'YouTube', href: 'https://www.youtube.com/@Sigmarillion' },
-            { label: 'VK', href: 'https://vk.com/sigmarillion' },
-            { label: 'Telegram', href: 'https://t.me/SigmarillionDnD' },
-            { label: 'Discord', href: 'https://discord.gg/vyhKQTKhsw' },
-          ].map(link => (
+          {socialLinks.map(({ label, href, icon: Icon }) => (
             <a
-              key={link.label}
-              href={link.href}
+              key={label}
+              href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 rounded text-xs tracking-[2px] transition-all duration-200 cursor-pointer inline-block"
+              aria-label={label}
+              title={label}
+              className="px-4 py-2.5 rounded text-xs tracking-[2px] transition-all duration-200 cursor-pointer inline-flex items-center gap-2"
               style={{
                 fontFamily: "'Cinzel', serif",
                 background: 'rgba(30,25,15,0.3)',
@@ -248,17 +245,18 @@ const HomePage: React.FC = () => {
                 textDecoration: 'none',
               }}
               onMouseEnter={(e) => {
-                (e.target as HTMLElement).style.borderColor = 'rgba(106,84,48,0.35)';
-                (e.target as HTMLElement).style.color = homeTheme.parchment;
-                (e.target as HTMLElement).style.transform = 'translateY(-2px)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(106,84,48,0.35)';
+                (e.currentTarget as HTMLElement).style.color = homeTheme.parchment;
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
-                (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.2)';
-                (e.target as HTMLElement).style.color = homeTheme.parchmentDim;
-                (e.target as HTMLElement).style.transform = 'translateY(0)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(80,70,50,0.2)';
+                (e.currentTarget as HTMLElement).style.color = homeTheme.parchmentDim;
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
               }}
             >
-              {link.label}
+              <Icon size={15} />
+              {label}
             </a>
           ))}
         </motion.div>

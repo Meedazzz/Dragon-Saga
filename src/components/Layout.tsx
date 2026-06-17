@@ -7,6 +7,7 @@ import LoadingScreen from './LoadingScreen';
 import Particles from './Particles';
 import { getThemeByPath } from '@/types/theme';
 import type { ColorTheme } from '@/types/theme';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -25,15 +26,16 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const location = useLocation();
   const theme = customTheme || getThemeByPath(location.pathname);
+  const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1200);
+    }, isMobile ? 300 : 900);
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, [location.pathname, isMobile]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--scrollbar-track', theme.void);
@@ -64,7 +66,7 @@ const Layout: React.FC<LayoutProps> = ({
         />
       )}
 
-      <Particles theme={theme} count={particleCount} variant={particleVariant} />
+      {!isMobile && <Particles theme={theme} count={particleCount} variant={particleVariant} />}
       <SideMenu theme={theme} />
       <MusicButton theme={theme} />
       {showBack && <BackButton theme={theme} />}

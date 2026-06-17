@@ -148,20 +148,21 @@ const cardBios: Record<string, string[]> = {
   ],
 };
 
+// Увеличил размах веера в 1.4 раза
 const desktopFan = [
-  { x: -340, y: 48, rotate: -24 },
-  { x: -170, y: 14, rotate: -12 },
+  { x: -340 * 1.4, y: 48, rotate: -24 },
+  { x: -170 * 1.4, y: 14, rotate: -12 },
   { x: 0, y: 0, rotate: 0 },
-  { x: 170, y: 14, rotate: 12 },
-  { x: 340, y: 48, rotate: 24 },
+  { x: 170 * 1.4, y: 14, rotate: 12 },
+  { x: 340 * 1.4, y: 48, rotate: 24 },
 ];
 
 const mobileFan = [
-  { x: -104, y: 46, rotate: -23 },
-  { x: -52, y: 12, rotate: -12 },
+  { x: -104 * 1.4, y: 46, rotate: -23 },
+  { x: -52 * 1.4, y: 12, rotate: -12 },
   { x: 0, y: 0, rotate: 0 },
-  { x: 52, y: 12, rotate: 12 },
-  { x: 104, y: 46, rotate: 23 },
+  { x: 52 * 1.4, y: 12, rotate: 12 },
+  { x: 104 * 1.4, y: 46, rotate: 23 },
 ];
 
 interface FanCardProps {
@@ -175,7 +176,7 @@ interface FanCardProps {
 const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-  const cardWidth = isMobile ? 150 : 218;
+  const cardWidth = isMobile ? 118 : 206;
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = clamp(progress / 0.24, 0, 1);
   const flipThreshold = 0.34 + index * 0.075;
@@ -268,6 +269,8 @@ const CardFront: React.FC<{ char: CharacterConfig }> = ({ char }) => (
       src={char.tarot}
       alt={char.name}
       className="h-full w-full object-cover"
+      loading="eager"
+      decoding="async"
       draggable={false}
       onError={(event) => {
         (event.target as HTMLImageElement).style.display = 'none';
@@ -337,6 +340,18 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
   const goTo = (path: string) => {
     onClose();
     navigate(path);
+  };
+
+  // Эмодзи для страниц персонажей (по смыслу)
+  const pageIcons: Record<string, string> = {
+    'Летопись': '📜',
+    'Биография': '👤',
+    'Способности': '⚡',
+    'История': '🏛️',
+    'Оружие': '🗡️',
+    'Магия': '🔮',
+    'Путь': '🗺️',
+    // можно добавить свои
   };
 
   return (
@@ -422,7 +437,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
             className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-transform hover:-translate-y-0.5"
             style={{ fontFamily: "'Cinzel', serif", background: `${char.color}22`, border: `1px solid ${char.color}65`, color: homeTheme.parchment }}
           >
-            Читать лор →
+            📜 Читать лор →
           </button>
         </div>
 
@@ -434,7 +449,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
               className="rounded px-3 py-1.5 text-[10px] tracking-[1px] transition-colors"
               style={{ fontFamily: "'Cinzel', serif", background: 'rgba(30,25,15,0.65)', border: '1px solid rgba(120,100,70,0.25)', color: homeTheme.parchmentDim }}
             >
-              {page.label}
+              {pageIcons[page.label] || '📄'} {page.label}
             </button>
           ))}
         </div>
@@ -447,16 +462,17 @@ const CharacterCardDeck: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const deckRef = useRef<HTMLDivElement | null>(null);
-  const [progress, setProgress] = useState(0);
+  // Начальный прогресс выше, чтобы веер карт был виден сразу на главной.
+  const [progress, setProgress] = useState(0.38);
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
   const { scrollYProgress } = useScroll({
     target: deckRef,
-    offset: ['start 82%', 'end 34%'],
+    offset: ['start 85%', 'end 20%'],
   });
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    setProgress(clamp(latest, 0, 1));
+    setProgress(clamp(Math.max(latest, 0.32), 0, 1));
   });
 
   const openCard = (char: CharacterConfig, flipped: boolean) => {
@@ -465,26 +481,13 @@ const CharacterCardDeck: React.FC = () => {
   };
 
   return (
-    <div ref={deckRef} className="relative min-h-[780px] md:min-h-[920px]">
-      <div className="sticky top-16 z-10 flex min-h-[620px] flex-col items-center justify-center overflow-visible py-8 md:top-20 md:min-h-[720px]">
-        <div className="mb-5 max-w-2xl text-center">
-          <div
-            className="mb-2 text-xs uppercase tracking-[4px]"
-            style={{ fontFamily: "'Cinzel', serif", color: homeTheme.primaryGlow }}
-          >
-            Scroll reveal · 3D tilt · lore cards
-          </div>
-          <p
-            className="mx-auto max-w-[620px] text-sm leading-relaxed md:text-base"
-            style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchmentDim }}
-          >
-            Прокручивайте вниз: колода раскрывается веером, а затем карты по очереди переворачиваются и показывают краткий лор каждого героя. Наведите мышь или наклоните телефон для живого 3D-поворота.
-          </p>
-        </div>
+    <div ref={deckRef} className="relative min-h-[440px] md:min-h-[620px]">
+      <div className="flex min-h-[400px] flex-col items-center justify-center overflow-visible py-4 md:min-h-[560px] md:py-6">
+        {/* Убрал пояснительный блок */}
 
         <div
           className="relative w-full max-w-[1040px]"
-          style={{ height: isMobile ? 390 : 520, perspective: 1500 }}
+          style={{ height: isMobile ? 300 : 440, perspective: 1500 }}
         >
           {characters.map((char, index) => (
             <FanCard
@@ -514,7 +517,7 @@ const CharacterCardDeck: React.FC = () => {
             className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5"
             style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.72)', border: `1px solid ${homeTheme.primary}55`, color: homeTheme.parchment }}
           >
-            Открыть летопись мира
+            📖 Открыть летопись мира
           </button>
         </div>
       </div>

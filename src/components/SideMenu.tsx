@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Globe, Scroll, ChevronDown, ChevronRight, Map } from 'lucide-react';
+import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Map, Youtube, Send, MessageCircle, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
@@ -24,13 +24,14 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const contactLinks = [
+    { label: 'YouTube', href: 'https://www.youtube.com/@Sigmarillion', icon: Youtube },
+    { label: 'VK', href: 'https://vk.com/sigmarillion', icon: Users },
+    { label: 'Telegram', href: 'https://t.me/SigmarillionDnD', icon: Send },
+    { label: 'Discord', href: 'https://discord.gg/vyhKQTKhsw', icon: MessageCircle },
+  ];
+
   const menuGroups: MenuItemGroup[] = [
-    {
-      id: 'letopis',
-      label: 'Летопись',
-      icon: Scroll,
-      path: '/letopis',
-    },
     {
       id: 'characters',
       label: 'Персонажи',
@@ -137,7 +138,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                 className="text-xs mt-2 tracking-[4px] uppercase"
                 style={{ color: theme.parchmentDim }}
               >
-                Chronicles
+                Dragon Saga
               </div>
               <div
                 className="mt-4 h-px w-full"
@@ -325,7 +326,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               ))}
             </nav>
 
-            {/* Footer */}
+            {/* Contacts */}
             <div className="p-4 text-center">
               <div
                 className="h-px w-full mb-4"
@@ -334,10 +335,31 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                 }}
               />
               <div
-                className="text-xs tracking-[6px] uppercase"
-                style={{ color: theme.parchmentDim, opacity: 0.5 }}
+                className="mb-3 text-[10px] tracking-[3px] uppercase"
+                style={{ color: theme.parchmentDim, opacity: 0.65, fontFamily: theme.fontFamily }}
               >
-                Letopise
+                Контакты
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                {contactLinks.map(({ label, href, icon: Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    title={label}
+                    className="flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                    style={{
+                      background: 'rgba(30,25,15,0.35)',
+                      border: `1px solid ${theme.buttonBorder}`,
+                      color: theme.menuText,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <Icon size={16} />
+                  </a>
+                ))}
               </div>
             </div>
           </motion.div>
