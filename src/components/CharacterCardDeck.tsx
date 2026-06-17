@@ -41,11 +41,9 @@ function useCardTilt(maxTilt = 10) {
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!ref.current || event.pointerType === 'touch') return;
-
     const rect = ref.current.getBoundingClientRect();
     const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-
     scheduleTilt({
       rotateX: (0.5 - y) * maxTilt * 2,
       rotateY: (x - 0.5) * maxTilt * 2,
@@ -57,13 +55,10 @@ function useCardTilt(maxTilt = 10) {
 
   const enableGyro = async () => {
     if (typeof window === 'undefined' || !('DeviceOrientationEvent' in window)) return;
-
     type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
       requestPermission?: () => Promise<PermissionState>;
     };
-
     const orientationEvent = window.DeviceOrientationEvent as unknown as DeviceOrientationWithPermission;
-
     try {
       if (typeof orientationEvent.requestPermission === 'function') {
         const permission = await orientationEvent.requestPermission();
@@ -81,13 +76,11 @@ function useCardTilt(maxTilt = 10) {
 
   useEffect(() => {
     if (!gyroEnabled) return undefined;
-
     const onOrientation = (event: DeviceOrientationEvent) => {
       const beta = event.beta ?? 0;
       const gamma = event.gamma ?? 0;
       const rotateX = clamp((beta - 45) / 45, -1, 1) * maxTilt;
       const rotateY = clamp(gamma / 35, -1, 1) * maxTilt;
-
       scheduleTilt({
         rotateX,
         rotateY,
@@ -96,7 +89,6 @@ function useCardTilt(maxTilt = 10) {
         glareOpacity: 0.2,
       });
     };
-
     window.addEventListener('deviceorientation', onOrientation, true);
     return () => window.removeEventListener('deviceorientation', onOrientation, true);
   }, [gyroEnabled, maxTilt]);
@@ -168,22 +160,17 @@ const mobileFan = [
 interface FanCardProps {
   char: CharacterConfig;
   index: number;
-  progress: number;
   isMobile: boolean;
   onOpen: (char: CharacterConfig, flipped: boolean) => void;
 }
 
-const FanCard: React.FC<FanCardProps> = ({ char, index, progress, isMobile, onOpen }) => {
+const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
   const [isHovered, setIsHovered] = useState(false);
   const fan = isMobile ? mobileFan[index] : desktopFan[index];
-  const cardWidth = isMobile ? 118 : 206; // увеличенный размер для десктопа
+  const cardWidth = isMobile ? 118 : 206;
   const cardHeight = Math.round(cardWidth * 1.79);
-  
-  // Всегда веером (spread = 1) или плавно раскрываемся при скролле?
-  // Пользователь просил "изначально веером", поэтому сделаем spread=1 сразу, 
-  // но оставим небольшую зависимость от progress для мягкости появления.
-  const spread = 1;
+  const spread = 1; // всегда раскрыт
   const isFlipped = isHovered;
   const revealAmount = isHovered ? 1 : 0;
 
@@ -466,7 +453,6 @@ const CharacterCardDeck: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const deckRef = useRef<HTMLDivElement | null>(null);
-  // Начальный прогресс 1.0, чтобы веер был сразу раскрыт
   const [progress, setProgress] = useState(1.0);
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
@@ -496,7 +482,6 @@ const CharacterCardDeck: React.FC = () => {
               key={char.id}
               char={char}
               index={index}
-              progress={progress}
               isMobile={isMobile}
               onOpen={openCard}
             />
