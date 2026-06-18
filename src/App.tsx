@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-import { Suspense, lazy, useEffect } from 'react';
->>>>>>> 6b6b02308a0ac0c53a2bc9f64d2b3f629092826f
 import { Routes, Route } from 'react-router-dom';
 import { MusicProvider } from '@/contexts/MusicContext';
 import HomePage from '@/pages/HomePage';
