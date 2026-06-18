@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { Suspense, lazy, useEffect } from 'react';
-=======
 import { Suspense, lazy } from 'react';
->>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
 import { Routes, Route } from 'react-router-dom';
 import { MusicProvider } from '@/contexts/MusicContext';
 import LoadingScreen from '@/components/LoadingScreen';
