@@ -191,4 +191,179 @@ const MapPage: React.FC = () => {
         <div className="max-w-3xl mx-auto px-6 py-24 text-center">
           <h1
             className="text-4xl font-bold mb-4"
-            style
+            style={{
+              fontFamily: "'Cinzel Decorative', serif",
+              color: lorTheme.parchment,
+            }}
+          >
+            Карта не найдена
+          </h1>
+          <p
+            className="text-lg italic"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              color: lorTheme.parchmentDim,
+            }}
+          >
+            По этому пути ещё не проложено летописи.
+          </p>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout theme={lorTheme} particleCount={15} overlayMode={isFullscreen}>
+      <div className={isFullscreen ? 'p-0' : 'max-w-[1200px] mx-auto px-4 md:px-8 pb-20 pt-16'}>
+        {/* Header (только если не в полноэкранном режиме) */}
+        {!isFullscreen && (
+          <motion.header
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center pb-6 mb-6"
+          >
+            <h1
+              className="text-2xl md:text-4xl font-bold tracking-[3px] mb-3"
+              style={{
+                fontFamily: "'Cinzel Decorative', serif",
+                color: lorTheme.parchment,
+                textShadow: '0 0 20px rgba(160,150,130,0.2), 0 2px 6px rgba(0,0,0,0.9)',
+              }}
+            >
+              {mapData.title}
+            </h1>
+            <p
+              className="text-sm md:text-base italic max-w-[560px] mx-auto leading-relaxed"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                color: lorTheme.parchmentDim,
+              }}
+            >
+              {mapData.description}
+            </p>
+            <p
+              className="text-xs mt-3 opacity-80"
+              style={{
+                fontFamily: "'Cinzel', serif",
+                color: lorTheme.parchmentDim,
+                letterSpacing: '1px',
+              }}
+            >
+              {isMobile
+                ? 'Кнопки + / - или щипок для масштаба · Свайп для перемещения'
+                : 'Колёсико мыши — масштаб · ЛКМ (удержание) — перемещение карты'}
+            </p>
+          </motion.header>
+        )}
+
+        {/* Главный контейнер карты */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          ref={containerRef}
+          className={
+            isFullscreen
+              ? 'fixed inset-0 z-[850] w-screen h-screen overflow-hidden bg-[#0c0a08] flex items-center justify-center select-none'
+              : 'relative w-full aspect-[16/10] md:aspect-[21/10] min-h-[440px] max-h-[78vh] overflow-hidden rounded-xl border-2 shadow-2xl bg-[#0c0a08] select-none cursor-grab active:cursor-grabbing'
+          }
+          style={{
+            borderColor: isFullscreen ? 'transparent' : `${lorTheme.primaryGlow}50`,
+          }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          {/* Изображение карты */}
+          <img
+            src={mapData.image}
+            alt={mapData.title}
+            className="w-full h-full object-contain select-none pointer-events-none"
+            draggable={false}
+            style={{
+              display: 'block',
+              transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+              transition: dragRef.current.isDragging ? 'none' : 'transform 0.15s ease-out',
+              transformOrigin: 'center center',
+            }}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'absolute inset-0 flex items-center justify-center bg-[#140f0a]/80 text-[#706850] italic p-8 text-center font-serif text-lg z-10';
+                placeholder.innerHTML = `🗺️ Изображение карты будет добавлено позже.<br/>Ожидаемый файл: <code style="color:#8a7040">public/map_${mapId}.png</code>`;
+                parent.appendChild(placeholder);
+              }
+            }}
+          />
+
+          {/* Плавающая панель управления (Тулбар) */}
+          <div
+            className="absolute bottom-4 right-4 z-30 flex items-center gap-1.5 bg-[#0c0a08]/92 p-2 rounded-xl border shadow-2xl backdrop-blur-md"
+            style={{ borderColor: `${lorTheme.primary}60` }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={resetMap}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-xs font-semibold tracking-wider transition-all border cursor-pointer"
+              style={{ fontFamily: "'Cinzel', serif", borderColor: `${lorTheme.primary}40` }}
+              title="Сбросить масштаб и позицию"
+            >
+              <span className="text-sm">🔄</span>
+              <span className="hidden sm:inline">Сбросить</span>
+            </button>
+
+            <div className="h-4 w-[1px] mx-1" style={{ background: `${lorTheme.primary}40` }} />
+
+            <button
+              onClick={zoomOut}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-base font-bold transition-all border cursor-pointer"
+              style={{ borderColor: `${lorTheme.primary}40` }}
+              title="Отдалить"
+            >
+              -
+            </button>
+
+            <span
+              className="text-xs font-mono px-1 min-w-[40px] text-center font-bold"
+              style={{ color: lorTheme.primaryGlow }}
+            >
+              {Math.round(scale * 100)}%
+            </span>
+
+            <button
+              onClick={zoomIn}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-base font-bold transition-all border cursor-pointer"
+              style={{ borderColor: `${lorTheme.primary}40` }}
+              title="Приблизить"
+            >
+              +
+            </button>
+
+            <div className="h-4 w-[1px] mx-1" style={{ background: `${lorTheme.primary}40` }} />
+
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-xs font-semibold tracking-wider transition-all border cursor-pointer"
+              style={{ fontFamily: "'Cinzel', serif", borderColor: `${lorTheme.primary}40` }}
+              title={isFullscreen ? 'Свернуть' : 'На весь экран'}
+            >
+              <span className="text-sm">{isFullscreen ? '✕' : '⛶'}</span>
+              <span className="hidden sm:inline">{isFullscreen ? 'Свернуть' : 'На весь экран'}</span>
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </Layout>
+  );
+};
+
+export default MapPage;
