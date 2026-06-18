@@ -133,7 +133,6 @@ const LorPage: React.FC = () => {
   return (
     <Layout theme={lorTheme} particleCount={35}>
       <div className="max-w-[900px] mx-auto px-4 md:px-8 pb-20 pt-10">
-        {/* Header — simplified */}
         <motion.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -161,7 +160,6 @@ const LorPage: React.FC = () => {
           </p>
         </motion.header>
 
-        {/* Search Bar */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -200,7 +198,6 @@ const LorPage: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Grouped Results */}
         {categoryOrder.map((cat) => {
           const items = groupedItems[cat];
           if (!items || items.length === 0) return null;
@@ -213,7 +210,12 @@ const LorPage: React.FC = () => {
               transition={{ delay: 0.25 }}
               className="mb-8"
             >
-              <div className="section-header !mt-1 !mb-3" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
+              <div className="section-header !mt-1 !mb-3" style={{ 
+                '--section-border': 'rgba(80,70,50,0.15)', 
+                '--section-icon-color': lorTheme.primaryGlow, 
+                '--section-title-color': lorTheme.primaryGlow, 
+                '--section-line-color': lorTheme.primary 
+              } as React.CSSProperties}>
                 <span className="section-icon">{items[0].icon}</span>
                 <h2 className="section-title">{categoryLabels[cat]}</h2>
                 <div className="section-line" />
@@ -279,7 +281,6 @@ const LorPage: React.FC = () => {
           );
         })}
 
-        {/* Empty search result */}
         {filteredItems.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -295,8 +296,10 @@ const LorPage: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Footer */}
-        <div className="footer-ornament mt-12" style={{ '--footer-border': 'rgba(80,70,50,0.1)', '--footer-text-color': lorTheme.primary } as React.CSSProperties}>
+        <div className="footer-ornament mt-12" style={{ 
+          '--footer-border': 'rgba(80,70,50,0.1)', 
+          '--footer-text-color': lorTheme.primary 
+        } as React.CSSProperties}>
           <div className="rune-string">L E T O P I S E</div>
         </div>
       </div>
