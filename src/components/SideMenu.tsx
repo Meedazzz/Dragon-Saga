@@ -42,6 +42,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
       children: characters.map(char => ({
         label: char.name,
         path: char.lorePath,
+<<<<<<< HEAD
         children: [
           { label: 'Полный лор', path: char.lorePath },
           ...char.pages.map(page => ({
@@ -49,6 +50,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
             path: page.path,
           }))
         ],
+=======
+        children: char.pages.map(page => ({
+          label: page.label,
+          path: page.path,
+        })),
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
       })),
     },
     {
@@ -85,6 +92,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
     setTimeout(() => navigate(path), 200);
   };
 
+<<<<<<< HEAD
   const handleLinkClick = (e: React.MouseEvent, path: string) => {
     if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
       e.preventDefault();
@@ -92,6 +100,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
     }
   };
 
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
   const toggleGroup = (id: string) => {
     setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
   };
@@ -181,23 +191,35 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
             {/* Nav */}
             <nav className="flex-1 px-4 overflow-y-auto pb-4">
               {/* Home link */}
+<<<<<<< HEAD
               <motion.a
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 href="/"
                 onClick={(e) => handleLinkClick(e, '/')}
                 className="w-full flex items-center gap-3 px-4 py-3 mb-1 rounded-lg text-left transition-all duration-300 cursor-pointer block"
+=======
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => handleNavigate('/')}
+                className="w-full flex items-center gap-3 px-4 py-3 mb-1 rounded-lg text-left transition-all duration-300 cursor-pointer"
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                 style={{
                   background: isPathActive('/') ? `${theme.menuAccent}20` : 'transparent',
                   border: `1px solid ${isPathActive('/') ? theme.menuAccent : 'transparent'}`,
                   color: isPathActive('/') ? theme.menuAccent : theme.menuText,
+<<<<<<< HEAD
                   textDecoration: 'none',
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                 }}
                 whileHover={{
                   x: 4,
                   background: `${theme.menuAccent}15`,
                 }}
               >
+<<<<<<< HEAD
                 <div className="flex items-center gap-3 w-full">
                   <Home size={16} />
                   <span className="text-sm tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
@@ -205,6 +227,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                   </span>
                 </div>
               </motion.a>
+=======
+                <Home size={16} />
+                <span className="text-sm tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                  Главная
+                </span>
+              </motion.button>
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
 
               {/* Menu Groups */}
               {menuGroups.map((group, gIdx) => (
@@ -286,16 +315,26 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                     className="ml-5"
                                   >
                                     {charItem.children.map((subPage) => (
+<<<<<<< HEAD
                                       <a
                                         key={subPage.path}
                                         href={subPage.path}
                                         onClick={(e) => handleLinkClick(e, subPage.path)}
                                         className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left transition-all duration-200 cursor-pointer block"
+=======
+                                      <button
+                                        key={subPage.path}
+                                        onClick={() => handleNavigate(subPage.path)}
+                                        className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left transition-all duration-200 cursor-pointer"
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                                         style={{
                                           color: isPathActive(subPage.path) ? theme.menuAccent : theme.parchmentDim,
                                           background: isPathActive(subPage.path) ? `${theme.menuAccent}15` : 'transparent',
                                           borderLeft: isPathActive(subPage.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+<<<<<<< HEAD
                                           textDecoration: 'none',
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                                         }}
                                         onMouseEnter={(e) => {
                                           if (!isPathActive(subPage.path)) {
@@ -313,7 +352,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                         <span className="text-[11px] tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
                                           {subPage.label}
                                         </span>
+<<<<<<< HEAD
                                       </a>
+=======
+                                      </button>
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                                     ))}
                                   </motion.div>
                                 )}
@@ -329,15 +372,24 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                               if (!overviewPath) return null;
                               const isActive = isPathActive(overviewPath);
                               return (
+<<<<<<< HEAD
                               <a
                                 href={overviewPath}
                                 onClick={(e) => handleLinkClick(e, overviewPath)}
                                 className="w-full flex items-center gap-2 px-3 py-2 rounded text-left transition-all duration-200 cursor-pointer block"
+=======
+                              <button
+                                onClick={() => handleNavigate(overviewPath)}
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded text-left transition-all duration-200 cursor-pointer"
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                                 style={{
                                   color: isActive ? theme.menuAccent : theme.parchmentDim,
                                   background: isActive ? `${theme.menuAccent}15` : 'transparent',
                                   borderLeft: isActive ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+<<<<<<< HEAD
                                   textDecoration: 'none',
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                                 }}
                                 onMouseEnter={(e) => {
                                   if (!isActive) {
@@ -352,6 +404,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                   }
                                 }}
                               >
+<<<<<<< HEAD
                                 <div className="flex items-center gap-2 w-full">
                                   <Search size={12} />
                                   <span className="text-xs tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
@@ -359,6 +412,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                   </span>
                                 </div>
                               </a>
+=======
+                                <Search size={12} />
+                                <span className="text-xs tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                                  Обзор мира
+                                </span>
+                              </button>
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                               );
                             })()}
                             {group.subGroups.map((subGroup) => (
@@ -379,6 +439,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                     {subGroup.label}
                                   </span>
                                 </button>
+<<<<<<< HEAD
                                   <AnimatePresence>
                                     {expandedSubGroups[subGroup.id] && (
                                       <motion.div
@@ -420,22 +481,73 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                       </motion.div>
                                     )}
                                   </AnimatePresence>
+=======
+                                <AnimatePresence>
+                                  {expandedSubGroups[subGroup.id] && (
+                                    <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                      className="ml-4"
+                                    >
+                                      {subGroup.items.map((item) => (
+                                        <button
+                                          key={item.path}
+                                          onClick={() => handleNavigate(item.path)}
+                                          className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left transition-all duration-200 cursor-pointer"
+                                          style={{
+                                            color: isPathActive(item.path) ? theme.menuAccent : theme.parchmentDim,
+                                            background: isPathActive(item.path) ? `${theme.menuAccent}15` : 'transparent',
+                                            borderLeft: isPathActive(item.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+                                          }}
+                                          onMouseEnter={(e) => {
+                                            if (!isPathActive(item.path)) {
+                                              (e.currentTarget as HTMLElement).style.color = theme.menuText;
+                                              (e.currentTarget as HTMLElement).style.borderLeftColor = `${theme.menuAccent}40`;
+                                            }
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            if (!isPathActive(item.path)) {
+                                              (e.currentTarget as HTMLElement).style.color = theme.parchmentDim;
+                                              (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                                            }
+                                          }}
+                                        >
+                                          <span className="text-[11px] tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                                            {item.label}
+                                          </span>
+                                        </button>
+                                      ))}
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                               </div>
                             ))}
                           </div>
                         ) : group.children ? (
                           // Simple sub-items (fallback)
                           group.children.map((item) => (
+<<<<<<< HEAD
                             <a
                               key={item.path}
                               href={item.path}
                               onClick={(e) => handleLinkClick(e, item.path)}
                               className="w-full flex items-center gap-2 px-4 py-2 ml-2 rounded text-left transition-all duration-200 cursor-pointer block"
+=======
+                            <button
+                              key={item.path}
+                              onClick={() => handleNavigate(item.path)}
+                              className="w-full flex items-center gap-2 px-4 py-2 ml-2 rounded text-left transition-all duration-200 cursor-pointer"
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                               style={{
                                 color: isPathActive(item.path) ? theme.menuAccent : theme.parchmentDim,
                                 background: isPathActive(item.path) ? `${theme.menuAccent}15` : 'transparent',
                                 borderLeft: isPathActive(item.path) ? `2px solid ${theme.menuAccent}` : '2px solid transparent',
+<<<<<<< HEAD
                                 textDecoration: 'none',
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                               }}
                               onMouseEnter={(e) => {
                                 if (!isPathActive(item.path)) {
@@ -453,7 +565,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                               <span className="text-xs tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
                                 {item.label}
                               </span>
+<<<<<<< HEAD
                             </a>
+=======
+                            </button>
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                           ))
                         ) : null}
                       </motion.div>

@@ -20,15 +20,25 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(0.3);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const initRef = useRef(false);
+
+  const getAudio = useCallback(() => {
+    if (!audioRef.current) {
+      const audio = new Audio(`${import.meta.env.BASE_URL}music/ambient.mp3`);
+      audio.loop = true;
+      audio.volume = volume;
+      audio.preload = 'none';
+      audioRef.current = audio;
+    }
+    return audioRef.current;
+  }, [volume]);
 
   useEffect(() => {
-    if (!initRef.current) {
-      initRef.current = true;
-      audioRef.current = new Audio(`${import.meta.env.BASE_URL}music/ambient.mp3`);
-      audioRef.current.loop = true;
+    if (audioRef.current) {
       audioRef.current.volume = volume;
     }
+  }, [volume]);
+
+  useEffect(() => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -37,22 +47,16 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, []);
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
-
   const toggleMusic = useCallback(() => {
-    if (!audioRef.current) return;
+    const audio = getAudio();
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().catch(() => {});
+      audio.play().catch(() => {});
       setIsPlaying(true);
     }
-  }, [isPlaying]);
+  }, [getAudio, isPlaying]);
 
   const setVolume = useCallback((v: number) => {
     setVolumeState(v);

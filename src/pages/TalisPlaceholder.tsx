@@ -1,12 +1,46 @@
 import Layout from '@/components/Layout';
-import { homeTheme } from '@/types/theme';
+import HeroNav from '@/components/HeroNav';
+import type { ColorTheme } from '@/types/theme';
+
+/** Тёмно-оранжевая тема для Таллиса */
+const talisTheme: ColorTheme = {
+  name: 'talis',
+  void: '#0c0806',
+  raven: '#140e0a',
+  primary: '#6a4020',
+  primaryGlow: '#8a5030',
+  primaryBright: '#aa7040',
+  accent: '#c06020',
+  accentGlow: '#e08040',
+  silver: '#b0a090',
+  silverBright: '#d0c0b0',
+  parchment: '#c8b090',
+  parchmentDim: '#887060',
+  border: 'rgba(140, 100, 40, 0.25)',
+  borderGlow: 'rgba(200, 140, 50, 0.4)',
+  menuBg: 'rgba(12, 8, 6, 0.97)',
+  menuText: '#c8b090',
+  menuAccent: '#e08040',
+  buttonBg: 'rgba(20, 14, 10, 0.85)',
+  buttonText: '#e08040',
+  buttonBorder: 'rgba(200, 140, 50, 0.4)',
+  particleColors: ['#e08040', '#c06020', '#FF5E00'],
+  fontFamily: "'Cinzel', Georgia, serif",
+  borderStyle: 'linear-gradient(180deg, #6a4020 0%, transparent 15%, transparent 85%, #6a4020 100%)',
+  isDark: true,
+};
 
 const TalisPlaceholder = () => {
   return (
-    <Layout theme={homeTheme}>
+    <Layout theme={talisTheme}>
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-6">Личное умение Таллиса</h1>
-        <p>Страница в разработке. Скоро здесь появится описание способностей.</p>
+        <HeroNav theme={talisTheme} characterId="talis" />
+        <h1 className="text-4xl font-bold mb-6" style={{ fontFamily: "'Cinzel Decorative', serif", color: talisTheme.parchment }}>
+          Подкласс Таллиса
+        </h1>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", color: talisTheme.silver }}>
+          У Таллиса нет личного умения — только подкласс. Страница в разработке.
+        </p>
       </div>
     </Layout>
   );

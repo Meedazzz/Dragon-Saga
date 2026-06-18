@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+<<<<<<< HEAD
 import { useLocation } from 'react-router-dom';
 import { getCharacterIdByPath } from '@/data/characters';
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
 import type { ColorTheme } from '@/types/theme';
 
 interface LoadingScreenProps {
@@ -9,6 +12,7 @@ interface LoadingScreenProps {
   isLoading: boolean;
 }
 
+<<<<<<< HEAD
 interface ConstellationNode {
   x: number; // percentage 0 to 100
   y: number; // percentage 0 to 100
@@ -384,6 +388,8 @@ const ConstellationCanvas: React.FC<{ characterId: string; isCrumbling: boolean 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-10" />;
 };
 
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
 /* ── Дракон-уроборос (SVG) ── */
 const OuroborosDragon: React.FC<{ color: string; glowColor: string }> = ({ color, glowColor }) => (
   <svg
@@ -530,7 +536,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
           }
           return prev + Math.random() * 25 + 15;
         });
+<<<<<<< HEAD
       }, 50);
+=======
+      }, 60);
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
       return () => clearInterval(interval);
     }
   }, [isLoading]);
@@ -548,6 +558,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
           className="fixed inset-0 mountaineer z-[9999] flex flex-col items-center justify-center overflow-hidden"
           style={{ background: theme.void }}
         >
+<<<<<<< HEAD
           {activeConstellation ? (
             /* ── CHARACTER CONSTELLATION LOADER ── */
             <div className="relative w-full h-full flex flex-col items-center justify-center">
@@ -579,6 +590,22 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
                 >
                   {activeConstellation.subtitle}
                 </div>
+=======
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col items-center gap-8"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+              style={{ filter: `drop-shadow(0 0 12px ${theme.primaryGlow}80)` }}
+            >
+              <OuroborosDragon color={theme.primaryGlow} glowColor={theme.parchment ?? '#fff'} />
+            </motion.div>
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
 
                 <div
                   className="mt-6 text-sm italic opacity-60 flex items-center justify-center gap-2"

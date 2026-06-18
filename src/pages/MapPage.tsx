@@ -48,6 +48,7 @@ const MapPage: React.FC = () => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+<<<<<<< HEAD
   /* Clamping function to restrict panning bounds within image borders */
   const clampPosition = useCallback((x: number, y: number, s: number) => {
     if (!containerRef.current) return { x, y };
@@ -96,6 +97,8 @@ const MapPage: React.FC = () => {
     setPos((prev) => clampPosition(prev.x, prev.y, scale));
   }, [scale, clampPosition]);
 
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
   /* ── Колёсико мыши — только зум (отдаление на 1x возвращает в центр) ── */
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
@@ -134,8 +137,16 @@ const MapPage: React.FC = () => {
     if (!dragRef.current.isDragging) return;
     const dx = e.clientX - dragRef.current.startX;
     const dy = e.clientY - dragRef.current.startY;
+<<<<<<< HEAD
     setPos(clampPosition(dragRef.current.originX + dx, dragRef.current.originY + dy, scale));
   }, [scale, clampPosition]);
+=======
+    setPos({
+      x: dragRef.current.originX + dx,
+      y: dragRef.current.originY + dy,
+    });
+  }, []);
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
 
   const handleMouseUp = useCallback(() => {
     dragRef.current.isDragging = false;
@@ -178,18 +189,31 @@ const MapPage: React.FC = () => {
       setScale(newScale);
       if (newScale <= 1) {
         setPos({ x: 0, y: 0 });
+<<<<<<< HEAD
       } else {
         setPos((prev) => clampPosition(prev.x, prev.y, newScale));
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
       }
     } else if (dragRef.current.isDragging && e.touches.length === 1) {
       if (scale > 1 || isFullscreen) {
         e.preventDefault();
         const dx = e.touches[0].clientX - dragRef.current.startX;
         const dy = e.touches[0].clientY - dragRef.current.startY;
+<<<<<<< HEAD
         setPos(clampPosition(dragRef.current.originX + dx, dragRef.current.originY + dy, scale));
       }
     }
   }, [scale, isFullscreen, clampPosition]);
+=======
+        setPos({
+          x: dragRef.current.originX + dx,
+          y: dragRef.current.originY + dy,
+        });
+      }
+    }
+  }, [scale, isFullscreen]);
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
 
   const handleTouchEnd = useCallback(() => {
     dragRef.current.isDragging = false;

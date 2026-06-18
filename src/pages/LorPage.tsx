@@ -223,6 +223,7 @@ const LorPage: React.FC = () => {
                 {items.map((item, idx) => {
                   const char = cat === 'characters' ? characters.find(c => c.id === item.id) : null;
                   return (
+<<<<<<< HEAD
                     <motion.a
                       key={item.path}
                       href={item.path}
@@ -236,11 +237,23 @@ const LorPage: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + idx * 0.05 }}
                       className="rounded-md p-4 md:p-5 relative overflow-hidden cursor-pointer transition-all duration-300 block text-left"
+=======
+                    <motion.div
+                      key={item.path}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + idx * 0.05 }}
+                      onClick={() => navigate(item.path)}
+                      className="rounded-md p-4 md:p-5 relative overflow-hidden cursor-pointer transition-all duration-300"
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                       style={{
                         background: 'linear-gradient(180deg, rgba(20,15,10,0.5) 0%, rgba(10,8,5,0.3) 100%)',
                         border: char ? `1px solid ${char.color}30` : '1px solid rgba(138,106,42,0.2)',
                         borderTop: char ? `2px solid ${char.color}` : undefined,
+<<<<<<< HEAD
                         textDecoration: 'none',
+=======
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                       }}
                       whileHover={{
                         borderColor: char ? `${char.color}60` : 'rgba(184,144,58,0.3)',
@@ -278,7 +291,11 @@ const LorPage: React.FC = () => {
                       >
                         {item.desc}
                       </div>
+<<<<<<< HEAD
                     </motion.a>
+=======
+                    </motion.div>
+>>>>>>> 331457cf42b0a5d86344547033c6aad467c70e79
                   );
                 })}
               </div>
