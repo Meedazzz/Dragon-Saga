@@ -1,15 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
-import HeroNav from '@/components/HeroNav';
 import { brinTheme } from '@/types/theme';
 
 const BrinPage: React.FC = () => {
   return (
     <Layout theme={brinTheme} particleVariant="mixed" particleCount={34}>
       <div className="max-w-[900px] mx-auto px-6 md:px-10 pb-20 pt-16">
-        <HeroNav theme={brinTheme} characterId="brin" />
-
         {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: 20 }}

@@ -16,7 +16,7 @@ const MusicButton: React.FC<MusicButtonProps> = ({ theme }) => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={toggleMusic}
-      className="fixed bottom-5 right-5 z-[600] w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 custom-tooltip"
+      className="fixed bottom-5 right-5 z-[600] w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300"
       style={{
         background: theme.buttonBg,
         border: `1px solid ${theme.buttonBorder}`,
@@ -24,7 +24,6 @@ const MusicButton: React.FC<MusicButtonProps> = ({ theme }) => {
         backdropFilter: 'blur(10px)',
         boxShadow: isPlaying ? `0 0 15px ${theme.primaryGlow}40` : 'none',
       }}
-      data-tooltip={isPlaying ? 'Выключить музыку' : 'Включить музыку'}
       title={isPlaying ? 'Выключить музыку' : 'Включить музыку'}
     >
       {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}

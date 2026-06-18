@@ -219,16 +219,6 @@ export const getThemeByPath = (pathname: string): ColorTheme => {
   if (pathname.includes('sakris')) return sakrisTheme;
   if (pathname.includes('brin')) return brinTheme;
   if (pathname.includes('darkbain')) return darkbainTheme;
-  if (pathname.includes('hessen')) return brinTheme;
-  if (pathname.includes('berghheim')) return sakrisTheme;
-  if (pathname.includes('arantir')) return homeTheme; // Will be overridden by ArantirPage's own theme
-  if (pathname.includes('stive')) return homeTheme;
-  if (pathname.includes('talis')) return homeTheme; // Will be overridden by TalisPlaceholder's own theme
-  if (pathname.includes('subclass')) {
-    // Subclass page handles theme internally via characterId
-    return homeTheme;
-  }
-  if (pathname.includes('map')) return lorTheme;
   if (pathname.includes('letopis')) return letopisTheme;
   if (pathname.includes('lor')) return lorTheme;
   return homeTheme;

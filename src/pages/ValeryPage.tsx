@@ -1,15 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
-import HeroNav from '@/components/HeroNav';
 import { valeryTheme } from '@/types/theme';
 
 const ValeryPage: React.FC = () => {
   return (
     <Layout theme={valeryTheme} particleVariant="default" particleCount={30}>
       <div className="max-w-[900px] mx-auto px-6 md:px-10 pb-20 pt-16">
-        <HeroNav theme={valeryTheme} characterId="valery" />
-
         {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: 20 }}

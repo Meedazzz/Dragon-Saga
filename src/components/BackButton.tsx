@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BackButtonProps {
   theme: ColorTheme;
@@ -11,10 +10,6 @@ interface BackButtonProps {
 
 const BackButton: React.FC<BackButtonProps> = ({ theme }) => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
-
-  // В мобильной версии убираем кнопку назад, в версии на компе — оставляем
-  if (isMobile) return null;
 
   return (
     <motion.button

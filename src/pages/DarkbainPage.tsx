@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
-import HeroNav from '@/components/HeroNav';
 import { darkbainTheme } from '@/types/theme';
 
 const DarkbainPage: React.FC = () => {
@@ -80,10 +79,6 @@ const DarkbainPage: React.FC = () => {
           boxShadow: `0 0 80px rgba(0,0,0,0.95), inset 0 0 120px rgba(0,0,0,0.6), 0 0 40px rgba(74,63,42,0.1)`,
         }}
       >
-        {/* HeroNav at the very top */}
-        <div className="pt-4">
-          <HeroNav theme={darkbainTheme} characterId="valery" />
-        </div>
         {/* Inner Border */}
         <div
           className="absolute top-3 left-3 right-3 bottom-3 pointer-events-none z-10"
@@ -129,9 +124,9 @@ const DarkbainPage: React.FC = () => {
             </div>
           ))}
 
-          {/* Crest — текущее изображение tarot_darkbain.png квадратное 1024×1024, поэтому место под него тоже квадратное */}
+          {/* Crest */}
           <div
-            className="w-56 h-56 md:w-72 md:h-72 mx-auto mb-8 flex items-center justify-center relative overflow-hidden"
+            className="w-44 h-72 md:w-56 md:h-80 mx-auto mb-8 flex items-center justify-center relative overflow-hidden"
             style={{
               border: `3px solid ${darkbainTheme.primaryGlow}`,
               background: darkbainTheme.void,
@@ -141,8 +136,7 @@ const DarkbainPage: React.FC = () => {
             <img
               src="tarot_darkbain.png"
               alt="Герб рода Даркбейн"
-              className="w-full h-full object-cover opacity-90 scale-[1.02]"
-              draggable={false}
+              className="opacity-85"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
               }}
@@ -609,7 +603,7 @@ const DarkbainPage: React.FC = () => {
             }}
           >
             <div
-              className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-6 flex items-center justify-center opacity-75 overflow-hidden"
+              className="w-32 h-44 md:w-36 md:h-48 mx-auto mb-6 flex items-center justify-center opacity-70 overflow-hidden"
               style={{
                 border: `2px solid ${darkbainTheme.primaryGlow}`,
                 background: darkbainTheme.void,
@@ -619,8 +613,7 @@ const DarkbainPage: React.FC = () => {
               <img
                 src="tarot_darkbain.png"
                 alt="Знак семьи"
-                className="w-full h-full object-cover opacity-70 scale-[1.02]"
-                draggable={false}
+                className="opacity-60"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             </div>
