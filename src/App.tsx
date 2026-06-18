@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { MusicProvider } from '@/contexts/MusicContext';
 import LoadingScreen from '@/components/LoadingScreen';
