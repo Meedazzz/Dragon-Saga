@@ -25,12 +25,10 @@ const MapPage: React.FC = () => {
   const isMobile = useIsMobile();
   const mapData = mapId ? mapsData[mapId] : undefined;
 
-  /* ── Состояние интерактивной карты ── */
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Ссылки для перетаскивания (мышь)
   const dragRef = useRef<{
     isDragging: boolean;
     startX: number;
@@ -39,7 +37,6 @@ const MapPage: React.FC = () => {
     originY: number;
   }>({ isDragging: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
-  // Ссылки для touch-событий (пинч-зум и тач-пан)
   const pinchRef = useRef<{
     isPinching: boolean;
     startDist: number;
@@ -48,7 +45,6 @@ const MapPage: React.FC = () => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /* ── Колёсико мыши — только зум (отдаление на 1x возвращает в центр) ── */
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     setScale((prev) => {
@@ -61,7 +57,6 @@ const MapPage: React.FC = () => {
     });
   }, []);
 
-  /* Подключаем нативный wheel-listener с { passive: false } */
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -69,9 +64,8 @@ const MapPage: React.FC = () => {
     return () => el.removeEventListener('wheel', handleWheel);
   }, [handleWheel, isFullscreen]);
 
-  /* ── Управление мышью (Только ЛКМ для перемещения) ── */
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Только ЛКМ
+    if (e.button !== 0) return;
     e.preventDefault();
     dragRef.current = {
       isDragging: true,
@@ -96,11 +90,9 @@ const MapPage: React.FC = () => {
     dragRef.current.isDragging = false;
   }, []);
 
-  /* ── Управление Touch (мобильная браузерная версия) ── */
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 1) {
-      // Одиночное касание — перетаскивание карты
-      if (scale <= 1 && !isFullscreen) return; // Разрешаем скролл страницы, если не приближено
+      if (scale <= 1 && !isFullscreen) return;
       dragRef.current = {
         isDragging: true,
         startX: e.touches[0].clientX,
@@ -109,7 +101,6 @@ const MapPage: React.FC = () => {
         originY: pos.y,
       };
     } else if (e.touches.length === 2) {
-      // Два касания — пинч-зум
       e.preventDefault();
       dragRef.current.isDragging = false;
       const t1 = e.touches[0];
@@ -152,7 +143,6 @@ const MapPage: React.FC = () => {
     pinchRef.current.isPinching = false;
   }, []);
 
-  /* ── Функции тулбара ── */
   const resetMap = useCallback(() => {
     setScale(1);
     setPos({ x: 0, y: 0 });
@@ -173,7 +163,6 @@ const MapPage: React.FC = () => {
     });
   }, []);
 
-  // Блокируем скролл тела страницы в полноэкранном режиме
   useEffect(() => {
     if (isFullscreen) {
       document.body.style.overflow = 'hidden';
@@ -215,7 +204,6 @@ const MapPage: React.FC = () => {
   return (
     <Layout theme={lorTheme} particleCount={15} overlayMode={isFullscreen}>
       <div className={isFullscreen ? 'p-0' : 'max-w-[1200px] mx-auto px-4 md:px-8 pb-20 pt-16'}>
-        {/* Header (только если не в полноэкранном режиме) */}
         {!isFullscreen && (
           <motion.header
             initial={{ opacity: 0, y: 20 }}
@@ -256,7 +244,6 @@ const MapPage: React.FC = () => {
           </motion.header>
         )}
 
-        {/* Главный контейнер карты */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -279,7 +266,6 @@ const MapPage: React.FC = () => {
           onTouchEnd={handleTouchEnd}
           onContextMenu={(e) => e.preventDefault()}
         >
-          {/* Изображение карты */}
           <img
             src={mapData.image}
             alt={mapData.title}
@@ -304,7 +290,6 @@ const MapPage: React.FC = () => {
             }}
           />
 
-          {/* Плавающая панель управления (Тулбар) */}
           <div
             className="absolute bottom-4 right-4 z-30 flex items-center gap-1.5 bg-[#0c0a08]/92 p-2 rounded-xl border shadow-2xl backdrop-blur-md"
             style={{ borderColor: `${lorTheme.primary}60` }}
