@@ -176,7 +176,7 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const cardWidth = isMobile ? 95 : 206;
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = 1; // всегда раскрыт
-  const isFlipped = isHovered;
+  const isFlipped = false; // No rotation/flipping on hover on the main page!
 
   return (
     <motion.div
