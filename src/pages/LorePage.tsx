@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
 import HeroNav from '@/components/HeroNav';
 import { getThemeByPath } from '@/types/theme';
-import type { ColorTheme } from '@/types/theme';
-
 
 interface LoreData {
   name: string;
@@ -23,7 +20,7 @@ interface LoreData {
   themeColor: string;
 }
 
-const BASE = import.meta.env.BASE_URL;
+const BASE_URL = import.meta.env.BASE_URL;
 
 const loreDatabase: Record<string, LoreData> = {
   valery: {
@@ -46,7 +43,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Иногда его захлёстывает жажда боя, и он не различает друга и врага.',
     },
     motto: '«Нет добра или зла. Есть только жизнь и смерть. И я выбираю — жить, пока могу сражаться.»',
-    avatar: `${BASE}avatar_valery.png`,
+    avatar: `${BASE_URL}avatar_valery.png`,
     themeColor: '#3e8de0',
   },
   brin: {
@@ -69,7 +66,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Слишком полагается на разум и расчёт; в горячке боя теряет связь с эмоциями и близкими.',
     },
     motto: '«Лёд учит терпению. А терпение учит власти — над собой и над врагом.»',
-    avatar: `${BASE}avatar_brin.png`,
+    avatar: `${BASE_URL}avatar_brin.png`,
     themeColor: '#cc6ae8',
   },
   sakris: {
@@ -92,7 +89,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Слишком доверяет голосу духа и может пройти мимо живых, ради мёртвых.',
     },
     motto: '«Сакрис, я устал… Я так устал…»',
-    avatar: `${BASE}avatar_sakris.png`,
+    avatar: `${BASE_URL}avatar_sakris.png`,
     themeColor: '#35b85a',
   },
   stive: {
@@ -114,7 +111,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Часто уходит в мир природы и забывает о мирских делах — и о собственных друзьях.',
     },
     motto: '«Слушай. Деревья говорят тише, чем люди, но говорят правду.»',
-    avatar: `${BASE}avatar_stive.png`,
+    avatar: `${BASE_URL}avatar_stive.png`,
     themeColor: '#35b85a',
   },
   talis: {
@@ -136,41 +133,16 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Слишком любит славу и кубок; может забыть о деле ради хорошей истории.',
     },
     motto: '«Когда умолкнет последняя песня — умолкнет и мир. Пока я дышу — я пою.»',
-    avatar: `${BASE}avatar_tallis.png`,
+    avatar: `${BASE_URL}avatar_tallis.png`,
     themeColor: '#e44a5a',
   },
 };
-
-interface SectionHeaderProps {
-  icon: string;
-  title: string;
-  theme: ColorTheme;
-  accent: string;
-}
-
-const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, title, theme, accent }) => (
-  <div
-    className="flex items-center gap-3 my-8 pb-3"
-    style={{ borderBottom: `1px solid ${accent}44` }}
-  >
-    <span style={{ color: accent, fontSize: '1.35rem' }}>{icon}</span>
-    <h2
-      className="text-[18px] md:text-xl font-bold tracking-[3px] uppercase"
-      style={{
-        fontFamily: "'Cinzel Decorative', serif",
-        color: theme.silverBright,
-      }}
-    >
-      {title}
-    </h2>
-  </div>
-);
 
 const LorePage: React.FC = () => {
   const { characterId } = useParams<{ characterId: string }>();
   const [lore, setLore] = useState<LoreData | null>(null);
 
-  const theme = useMemo<ColorTheme>(() => {
+  const theme = useMemo(() => {
     if (!characterId) return getThemeByPath('/');
     return getThemeByPath(`/${characterId}`);
   }, [characterId]);
@@ -185,27 +157,9 @@ const LorePage: React.FC = () => {
   if (!lore) {
     return (
       <Layout theme={theme}>
-        <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold tracking-[4px] mb-4"
-            style={{
-              fontFamily: "'Cinzel Decorative', serif",
-              color: theme.parchment,
-            }}
-          >
-            Персонаж не найден
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.15 }}
-            className="text-lg italic prose-readable"
-            style={{ color: theme.parchmentDim }}
-          >
-            По этому пути ещё не проложено летописи. Возможно, история ещё не написана.
-          </motion.p>
+        <div className="tome-page">
+          <h1 className="tome-title">Персонаж не найден</h1>
+          <p className="tome-lead">По этому пути ещё не проложено летописи. Возможно, история ещё не написана.</p>
         </div>
       </Layout>
     );
@@ -215,70 +169,60 @@ const LorePage: React.FC = () => {
 
   return (
     <Layout theme={theme}>
-      <div className="max-w-4xl mx-auto px-5 sm:px-6 py-12 prose-readable" style={{ color: theme.parchment }}>
-        <HeroNav theme={theme} characterId={characterId} />
+      <div className="tome-page">
+        <HeroNav theme={theme} />
 
-        <div className="flex flex-col md:flex-row gap-8 items-center mb-12">
-          <div
-            className="w-44 h-44 md:w-52 md:h-52 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
-            style={{
-              border: `2px solid ${accent}88`,
-              background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)`,
-              boxShadow: `0 0 34px ${accent}2a`,
-            }}
-          >
-            <img src={lore.avatar} alt={lore.name} className="w-full h-full object-cover" />
-          </div>
-          <div className="text-center md:text-left">
-            <h1
-              className="text-[32px] md:text-5xl font-bold tracking-[2.5px]"
-              style={{
-                fontFamily: "'Cinzel Decorative', serif",
-                color: theme.silverBright,
-                textShadow: `0 0 22px ${accent}33, 0 2px 8px rgba(0,0,0,0.9)`,
-              }}
-            >
-              {lore.name}
-            </h1>
-            <p className="text-[17px] md:text-xl italic mt-2" style={{ color: accent, fontFamily: "'Cormorant Garamond', serif" }}>
-              {lore.title}
-            </p>
-          </div>
+        <header className="lore-header">
+          <img
+            src={lore.avatar}
+            alt={lore.name}
+            className="lore-avatar"
+            loading="lazy"
+            decoding="async"
+          />
+          <h1 className="lore-title">{lore.name}</h1>
+          <p className="lore-subtitle">{lore.title}</p>
+        </header>
+
+        <div className="section-header">
+          <div className="section-title" style={{ color: theme.primaryBright }}>Биография</div>
+          <div className="section-line" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
         </div>
-
-        <SectionHeader icon="📜" title="Биография и путь" theme={theme} accent={accent} />
-        <div className="charge-box prose-readable" style={{ borderLeftColor: accent }}>
+        <div className="lore-bio prose-readable">
           {lore.bio.map((paragraph, idx) => (
-            <p key={idx} className="mb-3 last:mb-0 text-justify">{paragraph}</p>
+            <p key={idx}>{paragraph}</p>
           ))}
         </div>
 
-        <SectionHeader icon="⚔️" title="Ключевые свершения" theme={theme} accent={accent} />
-        <ul className="charge-list pl-1 mb-8">
+        <div className="section-header">
+          <div className="section-title" style={{ color: theme.primaryBright }}>Деяния</div>
+          <div className="section-line" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+        </div>
+        <div className="lore-deeds prose-readable">
           {lore.deeds.map((deed, idx) => (
-            <li key={idx} style={{ color: theme.silver } as any}>{deed}</li>
+            <p key={idx}>{deed}</p>
           ))}
-        </ul>
+        </div>
 
-        <SectionHeader icon="🌟" title="Личные особенности" theme={theme} accent={accent} />
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
+        <div className="section-header">
+          <div className="section-title" style={{ color: theme.primaryBright }}>Черты характера</div>
+          <div className="section-line" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+        </div>
+        <div className="lore-traits prose-readable">
           {([
             { key: 'character', label: 'Черта характера' },
             { key: 'ideal', label: 'Идеал' },
             { key: 'bond', label: 'Привязанность' },
             { key: 'flaw', label: 'Слабость' },
           ] as const).map(({ key, label }) => (
-            <div key={key} className="p-4 rounded-xl" style={{ background: `${accent}10`, borderLeft: `2px solid ${accent}` }}>
-              <strong style={{ color: accent, fontFamily: "'Cinzel', serif", fontSize: '0.82rem', letterSpacing: '1px' }}>{label}:</strong>{' '}
-              <span style={{ color: theme.silver }}>{lore.traits[key]}</span>
-            </div>
+            <p key={key}>
+              <strong>{label}:</strong> {lore.traits[key]}
+            </p>
           ))}
         </div>
 
-        <div className="quote-section my-12" style={{ borderColor: `${accent}55` } as any}>
-          <p style={{ fontFamily: "'Cinzel Decorative', serif", color: accent, letterSpacing: '1.8px', fontSize: '1.15rem' }}>
-            {lore.motto}
-          </p>
+        <div className="quote-section">
+          <div className="elven-quote">{lore.motto}</div>
         </div>
       </div>
     </Layout>

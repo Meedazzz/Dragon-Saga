@@ -41,23 +41,18 @@ const Particles: React.FC<ParticlesProps> = ({ theme, count = 30, variant = 'def
   }, [theme, count, variant]);
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
-    >
+    <div ref={containerRef} className="particles" aria-hidden="true">
       {particles.map((p, i) => (
-        <div
+        <span
           key={i}
-          className="absolute rounded-full"
+          className={`particle ${p.animType}`}
           style={{
             left: p.left,
+            animationDelay: p.delay,
+            animationDuration: p.duration,
+            background: p.color,
             width: `${p.size}px`,
             height: `${p.size}px`,
-            background: p.color,
-            boxShadow: `0 0 ${p.size * 3}px ${p.color}, 0 0 ${p.size * 6}px ${p.color}80`,
-            animation: `${p.animType} ${p.duration} infinite ease-in-out`,
-            animationDelay: p.delay,
-            opacity: 0,
           }}
         />
       ))}

@@ -33,34 +33,20 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [volume]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
+    if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
+  useEffect(() => () => {
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
   }, []);
 
   const toggleMusic = useCallback(() => {
     const audio = getAudio();
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      audio.play().catch(() => {});
-      setIsPlaying(true);
-    }
+    if (isPlaying) { audio.pause(); setIsPlaying(false); }
+    else { audio.play().catch(() => {}); setIsPlaying(true); }
   }, [getAudio, isPlaying]);
 
-  const setVolume = useCallback((v: number) => {
-    setVolumeState(v);
-  }, []);
+  const setVolume = useCallback((v: number) => { setVolumeState(v); }, []);
 
   return (
     <MusicContext.Provider value={{ isPlaying, toggleMusic, volume, setVolume }}>

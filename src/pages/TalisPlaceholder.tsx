@@ -2,7 +2,6 @@ import Layout from '@/components/Layout';
 import HeroNav from '@/components/HeroNav';
 import type { ColorTheme } from '@/types/theme';
 
-/** Тёмно-оранжевая тема для Таллиса */
 const talisTheme: ColorTheme = {
   name: 'talis',
   void: '#0c0806',
@@ -33,14 +32,12 @@ const talisTheme: ColorTheme = {
 const TalisPlaceholder = () => {
   return (
     <Layout theme={talisTheme}>
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <HeroNav theme={talisTheme} characterId="talis" />
-        <h1 className="text-4xl font-bold mb-6" style={{ fontFamily: "'Cinzel Decorative', serif", color: talisTheme.parchment }}>
-          Подкласс Таллиса
-        </h1>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", color: talisTheme.silver }}>
-          У Таллиса нет личного умения — только подкласс. Страница в разработке.
-        </p>
+      <div className="tome-page">
+        <HeroNav theme={talisTheme} />
+        <header className="tome-header">
+          <h1 className="tome-title">Подкласс Таллиса</h1>
+          <p className="tome-lead">У Таллиса нет личного умения — только подкласс. Страница в разработке.</p>
+        </header>
       </div>
     </Layout>
   );

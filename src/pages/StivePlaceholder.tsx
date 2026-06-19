@@ -5,14 +5,12 @@ import { homeTheme } from '@/types/theme';
 const StivePlaceholder = () => {
   return (
     <Layout theme={homeTheme}>
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <HeroNav theme={homeTheme} characterId="stive" />
-        <h1 className="text-4xl font-bold mb-6" style={{ fontFamily: "'Cinzel Decorative', serif", color: homeTheme.parchment }}>
-          Личное умение Стива
-        </h1>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.silver }}>
-          Страница в разработке. Скоро здесь появится описание способностей.
-        </p>
+      <div className="tome-page">
+        <HeroNav theme={homeTheme} />
+        <header className="tome-header">
+          <h1 className="tome-title">Личное умение Стива</h1>
+          <p className="tome-lead">Страница в разработке. Скоро здесь появится описание способностей.</p>
+        </header>
       </div>
     </Layout>
   );

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import SideMenu from './SideMenu';
 import MusicButton from './MusicButton';
 import BackButton from './BackButton';
-import LoadingScreen from './LoadingScreen';
+import Preloader from './Preloader';
 import Particles from './Particles';
 import { getThemeByPath } from '@/types/theme';
 import type { ColorTheme } from '@/types/theme';
@@ -33,9 +33,10 @@ const Layout: React.FC<LayoutProps> = ({
 
   useEffect(() => {
     setIsLoading(true);
+    // Wait long enough for the lazy-loaded page chunk to mount.
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, isMobile ? 100 : 300);
+    }, isMobile ? 500 : 600);
     return () => clearTimeout(timer);
   }, [location.pathname, isMobile]);
 
@@ -46,37 +47,25 @@ const Layout: React.FC<LayoutProps> = ({
   }, [theme]);
 
   return (
-    <div
-      className="tome-container"
-      style={{
-        background: theme.void,
-        color: theme.silver,
-        fontFamily: theme.fontFamily,
-        minHeight: '100vh',
-      }}
-    >
-      {/* Page Border */}
+    <div className="tome-container" style={{ background: theme.void }}>
       {theme.borderStyle !== 'none' && (
         <div
-          className="fixed inset-0 pointer-events-none z-[100]"
-          style={{
-            border: '2px solid transparent',
-            borderImage: theme.borderStyle,
-            borderImageSlice: '1',
-            boxShadow: `inset 0 0 60px rgba(0,0,0,${theme.isDark ? '0.6' : '0.2'})`,
-          }}
+          className="page-border"
+          style={{ background: theme.borderStyle }}
+          aria-hidden="true"
         />
       )}
 
-      {!isMobile && <Particles theme={theme} count={particleCount} variant={particleVariant} />}
+      {/* SideMenu is mounted here — it uses position:fixed internally (req #1) */}
       <SideMenu theme={theme} />
-      <MusicButton theme={theme} />
-      {showBack && !overlayMode && <BackButton theme={theme} />}
-      <LoadingScreen theme={theme} isLoading={isLoading} />
 
-      <div className="relative z-[1]">
-        {children}
-      </div>
+      {!isMobile && <Particles theme={theme} count={particleCount} variant={particleVariant} />}
+      {showBack && !overlayMode && <BackButton theme={theme} />}
+
+      {children}
+
+      <Preloader theme={theme} isLoading={isLoading} />
+      <MusicButton theme={theme} />
     </div>
   );
 };
