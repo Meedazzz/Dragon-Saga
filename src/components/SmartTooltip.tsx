@@ -6,7 +6,6 @@ interface SmartTooltipProps {
   children: React.ReactNode
   side?: "top" | "right" | "bottom" | "left"
   align?: "start" | "center" | "end"
-  disableHoverableContent?: boolean
 }
 
 export function SmartTooltip({ 
@@ -14,7 +13,6 @@ export function SmartTooltip({
   children, 
   side,
   align = "center",
-  disableHoverableContent = true,
 }: SmartTooltipProps) {
   const [open, setOpen] = React.useState(false)
   const triggerRef = React.useRef<HTMLDivElement>(null)
