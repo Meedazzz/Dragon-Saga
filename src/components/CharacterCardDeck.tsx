@@ -632,18 +632,6 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
   // Determine active side based on rotY angle
   const isBackSideActive = Math.cos((rotY * Math.PI) / 180) < 0;
 
-  const pageIcons: Record<string, string> = {
-    'Летопись': '📜',
-    'Биография': '👤',
-    'Способности': '⚡',
-    'История': '🏛️',
-    'Оружие': '🗡️',
-    'Магия': '🔮',
-    'Путь': '🗺️',
-    'Подкласс': '🛡️',
-    'Личное умение': '✨',
-  };
-
   return (
     <motion.div
       className="fixed inset-0 z-[650] flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
@@ -715,7 +703,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
                 transformStyle: 'preserve-3d',
-                transform: 'rotateY(180deg) translateZ(1px)',
+                transform: 'translateZ(-1px)',
               }}
             >
               <CardBack char={char} />
@@ -775,7 +763,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
               boxShadow: `0 0 15px ${char.color}50`,
             }}
           >
-            📜 Читать лор →
+            Читать лор →
           </a>
         </div>
 
@@ -803,7 +791,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
                 textDecoration: 'none',
               }}
             >
-              {pageIcons[page.label] || '📄'} {page.label}
+              {page.label}
             </a>
           ))}
         </div>
@@ -821,6 +809,22 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
   const isMobile = useIsMobile();
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
   const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
+  const [deckHint, setDeckHint] = useState("✦ Нажми на карту, чтобы услышать её шёпот ✦");
+
+  useEffect(() => {
+    const hints = [
+      "✦ Нажми на карту, чтобы узреть судьбу героя ✦",
+      "✦ Коснись меня, чтобы открыть летопись ✦",
+      "✦ Разверни судьбу — выбери свою карту ✦",
+      "✦ Карты Таро ждут твоего прикосновения ✦"
+    ];
+    let idx = 0;
+    const interval = setInterval(() => {
+      idx = (idx + 1) % hints.length;
+      setDeckHint(hints[idx]);
+    }, 6000); // alternate every 6 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     onExpandedChange?.(expanded);
@@ -834,6 +838,19 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
   return (
     <div className="relative min-h-[280px] md:min-h-[620px]">
       <div className="flex min-h-[240px] flex-col items-center justify-center overflow-visible py-3 md:min-h-[560px] md:py-6">
+        
+        {/* Pulsing mystical deck hint bubble */}
+        <motion.div
+          key={deckHint}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: [0.4, 1, 0.4], y: 0 }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="text-xs uppercase tracking-[3px] text-center mb-6 font-bold"
+          style={{ color: homeTheme.parchmentDim, fontFamily: "'Cinzel', serif" }}
+        >
+          {deckHint}
+        </motion.div>
+
         {isMobile ? (
           <MobileDeck onOpen={openCard} />
         ) : (
@@ -859,7 +876,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
             className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5 cursor-pointer"
             style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.72)', border: `1px solid ${homeTheme.primary}55`, color: homeTheme.parchment }}
           >
-            📖 Открыть летопись мира
+            Открыть летопись мира
           </button>
         </div>
       </div>

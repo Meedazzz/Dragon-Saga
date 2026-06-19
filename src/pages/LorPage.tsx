@@ -214,7 +214,6 @@ const LorPage: React.FC = () => {
               className="mb-8"
             >
               <div className="section-header !mt-1 !mb-3" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
-                <span className="section-icon">{items[0].icon}</span>
                 <h2 className="section-title">{categoryLabels[cat]}</h2>
                 <div className="section-line" />
               </div>

@@ -471,6 +471,11 @@ button:not(:disabled):active, a:not(.no-glow):active, [role="button"]:active {
   transform: scale(0.97);
 }
 
+/* Unify the look and feel by hiding all section icons globally (except contacts) */
+.section-icon {
+  display: none !important;
+}
+
 /* Beautiful magical swaying / floating effect for hovered tarot cards */
 @keyframes card-sway {
   0% { transform: translateY(0) rotate(0deg); }
