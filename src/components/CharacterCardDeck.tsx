@@ -4,6 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { characters, type CharacterConfig } from '@/data/characters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { homeTheme } from '@/types/theme';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from '@/components/ui/carousel';
 
 type TiltState = {
   rotateX: number;
@@ -15,10 +21,9 @@ type TiltState = {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-function useCardTilt(maxTilt = 10) {
+function useCardTilt(maxTilt = 9) {
   const ref = useRef<HTMLDivElement | null>(null);
   const frame = useRef<number | null>(null);
-  const [gyroEnabled, setGyroEnabled] = useState(false);
   const [tilt, setTilt] = useState<TiltState>({
     rotateX: 0,
     rotateY: 0,
@@ -49,49 +54,9 @@ function useCardTilt(maxTilt = 10) {
       rotateY: (x - 0.5) * maxTilt * 2,
       glareX: x * 100,
       glareY: y * 100,
-      glareOpacity: 0.28,
+      glareOpacity: 0.24,
     });
   };
-
-  const enableGyro = async () => {
-    if (typeof window === 'undefined' || !('DeviceOrientationEvent' in window)) return;
-    type DeviceOrientationWithPermission = typeof DeviceOrientationEvent & {
-      requestPermission?: () => Promise<PermissionState>;
-    };
-    const orientationEvent = window.DeviceOrientationEvent as unknown as DeviceOrientationWithPermission;
-    try {
-      if (typeof orientationEvent.requestPermission === 'function') {
-        const permission = await orientationEvent.requestPermission();
-        if (permission !== 'granted') return;
-      }
-      setGyroEnabled(true);
-    } catch {
-      // ignore
-    }
-  };
-
-  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === 'touch' && maxTilt > 0) void enableGyro();
-  };
-
-  useEffect(() => {
-    if (!gyroEnabled || maxTilt === 0) return undefined;
-    const onOrientation = (event: DeviceOrientationEvent) => {
-      const beta = event.beta ?? 0;
-      const gamma = event.gamma ?? 0;
-      const rotateX = clamp((beta - 45) / 45, -1, 1) * maxTilt;
-      const rotateY = clamp(gamma / 35, -1, 1) * maxTilt;
-      scheduleTilt({
-        rotateX,
-        rotateY,
-        glareX: clamp(50 + rotateY * 2.2, 12, 88),
-        glareY: clamp(42 - rotateX * 2.2, 12, 88),
-        glareOpacity: 0.2,
-      });
-    };
-    window.addEventListener('deviceorientation', onOrientation, true);
-    return () => window.removeEventListener('deviceorientation', onOrientation, true);
-  }, [gyroEnabled, maxTilt]);
 
   useEffect(() => {
     return () => {
@@ -102,12 +67,9 @@ function useCardTilt(maxTilt = 10) {
   return {
     ref,
     tilt,
-    gyroEnabled,
-    enableGyro,
     tiltHandlers: {
       onPointerMove: handlePointerMove,
       onPointerLeave: resetTilt,
-      onPointerDown: handlePointerDown,
     },
   };
 }
@@ -140,144 +102,148 @@ const cardBios: Record<string, string[]> = {
   ],
 };
 
-// Увеличенный размах веера (коэффициент 1.4) для десктопа
+// desktop fan
 const desktopFan = [
-  { x: -340 * 1.4, y: 48, rotate: -24 },
-  { x: -170 * 1.4, y: 14, rotate: -12 },
+  { x: -340 * 1.4, y: 48, rotate: -22 },
+  { x: -170 * 1.4, y: 14, rotate: -10 },
   { x: 0, y: 0, rotate: 0 },
-  { x: 170 * 1.4, y: 14, rotate: 12 },
-  { x: 340 * 1.4, y: 48, rotate: 24 },
-];
-
-// Мобильный веер с меньшим размахом, чтобы влезало на экран
-const mobileFan = [
-  { x: -70, y: 24, rotate: -20 },
-  { x: -35, y: 8, rotate: -10 },
-  { x: 0, y: 0, rotate: 0 },
-  { x: 35, y: 8, rotate: 10 },
-  { x: 70, y: 24, rotate: 20 },
+  { x: 170 * 1.4, y: 14, rotate: 10 },
+  { x: 340 * 1.4, y: 48, rotate: 22 },
 ];
 
 interface FanCardProps {
   char: CharacterConfig;
   index: number;
-  isMobile: boolean;
-  onOpen: (char: CharacterConfig, flipped: boolean) => void;
+  onOpen: (char: CharacterConfig) => void;
 }
 
-const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
-  const { ref, tilt, gyroEnabled, tiltHandlers } = useCardTilt(isMobile ? 6 : 9);
+const FanCard: React.FC<FanCardProps> = ({ char, index, onOpen }) => {
+  const { ref, tilt, tiltHandlers } = useCardTilt(8);
   const [isHovered, setIsHovered] = useState(false);
-  const fan = isMobile ? mobileFan[index] : desktopFan[index];
-  // Для мобильных используем ширину 95, для десктопа 206
-  const cardWidth = isMobile ? 95 : 206;
+  const fan = desktopFan[index];
+  const cardWidth = 212;
   const cardHeight = Math.round(cardWidth * 1.79);
-  const spread = 1; // всегда раскрыт
-  const isFlipped = isHovered;
-  const revealAmount = isHovered ? 1 : 0;
 
   return (
     <motion.div
-      className="absolute left-1/2 top-1/2"
+      className="absolute left-1/2 top-1/2 tarot-no-glow"
       style={{
         width: cardWidth,
         height: cardHeight,
         marginLeft: -cardWidth / 2,
         marginTop: -cardHeight / 2,
         zIndex: isHovered ? 100 : 20 + index,
-        perspective: 1200,
+        perspective: 1400,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 80, scale: 0.88 }}
+      initial={{ opacity: 0, y: 70, scale: 0.9 }}
       animate={{
         opacity: 1,
-        x: fan.x * spread,
-        y: 34 - fan.y * spread,
-        rotateZ: fan.rotate * spread,
-        scale: isHovered ? 1.05 : (0.94 + spread * 0.06),
+        x: fan.x,
+        y: 30 - fan.y,
+        rotateZ: fan.rotate,
+        scale: isHovered ? 1.045 : 0.99,
       }}
-      transition={{ type: 'spring', stiffness: 120, damping: 19, mass: 0.8 }}
+      transition={{ type: 'spring', stiffness: 110, damping: 20, mass: 0.85 }}
     >
+      {/* slow wobble when hovered */}
+      <motion.div
+        animate={isHovered ? { rotateZ: [-0.8, 0.8, -0.8], y: [0, -3, 0] } : { rotateZ: 0, y: 0 }}
+        transition={isHovered ? { duration: 3.8, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.4 }}
+        className="w-full h-full"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
       <div
         ref={ref}
         {...tiltHandlers}
-        onClick={() => onOpen(char, isFlipped)}
-        className="group relative h-full w-full cursor-pointer select-none rounded-[14px]"
+        onClick={() => onOpen(char)}
+        className="group relative h-full w-full cursor-pointer select-none rounded-[16px] tarot-no-glow"
         style={{
           transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
           transformStyle: 'preserve-3d',
-          transition: tilt.glareOpacity === 0 ? 'transform 520ms cubic-bezier(.2,.8,.2,1)' : 'none',
-          filter: `drop-shadow(0 24px 30px rgba(0,0,0,${0.34 + revealAmount * 0.18}))`,
+          transition: tilt.glareOpacity === 0 ? 'transform 620ms cubic-bezier(.2,.8,.2,1)' : 'none',
+          filter: `drop-shadow(0 26px 34px rgba(0,0,0,0.46))`,
         }}
         aria-label={`Открыть карту ${char.name}`}
         role="button"
         tabIndex={0}
         onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') onOpen(char, isFlipped);
+          if (event.key === 'Enter' || event.key === ' ') onOpen(char);
         }}
       >
-        <motion.div
-          className="relative h-full w-full rounded-[14px]"
-          style={{ transformStyle: 'preserve-3d' }}
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ duration: 0.75, ease: [0.2, 0.8, 0.2, 1] }}
-        >
-          <CardFront char={char} isMobile={isMobile} />
-          <CardBack char={char} compact />
-        </motion.div>
-
         <div
-          className="pointer-events-none absolute inset-0 rounded-[14px] opacity-0 mix-blend-screen transition-opacity duration-300 group-hover:opacity-100"
+          className="relative h-full w-full rounded-[16px] overflow-hidden"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          <CardFront char={char} />
+        </div>
+
+        {/* hover glow - hide when actively tilting / flipping */}
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[16px] transition-opacity duration-300"
           style={{
-            opacity: tilt.glareOpacity,
-            background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.58), rgba(255,255,255,0.14) 22%, transparent 55%)`,
-            transform: 'translateZ(42px)',
+            opacity: isHovered ? 0 : tilt.glareOpacity,
+            background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.42), rgba(255,255,255,0.1) 24%, transparent 58%)`,
+            mixBlendMode: 'screen' as const,
           }}
         />
-
-        {isMobile && !gyroEnabled && index === 2 && (
-          <div
-            className="pointer-events-none absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] tracking-[1px] opacity-70"
-            style={{ fontFamily: "'Cinzel', serif", color: homeTheme.parchmentDim }}
-          >
-            коснитесь карты — включится mobile tilt
-          </div>
-        )}
+        {/* elegant edge glow */}
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[16px] transition-opacity duration-500"
+          style={{
+            opacity: isHovered ? 0.95 : 0.45,
+            boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.085), 0 0 28px ${char.color}22`,
+          }}
+        />
+      </div>
+      </motion.div>
+      {/* card label below */}
+      <div className="absolute -bottom-9 left-0 right-0 text-center pointer-events-none">
+        <span
+          style={{
+            fontFamily: "'Cinzel', serif",
+            color: isHovered ? '#fff' : homeTheme.parchmentDim,
+            fontSize: 11,
+            letterSpacing: 2,
+            textShadow: `0 0 12px ${char.color}55`,
+            transition: 'color .2s',
+          }}
+        >
+          ✦ {char.name} ✦
+        </span>
       </div>
     </motion.div>
   );
 };
 
 const CardFront: React.FC<{ char: CharacterConfig; isMobile?: boolean }> = ({ char, isMobile }) => {
-  // Для мобильных подгружаем оптимизированные изображения, если путь содержит '/optimized/'
   const imgSrc = isMobile ? char.tarot.replace('/optimized/', '/optimized/mobile/') : char.tarot;
   return (
     <div
-      className="absolute inset-0 overflow-hidden rounded-[14px]"
+      className="absolute inset-0 overflow-hidden rounded-[16px]"
       style={{
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden',
-        background: `linear-gradient(145deg, rgba(255,255,255,0.05), ${char.color}18 34%, rgba(8,6,5,0.96))`,
+        background: `linear-gradient(160deg, rgba(255,255,255,0.035), ${char.color}14 38%, rgba(7,6,10,0.98))`,
         border: `1px solid ${char.color}55`,
-        boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 28px rgba(0,0,0,0.38), 0 0 36px ${char.color}18`,
+        boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.065), inset 0 0 28px rgba(0,0,0,0.42)`,
       }}
     >
       <img
         src={imgSrc}
         alt={char.name}
         className="h-full w-full object-cover"
+        style={{ filter: 'none' }}
         loading={isMobile ? 'lazy' : 'eager'}
         decoding="async"
         draggable={false}
-        onError={(event) => {
-          (event.target as HTMLImageElement).style.display = 'none';
-        }}
       />
+      {/* very light sheen, no darkening */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: 'linear-gradient(110deg, rgba(255,255,255,0.2), transparent 26%, transparent 70%, rgba(255,255,255,0.09))',
+          background: 'linear-gradient(110deg, rgba(255,255,255,0.10), transparent 28%, transparent 68%, rgba(255,255,255,0.055))',
         }}
       />
     </div>
@@ -286,19 +252,19 @@ const CardFront: React.FC<{ char: CharacterConfig; isMobile?: boolean }> = ({ ch
 
 const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char, compact = false }) => (
   <div
-    className={`absolute inset-0 flex flex-col items-center justify-center rounded-[14px] text-center ${compact ? 'p-4' : 'p-7'}`}
+    className={`absolute inset-0 flex flex-col items-center justify-center rounded-[16px] text-center ${compact ? 'p-4' : 'p-7'}`}
     style={{
       backfaceVisibility: 'hidden',
       WebkitBackfaceVisibility: 'hidden',
       transform: 'rotateY(180deg)',
-      background: `radial-gradient(circle at 50% 0%, ${char.color}38, transparent 42%), linear-gradient(155deg, rgba(8,7,6,0.98), rgba(20,15,10,0.98) 52%, ${char.color}22)`,
-      border: `1px solid ${char.color}70`,
-      boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 42px rgba(0,0,0,0.58), 0 0 36px ${char.color}18`,
+      background: `radial-gradient(circle at 50% 0%, ${char.color}2d, transparent 44%), linear-gradient(158deg, rgba(10,8,14,0.995), rgba(20,14,20,0.995) 52%, ${char.color}1a)`,
+      border: `1px solid ${char.color}66`,
+      boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 44px rgba(0,0,0,0.62), 0 0 34px ${char.color}18`,
     }}
   >
     <div
-      className={compact ? 'mb-3 text-[10px] uppercase tracking-[2px]' : 'mb-5 text-sm uppercase tracking-[3px]'}
-      style={{ fontFamily: "'Cinzel Decorative', serif", color: char.color, textShadow: `0 0 18px ${char.color}45` }}
+      className={compact ? 'mb-3 text-[11px] uppercase tracking-[2.4px]' : 'mb-5 text-sm uppercase tracking-[3px]'}
+      style={{ fontFamily: "'Cinzel Decorative', serif", color: char.color, textShadow: `0 0 18px ${char.color}55` }}
     >
       ✦ {char.name} ✦
     </div>
@@ -306,7 +272,7 @@ const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char
     {(cardBios[char.id] || []).map((line, idx) => (
       <p
         key={idx}
-        className={compact ? 'mb-2 text-[10px] leading-[1.35] last:mb-0' : 'mb-3 text-[15px] leading-relaxed last:mb-0'}
+        className={compact ? 'mb-2 text-[11.5px] leading-[1.45] last:mb-0' : 'mb-3 text-[15.5px] leading-relaxed last:mb-0'}
         style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}
       >
         {line}
@@ -314,83 +280,131 @@ const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char
     ))}
 
     <div
-      className={compact ? 'mt-3 text-[9px] italic tracking-[1px]' : 'mt-5 text-xs italic tracking-[1px]'}
+      className={compact ? 'mt-3 text-[9.5px] italic tracking-[1.2px]' : 'mt-5 text-xs italic tracking-[1px]'}
       style={{ color: homeTheme.parchmentDim }}
     >
-      {compact ? 'Клик — раскрыть карту' : 'Поверните или откройте летопись героя'}
+      Клик — раскрыть карту
     </div>
   </div>
 );
 
-/* ── Мобильные карточки (статичная сетка, без 3D-веера) ── */
-interface MobileCardProps {
+/* ── Mobile carousel ── */
+const MobileCarouselCard: React.FC<{
   char: CharacterConfig;
-  index: number;
-  onOpen: (char: CharacterConfig, flipped: boolean) => void;
-}
+  isActive: boolean;
+  onOpen: (char: CharacterConfig) => void;
+}> = ({ char, isActive, onOpen }) => {
+  const startPos = useRef<{x:number;y:number;t:number}|null>(null);
+  const [pressed, setPressed] = useState(false);
 
-const MobileCard: React.FC<MobileCardProps> = ({ char, index, onOpen }) => {
+  const handlePointerDown = (e: React.PointerEvent) => {
+    startPos.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+    setPressed(true);
+  };
+  const handlePointerUp = (e: React.PointerEvent) => {
+    setPressed(false);
+    if (!startPos.current) return;
+    const dx = e.clientX - startPos.current.x;
+    const dy = e.clientY - startPos.current.y;
+    const dt = Date.now() - startPos.current.t;
+    const dist = Math.hypot(dx, dy);
+    startPos.current = null;
+    if (dist < 10 && dt < 350) {
+      e.stopPropagation();
+      onOpen(char);
+    }
+  };
+  const handlePointerCancel = () => { setPressed(false); startPos.current = null; };
+
   return (
-    <motion.div
-      className="relative cursor-pointer select-none overflow-hidden rounded-[10px]"
+    <div
+      className="relative select-none rounded-[14px] overflow-hidden tarot-no-glow cursor-pointer transition-transform duration-200"
       style={{
-        background: `linear-gradient(145deg, rgba(255,255,255,0.05), ${char.color}18 34%, rgba(8,6,5,0.96))`,
+        background: `linear-gradient(155deg, rgba(255,255,255,0.03), ${char.color}16 40%, rgba(9,6,12,0.98))`,
         border: `1px solid ${char.color}55`,
-        boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 28px ${char.color}18`,
+        boxShadow: isActive
+          ? `0 20px 44px rgba(0,0,0,0.55), 0 0 28px ${char.color}2a`
+          : `0 10px 22px rgba(0,0,0,0.42), 0 0 16px ${char.color}16`,
+        transform: pressed ? 'scale(0.985)' : 'scale(1)',
+        aspectRatio: '768 / 1376',
       }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => onOpen(char, false)}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onPointerLeave={handlePointerCancel}
+      role="button"
+      aria-label={`Открыть карту ${char.name}`}
+      tabIndex={0}
     >
-      <div className="relative w-full" style={{ aspectRatio: '768 / 1376' }}>
-        <img
-          src={char.tarot.replace('/optimized/', '/optimized/mobile/')}
-          alt={char.name}
-          className="h-full w-full object-cover"
-          loading={index < 2 ? 'eager' : 'lazy'}
-          decoding="async"
-          draggable={false}
-        />
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background: 'linear-gradient(110deg, rgba(255,255,255,0.2), transparent 26%, transparent 70%, rgba(255,255,255,0.09))',
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-0 right-0 p-1.5 text-center"
-          style={{
-            background: 'linear-gradient(transparent, rgba(0,0,0,0.85))',
-          }}
-        >
-          <span
-            className="text-[8px] uppercase tracking-[1.5px]"
-            style={{ fontFamily: "'Cinzel', serif", color: char.color, textShadow: `0 0 8px ${char.color}80` }}
-          >
-            {char.name}
-          </span>
+      <img
+        src={char.tarot.replace('/optimized/', '/optimized/mobile/')}
+        alt={char.name}
+        className="w-full h-full object-cover pointer-events-none"
+        draggable={false}
+        loading="eager"
+      />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.62) 0%, transparent 38%, rgba(255,255,255,0.06) 100%)' }} />
+      <div className="absolute bottom-0 left-0 right-0 text-center pb-3 pt-8" style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.78))' }}>
+        <div style={{ fontFamily: "'Cinzel Decorative', serif", color: '#fff', fontSize: 14, letterSpacing: 1.6, textShadow: `0 0 14px ${char.color}aa` }}>
+          {char.name}
+        </div>
+        <div style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchmentDim, fontSize: 11, fontStyle: 'italic', marginTop: 2 }}>
+          коснитесь, чтобы открыть
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
-interface MobileDeckProps {
-  onOpen: (char: CharacterConfig, flipped: boolean) => void;
-}
+const MobileDeck: React.FC<{ onOpen: (char: CharacterConfig) => void }> = ({ onOpen }) => {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
 
-const MobileDeck: React.FC<MobileDeckProps> = ({ onOpen }) => {
+  useEffect(() => {
+    if (!api) return;
+    const onSelect = () => setCurrent(api.selectedScrollSnap());
+    onSelect();
+    api.on('select', onSelect);
+    return () => { api.off('select', onSelect); };
+  }, [api]);
+
   return (
-    <div className="flex flex-col items-center gap-2 w-full max-w-[280px] mx-auto px-2">
-      <div className="grid grid-cols-2 gap-2 w-full">
-        {characters.slice(0, 4).map((char, index) => (
-          <MobileCard key={char.id} char={char} index={index} onOpen={onOpen} />
+    <div className="w-full max-w-[420px] mx-auto px-3">
+      <Carousel
+        opts={{ align: 'center', loop: true }}
+        setApi={setApi}
+        className="w-full"
+      >
+        <CarouselContent className="-ml-3">
+          {characters.map((char) => (
+            <CarouselItem key={char.id} className="pl-3 basis-[74%] sm:basis-[62%]">
+              <div className="py-4">
+                <MobileCarouselCard
+                  char={char}
+                  isActive={characters[current]?.id === char.id}
+                  onOpen={onOpen}
+                />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+      <div className="flex justify-center gap-2 mt-1">
+        {characters.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => api?.scrollTo(i)}
+            aria-label={`Слайд ${i+1}`}
+            className="h-1.5 rounded-full transition-all"
+            style={{
+              width: current === i ? 22 : 8,
+              background: current === i ? homeTheme.primaryGlow : 'rgba(255,255,255,0.22)',
+            }}
+          />
         ))}
       </div>
-      <div className="w-[36vw] max-w-[130px]">
-        <MobileCard key={characters[4].id} char={characters[4]} index={4} onOpen={onOpen} />
+      <div className="text-center mt-2 text-[11px] tracking-wider" style={{ color: homeTheme.parchmentDim, fontFamily: "'Cinzel', serif" }}>
+        свайп — листать · тап — открыть
       </div>
     </div>
   );
@@ -398,121 +412,95 @@ const MobileDeck: React.FC<MobileDeckProps> = ({ onOpen }) => {
 
 interface ExpandedCardOverlayProps {
   char: CharacterConfig | null;
-  initialFlipped: boolean;
   onClose: () => void;
 }
 
-const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initialFlipped, onClose }) => {
+const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, onClose }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  
-  // 3D rotation angles
   const [rotX, setRotX] = useState(0);
-  const [rotY, setRotY] = useState(initialFlipped ? 180 : 0);
+  const [rotY, setRotY] = useState(0); // always start with front
   const [rotZ, setRotZ] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
   const dragStart = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
   const scrollAccum = useRef(0);
   const cardWrapperRef = useRef<HTMLDivElement>(null);
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const justDragged = useRef(false);
+  const dragMoved = useRef(false);
 
-  // Mouse drag handler for free 3D rotation
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only Left Click
+    if (e.button !== 0) return;
     setIsDragging(true);
-    dragStart.current = {
-      x: e.clientX,
-      y: e.clientY,
-      rotX,
-      rotY,
-    };
+    dragMoved.current = false;
+    dragStart.current = { x: e.clientX, y: e.clientY, rotX, rotY };
     e.preventDefault();
+    e.stopPropagation();
+  };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0];
+    setIsDragging(true);
+    dragMoved.current = false;
+    dragStart.current = { x: t.clientX, y: t.clientY, rotX, rotY };
   };
 
-  // Drag listeners
   useEffect(() => {
     if (!isDragging) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const dx = e.clientX - dragStart.current.x;
-      const dy = e.clientY - dragStart.current.y;
-      
-      // Rotate around Y and X axes
-      const newRotY = dragStart.current.rotY + dx * 0.55;
-      const newRotX = dragStart.current.rotX - dy * 0.55;
-
-      setRotY(newRotY);
-      setRotX(newRotX);
+    const handleMove = (clientX: number, clientY: number) => {
+      const dx = clientX - dragStart.current.x;
+      const dy = clientY - dragStart.current.y;
+      if (Math.abs(dx) + Math.abs(dy) > 3) dragMoved.current = true;
+      setRotY(dragStart.current.rotY + dx * 0.5);
+      setRotX(dragStart.current.rotX - dy * 0.5);
     };
-
-    const handleMouseUp = () => {
+    const onMouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    };
+    const end = () => {
       setIsDragging(false);
+      if (dragMoved.current) {
+        justDragged.current = true;
+        setTimeout(() => { justDragged.current = false; }, 120);
+      }
     };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', end);
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', end);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', end);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', end);
     };
   }, [isDragging]);
 
-  // Mouse wheel roll (rotate around Z axis)
+  // wheel Z rotation
   useEffect(() => {
-    if (isMobile) return;
     const el = cardWrapperRef.current;
     if (!el) return;
-
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      e.stopPropagation();
-      scrollAccum.current += e.deltaY * 0.25;
+      scrollAccum.current += e.deltaY * 0.22;
       setRotZ(scrollAccum.current);
-
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      scrollTimeout.current = setTimeout(() => {
-        // When scrolling stops, if back side is facing user, snap Z to flat 0
-        const cosY = Math.cos((rotY * Math.PI) / 180);
-        if (cosY < 0) {
-          setRotZ((prev) => {
-            const snapped = Math.round(prev / 360) * 360;
-            scrollAccum.current = snapped;
-            return snapped;
-          });
-        }
-      }, 700);
     };
-
     el.addEventListener('wheel', onWheel, { passive: false });
-    return () => {
-      el.removeEventListener('wheel', onWheel);
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    };
-  }, [isMobile, rotY]);
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
 
-  // Snapping logic: runs on release (isDragging = false)
-  // Ensures readable orientation on the back side of the card (where text is)
+  // snap back side upright when releasing
   useEffect(() => {
     if (isDragging) return;
-
     const cosY = Math.cos((rotY * Math.PI) / 180);
     const isBackFacing = cosY < 0;
-
     if (isBackFacing) {
-      // Snapping rotation on release:
-      // rotY to nearest odd multiple of 180
       const snappedY = Math.round(rotY / 180) * 180;
       const isOdd = Math.round(snappedY / 180) % 2 !== 0;
       const finalY = isOdd ? snappedY : snappedY + 180;
-
-      // rotX (tilt) to 0 (flat)
-      const finalX = Math.round(rotX / 360) * 360;
-
-      // rotZ (roll) to nearest multiple of 360 (upright)
+      const finalX = 0;
       const finalZ = Math.round(rotZ / 360) * 360;
-
       setRotX(finalX);
       setRotY(finalY);
       setRotZ(finalZ);
@@ -520,123 +508,85 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
     }
   }, [isDragging, rotX, rotY, rotZ]);
 
-  // Sync scroll accumulator with Z rotation when modified via buttons
-  useEffect(() => {
-    scrollAccum.current = rotZ;
-  }, [rotZ]);
-
   if (!char) return null;
 
-  const goTo = (path: string) => {
-    onClose();
-    navigate(path);
-  };
-
-  // Intercept left clicks on child page buttons for standard SPA transition
+  const goTo = (path: string) => { onClose(); navigate(path); };
   const handleChildLinkClick = (e: React.MouseEvent, path: string) => {
     if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
-      e.preventDefault();
-      goTo(path);
+      e.preventDefault(); goTo(path);
     }
   };
-
-  const toggleFlip = () => {
-    setRotY((prev) => prev + 180);
-  };
-
-  const toggleRoll = () => {
-    setRotZ((prev) => prev + 180);
-  };
-
-  // Determine active side based on rotY angle
+  const toggleFlip = () => setRotY((prev) => prev + 180);
   const isBackSideActive = Math.cos((rotY * Math.PI) / 180) < 0;
 
-  const pageIcons: Record<string, string> = {
-    'Летопись': '📜',
-    'Биография': '👤',
-    'Способности': '⚡',
-    'История': '🏛️',
-    'Оружие': '🗡️',
-    'Магия': '🔮',
-    'Путь': '🗺️',
-    'Подкласс': '🛡️',
-    'Личное умение': '✨',
+  const tryClose = () => {
+    if (justDragged.current) return;
+    onClose();
   };
 
   return (
     <motion.div
-      className="fixed inset-0 z-[650] flex items-center justify-center bg-black/78 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-[650] flex items-center justify-center bg-black/82 p-4 backdrop-blur-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      onClick={onClose}
+      onMouseDown={(e) => { if (e.target === e.currentTarget) tryClose(); }}
     >
       <motion.div
         className="relative flex flex-col items-center justify-center max-h-[95vh] my-auto"
-        initial={{ opacity: 0, scale: 0.72, y: 32 }}
+        initial={{ opacity: 0, scale: 0.78, y: 28 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.72, y: 32 }}
-        transition={{ type: 'spring', damping: 22, stiffness: 190 }}
-        onClick={(event) => event.stopPropagation()}
-        style={{ perspective: 1400 }}
+        exit={{ opacity: 0, scale: 0.78, y: 28 }}
+        transition={{ type: 'spring', damping: 23, stiffness: 210 }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        style={{ perspective: 1500 }}
       >
         <button
           onClick={onClose}
-          className="absolute -right-2 -top-12 z-20 flex h-9 w-9 items-center justify-center rounded-full text-xl transition-transform hover:scale-110 cursor-pointer"
-          style={{ background: 'rgba(10,8,6,0.92)', border: `1px solid ${char.color}70`, color: homeTheme.parchment }}
+          className="absolute -right-2 -top-11 z-20 flex h-9 w-9 items-center justify-center rounded-full text-xl transition-transform hover:scale-110 cursor-pointer tarot-no-glow"
+          style={{ background: 'rgba(12,8,14,0.94)', border: `1px solid ${char.color}70`, color: homeTheme.parchment }}
           aria-label="Закрыть карту"
         >
           ×
         </button>
 
-        <div ref={cardWrapperRef} className="relative" style={{ perspective: 1400 }}>
+        <div ref={cardWrapperRef} className="relative" style={{ perspective: 1500 }}>
           <div
             onMouseDown={handleMouseDown}
-            className="relative rounded-[18px] select-none cursor-grab active:cursor-grabbing"
+            onTouchStart={handleTouchStart}
+            className="relative rounded-[18px] select-none cursor-grab active:cursor-grabbing tarot-no-glow"
             style={{
-              width: isMobile ? 'min(55vw, 190px)' : '360px',
+              width: isMobile ? 'min(58vw, 220px)' : '352px',
               aspectRatio: '768 / 1376',
               transform: `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`,
               transformStyle: 'preserve-3d',
-              transition: isDragging
-                ? 'none'
-                : 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)',
-              filter: `drop-shadow(0 34px 48px rgba(0,0,0,0.72))`,
+              transition: isDragging ? 'none' : 'transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1)',
+              filter: `drop-shadow(0 36px 52px rgba(0,0,0,0.74))`,
             }}
           >
-            {/* Front face */}
+            {/* Front */}
             <div
               className="absolute inset-0"
-              style={{
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                transformStyle: 'preserve-3d',
-                transform: 'translateZ(1px)',
-              }}
+              style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'translateZ(1px)' }}
             >
               <CardFront char={char} />
             </div>
-
-            {/* Back face */}
+            {/* Back */}
             <div
               className="absolute inset-0"
-              style={{
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                transformStyle: 'preserve-3d',
-                transform: 'rotateY(180deg) translateZ(1px)',
-              }}
+              style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg) translateZ(1px)' }}
             >
               <CardBack char={char} />
             </div>
 
-            {/* Glare effect */}
+            {/* glow - hide while actively rotating */}
             <div
-              className="pointer-events-none absolute inset-0 rounded-[18px] mix-blend-screen"
+              className="pointer-events-none absolute inset-0 rounded-[18px] transition-opacity duration-200"
               style={{
-                opacity: isDragging ? 0.35 : 0,
-                background: `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.45), transparent 60%)`,
-                transform: 'translateZ(10px)',
+                opacity: isDragging ? 0 : 0.14,
+                background: `radial-gradient(circle at 50% 35%, rgba(255,255,255,0.22), transparent 62%)`,
+                mixBlendMode: 'screen' as const,
               }}
             />
           </div>
@@ -645,74 +595,59 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
           <button
             onClick={toggleFlip}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-all hover:-translate-y-0.5 hover:shadow-lg hover:brightness-110 cursor-pointer"
+            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-all hover:-translate-y-0.5 cursor-pointer tarot-no-glow"
             style={{
               fontFamily: "'Cinzel', serif",
-              background: 'rgba(20,15,10,0.92)',
+              background: 'rgba(22,14,20,0.95)',
               border: `1px solid ${char.color}88`,
               color: homeTheme.parchment,
-              boxShadow: `0 0 10px ${char.color}30`,
+              boxShadow: `0 0 12px ${char.color}28`,
             }}
           >
             {isBackSideActive ? '↩ Лицевая сторона' : '↕ Краткий лор'}
           </button>
-
-          <button
-            onClick={toggleRoll}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-all hover:-translate-y-0.5 hover:shadow-lg hover:brightness-110 cursor-pointer"
-            style={{
-              fontFamily: "'Cinzel', serif",
-              background: 'rgba(20,15,10,0.92)',
-              border: `1px solid ${char.color}88`,
-              color: homeTheme.parchment,
-              boxShadow: `0 0 10px ${char.color}30`,
-            }}
-          >
-            ↺ Перевернуть
-          </button>
-
           <a
             href={char.lorePath}
             onClick={(e) => handleChildLinkClick(e, char.lorePath)}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-all hover:-translate-y-0.5 hover:shadow-lg hover:brightness-110 cursor-pointer block text-center"
+            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-all hover:-translate-y-0.5 cursor-pointer block text-center tarot-no-glow"
             style={{
               fontFamily: "'Cinzel', serif",
-              background: `${char.color}30`,
-              border: `2px solid ${char.color}`,
-              color: homeTheme.parchment,
+              background: `${char.color}28`,
+              border: `1.5px solid ${char.color}`,
+              color: '#fff',
               textDecoration: 'none',
-              boxShadow: `0 0 15px ${char.color}50`,
+              boxShadow: `0 0 16px ${char.color}38`,
             }}
           >
             📜 Читать лор →
           </a>
         </div>
 
-        {!isMobile && (
-          <div
-            className="mt-2 text-center text-[10px] tracking-[1.5px] opacity-70 font-semibold"
-            style={{ fontFamily: "'Cinzel', serif", color: homeTheme.parchmentDim }}
-          >
-            Зажмите ЛКМ и двигайте — свободное вращение в 3D · Колёсико мыши — вращать по оси Z
-          </div>
-        )}
+        <div
+          className="mt-2 text-center text-[11px] tracking-[1.2px] opacity-75"
+          style={{ fontFamily: "'Manrope', sans-serif", color: homeTheme.parchmentDim }}
+        >
+          {isMobile
+            ? 'Тяните для вращения · тап по кнопке — перевернуть'
+            : 'ЛКМ + движение — 3D осмотр · Колёсико — поворот'}
+        </div>
 
-        <div className="mt-3 flex max-w-[520px] flex-wrap items-center justify-center gap-2">
+        <div className="mt-3 flex max-w-[540px] flex-wrap items-center justify-center gap-2">
           {char.pages.map((page) => (
             <a
               key={page.path}
               href={page.path}
               onClick={(e) => handleChildLinkClick(e, page.path)}
-              className="rounded px-3 py-1.5 text-[10px] tracking-[1px] transition-all hover:-translate-y-0.5 hover:shadow hover:brightness-110 cursor-pointer block text-center"
+              className="rounded-lg px-3 py-1.5 text-[11px] tracking-[0.8px] transition-all hover:-translate-y-0.5 cursor-pointer block text-center tarot-no-glow"
               style={{
                 fontFamily: "'Cinzel', serif",
-                background: 'rgba(30,25,15,0.75)',
-                border: '1px solid rgba(138,112,64,0.35)',
+                background: 'rgba(26,18,26,0.78)',
+                border: '1px solid rgba(255,255,255,0.1)',
                 color: homeTheme.parchment,
                 textDecoration: 'none',
               }}
             >
-              {pageIcons[page.label] || '📄'} {page.label}
+              {page.label}
             </a>
           ))}
         </div>
@@ -729,44 +664,37 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
-  const [overlayStartsFlipped, setOverlayStartsFlipped] = useState(false);
 
-  useEffect(() => {
-    onExpandedChange?.(expanded);
-  }, [expanded, onExpandedChange]);
+  useEffect(() => { onExpandedChange?.(expanded); }, [expanded, onExpandedChange]);
 
-  const openCard = (char: CharacterConfig, flipped: boolean) => {
-    setOverlayStartsFlipped(flipped);
-    setExpanded(char);
+  const openCard = (char: CharacterConfig) => {
+    setExpanded(char); // always front-first
   };
 
   return (
-    <div className="relative min-h-[280px] md:min-h-[620px]">
-      <div className="flex min-h-[240px] flex-col items-center justify-center overflow-visible py-3 md:min-h-[560px] md:py-6">
+    <div className="relative min-h-[320px] md:min-h-[600px]">
+      <div className="flex min-h-[280px] flex-col items-center justify-center overflow-visible py-3 md:min-h-[540px] md:py-6">
         {isMobile ? (
           <MobileDeck onOpen={openCard} />
         ) : (
-          <div
-            className="relative w-full max-w-[1040px]"
-            style={{ height: 440, perspective: 1500 }}
-          >
+          <div className="relative w-full max-w-[1080px]" style={{ height: 430, perspective: 1600 }}>
             {characters.map((char, index) => (
-              <FanCard
-                key={char.id}
-                char={char}
-                index={index}
-                isMobile={false}
-                onOpen={openCard}
-              />
+              <FanCard key={char.id} char={char} index={index} onOpen={openCard} />
             ))}
           </div>
         )}
 
-        <div className="mt-6 md:mt-14 flex w-full max-w-[520px] flex-col items-center gap-3 px-5">
+        <div className="mt-8 md:mt-14 flex w-full max-w-[540px] flex-col items-center gap-3 px-5">
           <button
             onClick={() => navigate('/letopis')}
-            className="rounded-full px-5 py-2 text-xs tracking-[2px] transition-transform hover:-translate-y-0.5 cursor-pointer"
-            style={{ fontFamily: "'Cinzel', serif", background: 'rgba(20,15,10,0.72)', border: `1px solid ${homeTheme.primary}55`, color: homeTheme.parchment }}
+            className="rounded-full px-5 py-2.5 text-[11px] md:text-xs tracking-[2.2px] transition-transform hover:-translate-y-0.5 cursor-pointer"
+            style={{
+              fontFamily: "'Cinzel', serif",
+              background: 'rgba(22,14,20,0.78)',
+              border: `1px solid ${homeTheme.primaryGlow}66`,
+              color: homeTheme.parchment,
+              boxShadow: `0 0 18px ${homeTheme.primaryGlow}18`,
+            }}
           >
             📖 Открыть летопись мира
           </button>
@@ -775,11 +703,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
 
       <AnimatePresence>
         {expanded && (
-          <ExpandedCardOverlay
-            char={expanded}
-            initialFlipped={overlayStartsFlipped}
-            onClose={() => setExpanded(null)}
-          />
+          <ExpandedCardOverlay char={expanded} onClose={() => setExpanded(null)} />
         )}
       </AnimatePresence>
     </div>

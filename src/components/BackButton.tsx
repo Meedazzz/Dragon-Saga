@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { SmartTooltip } from './SmartTooltip';
 
 interface BackButtonProps {
   theme: ColorTheme;
@@ -13,10 +14,10 @@ const BackButton: React.FC<BackButtonProps> = ({ theme }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // В мобильной версии убираем кнопку назад, в версии на компе — оставляем
   if (isMobile) return null;
 
   return (
+    <SmartTooltip content="Назад" side="bottom" align="end">
     <motion.button
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -35,10 +36,12 @@ const BackButton: React.FC<BackButtonProps> = ({ theme }) => {
         letterSpacing: '2px',
         textTransform: 'uppercase' as const,
       }}
+      aria-label="Назад"
     >
       <ArrowLeft size={16} />
       <span className="hidden sm:inline">Назад</span>
     </motion.button>
+    </SmartTooltip>
   );
 };
 

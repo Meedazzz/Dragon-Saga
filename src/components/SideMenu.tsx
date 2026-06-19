@@ -4,6 +4,7 @@ import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Youtube, Send, M
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
+import { SmartTooltip } from './SmartTooltip';
 
 interface SideMenuProps {
   theme: ColorTheme;
@@ -108,21 +109,23 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
 
   return (
     <>
+      <SmartTooltip content={isOpen ? "Закрыть меню" : "Открыть меню"} side="right">
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-5 left-5 z-[600] w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 custom-tooltip"
+        className="fixed top-5 left-5 z-[600] w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300"
         style={{
           background: theme.menuBg,
           border: `1px solid ${theme.buttonBorder}`,
           color: theme.menuAccent,
           backdropFilter: 'blur(10px)',
         }}
-        data-tooltip={isOpen ? "Закрыть меню" : "Открыть меню"}
+        aria-label={isOpen ? "Закрыть меню" : "Открыть меню"}
       >
         {isOpen ? <X size={22} /> : <Menu size={22} />}
       </motion.button>
+      </SmartTooltip>
 
       <AnimatePresence>
         {isOpen && (

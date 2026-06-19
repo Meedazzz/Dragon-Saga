@@ -7,16 +7,18 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const BASE = import.meta.env.BASE_URL;
 
-const mapsData: Record<string, { title: string; image: string; description: string }> = {
+const mapsData: Record<string, { title: string; image: string; description: string; aspect?: string }> = {
   sever: {
     title: 'Карта Севера',
     image: `${BASE}map_sever.png`,
     description: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.',
+    aspect: '2400 / 1123',
   },
   northwind: {
     title: 'Карта Нортвинда',
     image: `${BASE}map_northwind.png`,
     description: 'Карта Нортвинда — оплота севера и его окрестностей.',
+    aspect: '2560 / 1396',
   },
 };
 
@@ -25,91 +27,46 @@ const MapPage: React.FC = () => {
   const isMobile = useIsMobile();
   const mapData = mapId ? mapsData[mapId] : undefined;
 
-  /* ── Состояние интерактивной карты ── */
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [imgNatural, setImgNatural] = useState<{w:number,h:number}|null>(null);
 
-  // Ссылки для перетаскивания (мышь)
-  const dragRef = useRef<{
-    isDragging: boolean;
-    startX: number;
-    startY: number;
-    originX: number;
-    originY: number;
-  }>({ isDragging: false, startX: 0, startY: 0, originX: 0, originY: 0 });
-
-  // Ссылки для touch-событий (пинч-зум и тач-пан)
-  const pinchRef = useRef<{
-    isPinching: boolean;
-    startDist: number;
-    startScale: number;
-  }>({ isPinching: false, startDist: 0, startScale: 1 });
-
+  const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, originX: 0, originY: 0 });
+  const pinchRef = useRef({ isPinching: false, startDist: 0, startScale: 1 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /* Clamping function to restrict panning bounds within image borders */
   const clampPosition = useCallback((x: number, y: number, s: number) => {
-    if (!containerRef.current) return { x, y };
-    
-    const imgEl = containerRef.current.querySelector('img');
-    if (!imgEl) return { x, y };
+    if (!containerRef.current || !imgNatural) return { x: 0, y: 0 };
+    const cw = containerRef.current.clientWidth;
+    const ch = containerRef.current.clientHeight;
 
-    const containerWidth = containerRef.current.clientWidth;
-    const containerHeight = containerRef.current.clientHeight;
+    // image fills container with object-fit:contain → it fits fully at scale=1
+    // so we can drag until edges meet container edges
+    const scaledW = cw * s;
+    const scaledH = ch * s;
+    const maxX = Math.max(0, (scaledW - cw) / 2);
+    const maxY = Math.max(0, (scaledH - ch) / 2);
 
-    const imgWidth = imgEl.naturalWidth || containerWidth;
-    const imgHeight = imgEl.naturalHeight || containerHeight;
+    return {
+      x: Math.max(-maxX, Math.min(maxX, x)),
+      y: Math.max(-maxY, Math.min(maxY, y)),
+    };
+  }, [imgNatural]);
 
-    const containerRatio = containerWidth / containerHeight;
-    const imgRatio = imgWidth / imgHeight;
-
-    let renderedWidth = containerWidth;
-    let renderedHeight = containerHeight;
-
-    if (imgRatio > containerRatio) {
-      renderedHeight = containerWidth / imgRatio;
-    } else {
-      renderedWidth = containerHeight * imgRatio;
-    }
-
-    const scaledWidth = renderedWidth * s;
-    const scaledHeight = renderedHeight * s;
-
-    let clampedX = 0;
-    if (scaledWidth > containerWidth) {
-      const maxDragX = (scaledWidth - containerWidth) / 2;
-      clampedX = Math.min(maxDragX, Math.max(-maxDragX, x));
-    }
-
-    let clampedY = 0;
-    if (scaledHeight > containerHeight) {
-      const maxDragY = (scaledHeight - containerHeight) / 2;
-      clampedY = Math.min(maxDragY, Math.max(-maxDragY, y));
-    }
-
-    return { x: clampedX, y: clampedY };
-  }, []);
-
-  // Clamp position whenever scale or viewport size changes
   useEffect(() => {
     setPos((prev) => clampPosition(prev.x, prev.y, scale));
   }, [scale, clampPosition]);
 
-  /* ── Колёсико мыши — только зум (отдаление на 1x возвращает в центр) ── */
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     setScale((prev) => {
-      const next = Math.min(7, Math.max(1, prev - e.deltaY * 0.002));
-      if (next <= 1) {
-        setPos({ x: 0, y: 0 });
-        return 1;
-      }
+      const next = Math.min(6, Math.max(1, prev * (e.deltaY > 0 ? 0.92 : 1.08)));
+      if (next <= 1.01) { setPos({ x: 0, y: 0 }); return 1; }
       return next;
     });
   }, []);
 
-  /* Подключаем нативный wheel-listener с { passive: false } */
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -117,18 +74,11 @@ const MapPage: React.FC = () => {
     return () => el.removeEventListener('wheel', handleWheel);
   }, [handleWheel, isFullscreen]);
 
-  /* ── Управление мышью (Только ЛКМ для перемещения) ── */
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Только ЛКМ
+    if (e.button !== 0 || scale <= 1) return;
     e.preventDefault();
-    dragRef.current = {
-      isDragging: true,
-      startX: e.clientX,
-      startY: e.clientY,
-      originX: pos.x,
-      originY: pos.y,
-    };
-  }, [pos]);
+    dragRef.current = { isDragging: true, startX: e.clientX, startY: e.clientY, originX: pos.x, originY: pos.y };
+  }, [pos, scale]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragRef.current.isDragging) return;
@@ -137,272 +87,168 @@ const MapPage: React.FC = () => {
     setPos(clampPosition(dragRef.current.originX + dx, dragRef.current.originY + dy, scale));
   }, [scale, clampPosition]);
 
-  const handleMouseUp = useCallback(() => {
-    dragRef.current.isDragging = false;
-  }, []);
+  const handleMouseUp = useCallback(() => { dragRef.current.isDragging = false; }, []);
 
-  /* ── Управление Touch (мобильная браузерная версия) ── */
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 1) {
-      // Одиночное касание — перетаскивание карты
-      if (scale <= 1 && !isFullscreen) return; // Разрешаем скролл страницы, если не приближено
-      dragRef.current = {
-        isDragging: true,
-        startX: e.touches[0].clientX,
-        startY: e.touches[0].clientY,
-        originX: pos.x,
-        originY: pos.y,
-      };
+    if (e.touches.length === 1 && scale > 1) {
+      dragRef.current = { isDragging: true, startX: e.touches[0].clientX, startY: e.touches[0].clientY, originX: pos.x, originY: pos.y };
     } else if (e.touches.length === 2) {
-      // Два касания — пинч-зум
       e.preventDefault();
       dragRef.current.isDragging = false;
-      const t1 = e.touches[0];
-      const t2 = e.touches[1];
+      const t1 = e.touches[0], t2 = e.touches[1];
       const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-      pinchRef.current = {
-        isPinching: true,
-        startDist: dist,
-        startScale: scale,
-      };
+      pinchRef.current = { isPinching: true, startDist: dist, startScale: scale };
     }
-  }, [scale, pos, isFullscreen]);
+  }, [scale, pos]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (pinchRef.current.isPinching && e.touches.length === 2) {
       e.preventDefault();
-      const t1 = e.touches[0];
-      const t2 = e.touches[1];
+      const t1 = e.touches[0], t2 = e.touches[1];
       const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-      const newScale = Math.min(7, Math.max(1, pinchRef.current.startScale * (dist / pinchRef.current.startDist)));
+      const newScale = Math.min(6, Math.max(1, pinchRef.current.startScale * (dist / pinchRef.current.startDist)));
       setScale(newScale);
-      if (newScale <= 1) {
-        setPos({ x: 0, y: 0 });
-      } else {
-        setPos((prev) => clampPosition(prev.x, prev.y, newScale));
-      }
-    } else if (dragRef.current.isDragging && e.touches.length === 1) {
-      if (scale > 1 || isFullscreen) {
-        e.preventDefault();
-        const dx = e.touches[0].clientX - dragRef.current.startX;
-        const dy = e.touches[0].clientY - dragRef.current.startY;
-        setPos(clampPosition(dragRef.current.originX + dx, dragRef.current.originY + dy, scale));
-      }
+      if (newScale <= 1.01) setPos({ x: 0, y: 0 });
+      else setPos((prev) => clampPosition(prev.x, prev.y, newScale));
+    } else if (dragRef.current.isDragging && e.touches.length === 1 && scale > 1) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - dragRef.current.startX;
+      const dy = e.touches[0].clientY - dragRef.current.startY;
+      setPos(clampPosition(dragRef.current.originX + dx, dragRef.current.originY + dy, scale));
     }
-  }, [scale, isFullscreen, clampPosition]);
+  }, [scale, clampPosition]);
 
-  const handleTouchEnd = useCallback(() => {
-    dragRef.current.isDragging = false;
-    pinchRef.current.isPinching = false;
-  }, []);
+  const handleTouchEnd = useCallback(() => { dragRef.current.isDragging = false; pinchRef.current.isPinching = false; }, []);
 
-  /* ── Функции тулбара ── */
-  const resetMap = useCallback(() => {
-    setScale(1);
-    setPos({ x: 0, y: 0 });
-  }, []);
+  const resetMap = useCallback(() => { setScale(1); setPos({ x: 0, y: 0 }); }, []);
+  const zoomIn = useCallback(() => setScale((p) => Math.min(6, p * 1.25)), []);
+  const zoomOut = useCallback(() => setScale((p) => {
+    const n = Math.max(1, p / 1.25);
+    if (n <= 1.01) { setPos({ x: 0, y: 0 }); return 1; }
+    return n;
+  }), []);
 
-  const zoomIn = useCallback(() => {
-    setScale((prev) => Math.min(7, prev + 0.6));
-  }, []);
-
-  const zoomOut = useCallback(() => {
-    setScale((prev) => {
-      const next = Math.max(1, prev - 0.6);
-      if (next <= 1) {
-        setPos({ x: 0, y: 0 });
-        return 1;
-      }
-      return next;
-    });
-  }, []);
-
-  // Блокируем скролл тела страницы в полноэкранном режиме
   useEffect(() => {
-    if (isFullscreen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
+    document.body.style.overflow = isFullscreen ? 'hidden' : 'auto';
+    return () => { document.body.style.overflow = 'auto'; };
   }, [isFullscreen]);
 
   if (!mapData) {
     return (
       <Layout theme={lorTheme}>
         <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-          <h1
-            className="text-4xl font-bold mb-4"
-            style={{
-              fontFamily: "'Cinzel Decorative', serif",
-              color: lorTheme.parchment,
-            }}
-          >
-            Карта не найдена
-          </h1>
-          <p
-            className="text-lg italic"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              color: lorTheme.parchmentDim,
-            }}
-          >
-            По этому пути ещё не проложено летописи.
-          </p>
+          <h1 style={{ fontFamily: "'Cinzel Decorative', serif", color: lorTheme.parchment }} className="text-4xl font-bold mb-4">Карта не найдена</h1>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", color: lorTheme.parchmentDim }} className="text-lg italic">По этому пути ещё не проложено летописи.</p>
         </div>
       </Layout>
     );
   }
 
   return (
-    <Layout theme={lorTheme} particleCount={15} overlayMode={isFullscreen}>
-      <div className={isFullscreen ? 'p-0' : 'max-w-[1200px] mx-auto px-4 md:px-8 pb-20 pt-16'}>
-        {/* Header (только если не в полноэкранном режиме) */}
+    <Layout theme={lorTheme} particleCount={14} overlayMode={isFullscreen}>
+      <div className={isFullscreen ? '' : 'max-w-[1220px] mx-auto px-4 md:px-8 pb-20 pt-14'}>
         {!isFullscreen && (
-          <motion.header
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center pb-6 mb-6"
-          >
+          <motion.header initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="text-center pb-7 mb-5">
             <h1
-              className="text-2xl md:text-4xl font-bold tracking-[3px] mb-3"
-              style={{
-                fontFamily: "'Cinzel Decorative', serif",
-                color: lorTheme.parchment,
-                textShadow: '0 0 20px rgba(160,150,130,0.2), 0 2px 6px rgba(0,0,0,0.9)',
-              }}
+              className="text-[26px] md:text-[38px] font-bold tracking-[3px] mb-3"
+              style={{ fontFamily: "'Cinzel Decorative', serif", color: lorTheme.silverBright, textShadow: '0 0 20px rgba(228,74,90,.18), 0 2px 8px rgba(0,0,0,.9)'}}
             >
               {mapData.title}
             </h1>
-            <p
-              className="text-sm md:text-base italic max-w-[560px] mx-auto leading-relaxed"
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                color: lorTheme.parchmentDim,
-              }}
-            >
+            <p className="text-[15px] md:text-[17px] italic max-w-[600px] mx-auto leading-relaxed prose-readable" style={{ color: lorTheme.parchmentDim }}>
               {mapData.description}
             </p>
-            <p
-              className="text-xs mt-3 opacity-80"
-              style={{
-                fontFamily: "'Cinzel', serif",
-                color: lorTheme.parchmentDim,
-                letterSpacing: '1px',
-              }}
-            >
-              {isMobile
-                ? 'Кнопки + / - или щипок для масштаба · Свайп для перемещения'
-                : 'Колёсико мыши — масштаб · ЛКМ (удержание) — перемещение карты'}
+            <p className="text-[11px] mt-3 opacity-80 tracking-wider" style={{ fontFamily: "'Cinzel', serif", color: lorTheme.parchmentDim }}>
+              {isMobile ? 'Кнопки + / − или щипок — масштаб · Свайп — перемещение' : 'Колёсико — масштаб · ЛКМ — перемещение'}
             </p>
           </motion.header>
         )}
 
-        {/* Главный контейнер карты */}
+        {/* MAP FRAME - tight wrap */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          ref={containerRef}
-          className={
-            isFullscreen
-              ? 'fixed inset-0 z-[850] w-screen h-screen overflow-hidden bg-[#0c0a08] flex items-center justify-center select-none'
-              : 'relative w-full aspect-[16/10] md:aspect-[21/10] min-h-[440px] max-h-[78vh] overflow-hidden rounded-xl border-2 shadow-2xl bg-[#0c0a08] select-none cursor-grab active:cursor-grabbing'
+          transition={{ delay: 0.15 }}
+          className={isFullscreen
+            ? 'fixed inset-0 z-[840] bg-[#060508]'
+            : 'relative mx-auto rounded-[18px] overflow-hidden shadow-[0_18px_60px_rgba(0,0,0,0.62)]'
           }
           style={{
-            borderColor: isFullscreen ? 'transparent' : `${lorTheme.primaryGlow}50`,
+            border: isFullscreen ? 'none' : `1px solid ${lorTheme.primaryGlow}55`,
+            maxWidth: isFullscreen ? 'none' : '1160px',
           }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onContextMenu={(e) => e.preventDefault()}
         >
-          {/* Изображение карты */}
-          <img
-            src={mapData.image}
-            alt={mapData.title}
-            className="w-full h-full object-contain select-none pointer-events-none"
-            draggable={false}
-            style={{
-              display: 'block',
-              transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
-              transition: dragRef.current.isDragging ? 'none' : 'transform 0.15s ease-out',
-              transformOrigin: 'center center',
-            }}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-              const parent = target.parentElement;
-              if (parent) {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'absolute inset-0 flex items-center justify-center bg-[#140f0a]/80 text-[#706850] italic p-8 text-center font-serif text-lg z-10';
-                placeholder.innerHTML = `🗺️ Изображение карты будет добавлено позже.<br/>Ожидаемый файл: <code style="color:#8a7040">public/map_${mapId}.png</code>`;
-                parent.appendChild(placeholder);
-              }
-            }}
-          />
-
-          {/* Плавающая панель управления (Тулбар) */}
           <div
-            className="absolute bottom-4 right-4 z-30 flex items-center gap-1.5 bg-[#0c0a08]/92 p-2 rounded-xl border shadow-2xl backdrop-blur-md"
-            style={{ borderColor: `${lorTheme.primary}60` }}
+            ref={containerRef}
+            className={isFullscreen
+              ? 'w-screen h-screen flex items-center justify-center overflow-hidden select-none touch-none'
+              : 'relative w-full overflow-hidden select-none touch-none bg-[#07060a]'}
+            style={{
+              aspectRatio: isFullscreen ? undefined : (mapData.aspect || '21 / 10'),
+              maxHeight: isFullscreen ? '100vh' : '78vh',
+              cursor: scale > 1 ? (dragRef.current.isDragging ? 'grabbing' : 'grab') : 'default',
+              height: isFullscreen ? '100vh' : undefined,
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            <img
+              src={mapData.image}
+              alt={mapData.title}
+              draggable={false}
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                setImgNatural({ w: img.naturalWidth, h: img.naturalHeight });
+              }}
+              className="block select-none pointer-events-none"
+              style={{
+                width: '100%',
+                height: isFullscreen ? '100%' : '100%',
+                objectFit: 'contain',
+                transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+                transformOrigin: 'center center',
+                transition: dragRef.current.isDragging ? 'none' : 'transform 140ms ease-out',
+                imageRendering: 'auto' as any,
+              }}
+            />
+            {/* vignette edge, subtle */}
+            <div className="pointer-events-none absolute inset-0" style={{
+              boxShadow: 'inset 0 0 120px rgba(0,0,0,0.55), inset 0 0 40px rgba(0,0,0,0.35)',
+              borderRadius: isFullscreen ? 0 : 18,
+            }}/>
+          </div>
+
+          {/* Toolbar */}
+          <div
+            className="absolute z-30 flex items-center gap-1.5 rounded-xl px-2.5 py-2 shadow-2xl backdrop-blur-xl"
+            style={{
+              right: '14px',
+              bottom: '14px',
+              background: 'rgba(12, 8, 14, 0.88)',
+              border: `1px solid ${lorTheme.primaryGlow}55`,
+            }}
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={resetMap}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-xs font-semibold tracking-wider transition-all border cursor-pointer"
-              style={{ fontFamily: "'Cinzel', serif", borderColor: `${lorTheme.primary}40` }}
-              title="Сбросить масштаб и позицию"
-            >
-              <span className="text-sm">🔄</span>
-              <span className="hidden sm:inline">Сбросить</span>
-            </button>
-
-            <div className="h-4 w-[1px] mx-1" style={{ background: `${lorTheme.primary}40` }} />
-
-            <button
-              onClick={zoomOut}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-base font-bold transition-all border cursor-pointer"
-              style={{ borderColor: `${lorTheme.primary}40` }}
-              title="Отдалить"
-            >
-              -
-            </button>
-
-            <span
-              className="text-xs font-mono px-1 min-w-[40px] text-center font-bold"
-              style={{ color: lorTheme.primaryGlow }}
-            >
-              {Math.round(scale * 100)}%
-            </span>
-
-            <button
-              onClick={zoomIn}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-base font-bold transition-all border cursor-pointer"
-              style={{ borderColor: `${lorTheme.primary}40` }}
-              title="Приблизить"
-            >
-              +
-            </button>
-
-            <div className="h-4 w-[1px] mx-1" style={{ background: `${lorTheme.primary}40` }} />
-
-            <button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#201912] hover:bg-[#30261c] active:scale-95 text-[#e6dec8] text-xs font-semibold tracking-wider transition-all border cursor-pointer"
-              style={{ fontFamily: "'Cinzel', serif", borderColor: `${lorTheme.primary}40` }}
-              title={isFullscreen ? 'Свернуть' : 'На весь экран'}
-            >
-              <span className="text-sm">{isFullscreen ? '✕' : '⛶'}</span>
-              <span className="hidden sm:inline">{isFullscreen ? 'Свернуть' : 'На весь экран'}</span>
-            </button>
+            <button onClick={resetMap}
+              className="px-3 py-[7px] rounded-lg text-[11px] tracking-wider font-semibold transition-all hover:-translate-y-px tarot-no-glow"
+              style={{ fontFamily: "'Cinzel', serif", color: lorTheme.parchment, background: 'rgba(255,255,255,0.04)', border: `1px solid ${lorTheme.primary}44` }}
+            >⟲ Сброс</button>
+            <div style={{ width: 1, height: 18, background: `${lorTheme.primary}38`, margin: '0 4px' }} />
+            <button onClick={zoomOut} className="w-8 h-8 rounded-lg font-bold tarot-no-glow" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${lorTheme.primary}44`, color: lorTheme.parchment }}>−</button>
+            <span className="text-[11px] tabular-nums px-1 min-w-[44px] text-center" style={{ color: lorTheme.primaryGlow, fontFamily: "'Manrope', sans-serif", fontWeight: 600 }}>{Math.round(scale*100)}%</span>
+            <button onClick={zoomIn} className="w-8 h-8 rounded-lg font-bold tarot-no-glow" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${lorTheme.primary}44`, color: lorTheme.parchment }}>+</button>
+            <div style={{ width: 1, height: 18, background: `${lorTheme.primary}38`, margin: '0 4px' }} />
+            <button onClick={() => setIsFullscreen(!isFullscreen)}
+              className="px-3 py-[7px] rounded-lg text-[11px] tracking-wider font-semibold transition-all hover:-translate-y-px tarot-no-glow"
+              style={{ fontFamily: "'Cinzel', serif", color: lorTheme.parchment, background: 'rgba(255,255,255,0.04)', border: `1px solid ${lorTheme.primary}44` }}
+            >{isFullscreen ? '✕ Выйти' : '⛶ Экран'}</button>
           </div>
         </motion.div>
       </div>
