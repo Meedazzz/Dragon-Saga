@@ -46,9 +46,9 @@ const HeroNav: React.FC<HeroNavProps> = ({ theme, characterId }) => {
             style={{
               fontFamily: "'Cinzel', serif",
               background: isActive
-                ? `${char.color}22`
-                : 'rgba(20,14,20,0.42)',
-              border: `1px solid ${isActive ? `${char.color}66` : theme.buttonBorder}`,
+                ? `${char.color}25`
+                : 'rgba(20,15,10,0.3)',
+              border: `1px solid ${isActive ? `${char.color}60` : 'rgba(80,70,50,0.2)'}`,
               color: isActive ? theme.parchment : theme.parchmentDim,
               boxShadow: isActive ? `0 0 12px ${char.color}20` : 'none',
               textDecoration: 'none',
