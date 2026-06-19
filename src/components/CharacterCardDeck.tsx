@@ -174,7 +174,6 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
   const cardHeight = Math.round(cardWidth * 1.79);
   const spread = 1; // всегда раскрыт
   const isFlipped = isHovered;
-  const revealAmount = isHovered ? 1 : 0;
 
   return (
     <motion.div
@@ -202,19 +201,21 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, isMobile, onOpen }) => {
       <div
         ref={ref}
         {...tiltHandlers}
-        onClick={() => onOpen(char, isFlipped)}
-        className="group relative h-full w-full cursor-pointer select-none rounded-[14px]"
+        onClick={() => onOpen(char, false)}
+        className={`group relative h-full w-full cursor-pointer select-none rounded-[14px] ${isHovered ? 'animate-[card-shiver_0.22s_infinite_linear]' : ''}`}
         style={{
           transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
           transformStyle: 'preserve-3d',
           transition: tilt.glareOpacity === 0 ? 'transform 520ms cubic-bezier(.2,.8,.2,1)' : 'none',
-          filter: `drop-shadow(0 24px 30px rgba(0,0,0,${0.34 + revealAmount * 0.18}))`,
+          filter: isHovered 
+            ? `drop-shadow(0 24px 30px rgba(0,0,0,0.5)) drop-shadow(0 0 16px ${char.color}45)`
+            : `drop-shadow(0 24px 30px rgba(0,0,0,0.34))`,
         }}
         aria-label={`Открыть карту ${char.name}`}
         role="button"
         tabIndex={0}
         onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') onOpen(char, isFlipped);
+          if (event.key === 'Enter' || event.key === ' ') onOpen(char, false);
         }}
       >
         <motion.div
@@ -492,32 +493,34 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, initial
     };
   }, [isMobile, rotY]);
 
-  // Snapping logic: runs on release (isDragging = false)
+  // Snapping logic: runs ONLY on release of dragging (isDragging transitions from true to false)
   // Ensures readable orientation on the back side of the card (where text is)
+  const prevDragging = useRef(false);
   useEffect(() => {
-    if (isDragging) return;
+    if (prevDragging.current && !isDragging) {
+      const cosY = Math.cos((rotY * Math.PI) / 180);
+      const isBackFacing = cosY < 0;
 
-    const cosY = Math.cos((rotY * Math.PI) / 180);
-    const isBackFacing = cosY < 0;
+      if (isBackFacing) {
+        // Snapping rotation on release:
+        // rotY to nearest odd multiple of 180
+        const snappedY = Math.round(rotY / 180) * 180;
+        const isOdd = Math.round(snappedY / 180) % 2 !== 0;
+        const finalY = isOdd ? snappedY : snappedY + 180;
 
-    if (isBackFacing) {
-      // Snapping rotation on release:
-      // rotY to nearest odd multiple of 180
-      const snappedY = Math.round(rotY / 180) * 180;
-      const isOdd = Math.round(snappedY / 180) % 2 !== 0;
-      const finalY = isOdd ? snappedY : snappedY + 180;
+        // rotX (tilt) to 0 (flat)
+        const finalX = Math.round(rotX / 360) * 360;
 
-      // rotX (tilt) to 0 (flat)
-      const finalX = Math.round(rotX / 360) * 360;
+        // rotZ (roll) to nearest multiple of 360 (upright)
+        const finalZ = Math.round(rotZ / 360) * 360;
 
-      // rotZ (roll) to nearest multiple of 360 (upright)
-      const finalZ = Math.round(rotZ / 360) * 360;
-
-      setRotX(finalX);
-      setRotY(finalY);
-      setRotZ(finalZ);
-      scrollAccum.current = finalZ;
+        setRotX(finalX);
+        setRotY(finalY);
+        setRotZ(finalZ);
+        scrollAccum.current = finalZ;
+      }
     }
+    prevDragging.current = isDragging;
   }, [isDragging, rotX, rotY, rotZ]);
 
   // Sync scroll accumulator with Z rotation when modified via buttons
@@ -735,8 +738,8 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
     onExpandedChange?.(expanded);
   }, [expanded, onExpandedChange]);
 
-  const openCard = (char: CharacterConfig, flipped: boolean) => {
-    setOverlayStartsFlipped(flipped);
+  const openCard = (char: CharacterConfig) => {
+    setOverlayStartsFlipped(false); // Always show front face (artwork) to the viewer initially!
     setExpanded(char);
   };
 
