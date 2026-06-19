@@ -47,8 +47,12 @@ const LorPage: React.FC = () => {
 
   return (
     <Layout theme={lorTheme} particleCount={35}>
+<<<<<<< HEAD
       <div className="max-w-[1000px] mx-auto px-6 md:px-8 pb-20 pt-12">
         {/* Header */}
+=======
+      <div className="max-w-[900px] mx-auto px-4 md:px-8 pb-20 pt-10">
+>>>>>>> 6b6b02308a0ac0c53a2bc9f64d2b3f629092826f
         <motion.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -92,9 +96,14 @@ const LorPage: React.FC = () => {
           </p>
         </motion.header>
 
+<<<<<<< HEAD
         {/* Nav */}
         <motion.nav
           initial={{ opacity: 0, y: 20 }}
+=======
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+>>>>>>> 6b6b02308a0ac0c53a2bc9f64d2b3f629092826f
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="flex justify-center gap-2 mb-10 flex-wrap"
@@ -146,12 +155,103 @@ const LorPage: React.FC = () => {
           </button>
         </motion.nav>
 
+<<<<<<< HEAD
         {/* Heroes Section */}
         {activeSection === 'heroes' && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
+=======
+        {categoryOrder.map((cat) => {
+          const items = groupedItems[cat];
+          if (!items || items.length === 0) return null;
+
+          return (
+            <motion.section
+              key={cat}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="mb-8"
+            >
+              <div className="section-header !mt-1 !mb-3" style={{ 
+                '--section-border': 'rgba(80,70,50,0.15)', 
+                '--section-icon-color': lorTheme.primaryGlow, 
+                '--section-title-color': lorTheme.primaryGlow, 
+                '--section-line-color': lorTheme.primary 
+              } as React.CSSProperties}>
+                <span className="section-icon">{items[0].icon}</span>
+                <h2 className="section-title">{categoryLabels[cat]}</h2>
+                <div className="section-line" />
+              </div>
+
+              <div className={`grid gap-3 ${cat === 'characters' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'}`}>
+                {items.map((item, idx) => {
+                  const char = cat === 'characters' ? characters.find(c => c.id === item.id) : null;
+                  return (
+                    <motion.div
+                      key={item.path}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + idx * 0.05 }}
+                      onClick={() => navigate(item.path)}
+                      className="rounded-md p-4 md:p-5 relative overflow-hidden cursor-pointer transition-all duration-300"
+                      style={{
+                        background: 'linear-gradient(180deg, rgba(20,15,10,0.5) 0%, rgba(10,8,5,0.3) 100%)',
+                        border: char ? `1px solid ${char.color}30` : '1px solid rgba(138,106,42,0.2)',
+                        borderTop: char ? `2px solid ${char.color}` : undefined,
+                      }}
+                      whileHover={{
+                        borderColor: char ? `${char.color}60` : 'rgba(184,144,58,0.3)',
+                        y: -2,
+                        boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
+                      }}
+                    >
+                      {char && (
+                        <div
+                          className="absolute top-0 left-0 right-0 h-0.5"
+                          style={{ background: `linear-gradient(90deg, transparent, ${char.color}, ${char.color}80, transparent)` }}
+                        />
+                      )}
+                      {!char && (
+                        <div
+                          className="absolute top-0 left-0 right-0 h-0.5"
+                          style={{ background: `linear-gradient(90deg, transparent, ${lorTheme.primaryGlow}, transparent)` }}
+                        />
+                      )}
+                      <div
+                        className="text-sm md:text-base font-bold tracking-[2px] mb-1.5"
+                        style={{
+                          fontFamily: "'Cinzel Decorative', serif",
+                          color: char ? lorTheme.silver : lorTheme.primaryGlow,
+                        }}
+                      >
+                        {item.title}
+                      </div>
+                      <div
+                        className="text-xs leading-relaxed"
+                        style={{
+                          fontFamily: "'Cormorant Garamond', serif",
+                          color: lorTheme.parchmentDim,
+                        }}
+                      >
+                        {item.desc}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.section>
+          );
+        })}
+
+        {filteredItems.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+>>>>>>> 6b6b02308a0ac0c53a2bc9f64d2b3f629092826f
           >
             <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
               <span className="section-icon">&#9876;</span>
@@ -297,8 +397,10 @@ const LorPage: React.FC = () => {
           </motion.section>
         )}
 
-        {/* Footer */}
-        <div className="footer-ornament mt-12" style={{ '--footer-border': 'rgba(80,70,50,0.1)', '--footer-text-color': lorTheme.primary } as React.CSSProperties}>
+        <div className="footer-ornament mt-12" style={{ 
+          '--footer-border': 'rgba(80,70,50,0.1)', 
+          '--footer-text-color': lorTheme.primary 
+        } as React.CSSProperties}>
           <div className="rune-string">L E T O P I S E</div>
         </div>
       </div>
