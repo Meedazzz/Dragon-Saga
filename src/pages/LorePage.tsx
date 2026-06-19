@@ -2,8 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
+import HeroNav from '@/components/HeroNav';
 import { getThemeByPath } from '@/types/theme';
 import type { ColorTheme } from '@/types/theme';
+
 
 interface LoreData {
   name: string;
@@ -44,7 +46,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Иногда его захлёстывает жажда боя, и он не различает друга и врага.',
     },
     motto: '«Нет добра или зла. Есть только жизнь и смерть. И я выбираю — жить, пока могу сражаться.»',
-    avatar: `${BASE}tarot_valery.png`,
+    avatar: `${BASE}avatar_valery.png`,
     themeColor: '#2a5a8a',
   },
   brin: {
@@ -67,11 +69,11 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Слишком полагается на разум и расчёт; в горячке боя теряет связь с эмоциями и близкими.',
     },
     motto: '«Лёд учит терпению. А терпение учит власти — над собой и над врагом.»',
-    avatar: `${BASE}tarot_brin.png`,
+    avatar: `${BASE}avatar_brin.png`,
     themeColor: '#5a3a7a',
   },
   sakris: {
-    name: 'Сакрис из Бергхейма',
+    name: 'Сакрис Ульриаш',
     title: 'Следопыт, сосуд древнего духа',
     bio: [
       'Рождённый в горном крае Бергхейма, он был амбициозным юношей, которому стало тесно в родном доме. Когда отряд наёмников перешёл ему дорогу, в Сакрисе пробудился древний дух — следопыт, видевший тропы между мирами.',
@@ -90,7 +92,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Слишком доверяет голосу духа и может пройти мимо живых, ради мёртвых.',
     },
     motto: '«Сакрис, я устал… Я так устал…»',
-    avatar: `${BASE}tarot_sakris.png`,
+    avatar: `${BASE}avatar_sakris.png`,
     themeColor: '#2a6a3a',
   },
   stive: {
@@ -112,7 +114,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Часто уходит в мир природы и забывает о мирских делах — и о собственных друзьях.',
     },
     motto: '«Слушай. Деревья говорят тише, чем люди, но говорят правду.»',
-    avatar: `${BASE}tarot_stive.png`,
+    avatar: `${BASE}avatar_stive.png`,
     themeColor: '#2a6a3a',
   },
   talis: {
@@ -134,7 +136,7 @@ const loreDatabase: Record<string, LoreData> = {
       flaw: 'Слишком любит славу и кубок; может забыть о деле ради хорошей истории.',
     },
     motto: '«Когда умолкнет последняя песня — умолкнет и мир. Пока я дышу — я пою.»',
-    avatar: `${BASE}tarot_tallis.png`,
+    avatar: `${BASE}avatar_tallis.png`,
     themeColor: '#FF5E00',
   },
 };
@@ -220,10 +222,12 @@ const LorePage: React.FC = () => {
         className="max-w-4xl mx-auto px-6 py-12"
         style={{ color: theme.parchment }}
       >
+        <HeroNav theme={theme} characterId={characterId} />
+
         {/* Аватар и заголовок */}
         <div className="flex flex-col md:flex-row gap-8 items-center mb-12">
           <div
-            className="w-48 h-48 rounded-full overflow-hidden border-2 flex items-center justify-center"
+            className="w-48 h-48 rounded-full overflow-hidden border-2 flex items-center justify-center flex-shrink-0"
             style={{
               borderColor: `${accent}80`,
               background: `radial-gradient(circle, ${accent}25 0%, transparent 70%)`,
@@ -235,7 +239,16 @@ const LorePage: React.FC = () => {
               alt={lore.name}
               className="w-full h-full object-cover"
               onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
+                // Fallback: show initials if avatar not found
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  const fallback = document.createElement('div');
+                  fallback.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:3rem;color:' + accent + ';font-family:Cinzel Decorative,serif;';
+                  fallback.textContent = lore.name.split(' ').map(w => w[0]).join('').substring(0, 2);
+                  parent.appendChild(fallback);
+                }
               }}
             />
           </div>

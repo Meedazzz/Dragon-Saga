@@ -25,10 +25,12 @@ const MapPage: React.FC = () => {
   const isMobile = useIsMobile();
   const mapData = mapId ? mapsData[mapId] : undefined;
 
+  /* ── Состояние интерактивной карты ── */
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Ссылки для перетаскивания (мышь)
   const dragRef = useRef<{
     isDragging: boolean;
     startX: number;
@@ -37,6 +39,7 @@ const MapPage: React.FC = () => {
     originY: number;
   }>({ isDragging: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
+  // Ссылки для touch-событий (пинч-зум и тач-пан)
   const pinchRef = useRef<{
     isPinching: boolean;
     startDist: number;
@@ -45,6 +48,55 @@ const MapPage: React.FC = () => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  /* Clamping function to restrict panning bounds within image borders */
+  const clampPosition = useCallback((x: number, y: number, s: number) => {
+    if (!containerRef.current) return { x, y };
+    
+    const imgEl = containerRef.current.querySelector('img');
+    if (!imgEl) return { x, y };
+
+    const containerWidth = containerRef.current.clientWidth;
+    const containerHeight = containerRef.current.clientHeight;
+
+    const imgWidth = imgEl.naturalWidth || containerWidth;
+    const imgHeight = imgEl.naturalHeight || containerHeight;
+
+    const containerRatio = containerWidth / containerHeight;
+    const imgRatio = imgWidth / imgHeight;
+
+    let renderedWidth = containerWidth;
+    let renderedHeight = containerHeight;
+
+    if (imgRatio > containerRatio) {
+      renderedHeight = containerWidth / imgRatio;
+    } else {
+      renderedWidth = containerHeight * imgRatio;
+    }
+
+    const scaledWidth = renderedWidth * s;
+    const scaledHeight = renderedHeight * s;
+
+    let clampedX = 0;
+    if (scaledWidth > containerWidth) {
+      const maxDragX = (scaledWidth - containerWidth) / 2;
+      clampedX = Math.min(maxDragX, Math.max(-maxDragX, x));
+    }
+
+    let clampedY = 0;
+    if (scaledHeight > containerHeight) {
+      const maxDragY = (scaledHeight - containerHeight) / 2;
+      clampedY = Math.min(maxDragY, Math.max(-maxDragY, y));
+    }
+
+    return { x: clampedX, y: clampedY };
+  }, []);
+
+  // Clamp position whenever scale or viewport size changes
+  useEffect(() => {
+    setPos((prev) => clampPosition(prev.x, prev.y, scale));
+  }, [scale, clampPosition]);
+
+  /* ── Колёсико мыши — только зум (отдаление на 1x возвращает в центр) ── */
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     setScale((prev) => {
@@ -57,6 +109,7 @@ const MapPage: React.FC = () => {
     });
   }, []);
 
+  /* Подключаем нативный wheel-listener с { passive: false } */
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -64,8 +117,9 @@ const MapPage: React.FC = () => {
     return () => el.removeEventListener('wheel', handleWheel);
   }, [handleWheel, isFullscreen]);
 
+  /* ── Управление мышью (Только ЛКМ для перемещения) ── */
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0) return; // Только ЛКМ
     e.preventDefault();
     dragRef.current = {
       isDragging: true,
@@ -80,19 +134,18 @@ const MapPage: React.FC = () => {
     if (!dragRef.current.isDragging) return;
     const dx = e.clientX - dragRef.current.startX;
     const dy = e.clientY - dragRef.current.startY;
-    setPos({
-      x: dragRef.current.originX + dx,
-      y: dragRef.current.originY + dy,
-    });
-  }, []);
+    setPos(clampPosition(dragRef.current.originX + dx, dragRef.current.originY + dy, scale));
+  }, [scale, clampPosition]);
 
   const handleMouseUp = useCallback(() => {
     dragRef.current.isDragging = false;
   }, []);
 
+  /* ── Управление Touch (мобильная браузерная версия) ── */
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 1) {
-      if (scale <= 1 && !isFullscreen) return;
+      // Одиночное касание — перетаскивание карты
+      if (scale <= 1 && !isFullscreen) return; // Разрешаем скролл страницы, если не приближено
       dragRef.current = {
         isDragging: true,
         startX: e.touches[0].clientX,
@@ -101,6 +154,7 @@ const MapPage: React.FC = () => {
         originY: pos.y,
       };
     } else if (e.touches.length === 2) {
+      // Два касания — пинч-зум
       e.preventDefault();
       dragRef.current.isDragging = false;
       const t1 = e.touches[0];
@@ -124,25 +178,25 @@ const MapPage: React.FC = () => {
       setScale(newScale);
       if (newScale <= 1) {
         setPos({ x: 0, y: 0 });
+      } else {
+        setPos((prev) => clampPosition(prev.x, prev.y, newScale));
       }
     } else if (dragRef.current.isDragging && e.touches.length === 1) {
       if (scale > 1 || isFullscreen) {
         e.preventDefault();
         const dx = e.touches[0].clientX - dragRef.current.startX;
         const dy = e.touches[0].clientY - dragRef.current.startY;
-        setPos({
-          x: dragRef.current.originX + dx,
-          y: dragRef.current.originY + dy,
-        });
+        setPos(clampPosition(dragRef.current.originX + dx, dragRef.current.originY + dy, scale));
       }
     }
-  }, [scale, isFullscreen]);
+  }, [scale, isFullscreen, clampPosition]);
 
   const handleTouchEnd = useCallback(() => {
     dragRef.current.isDragging = false;
     pinchRef.current.isPinching = false;
   }, []);
 
+  /* ── Функции тулбара ── */
   const resetMap = useCallback(() => {
     setScale(1);
     setPos({ x: 0, y: 0 });
@@ -163,6 +217,7 @@ const MapPage: React.FC = () => {
     });
   }, []);
 
+  // Блокируем скролл тела страницы в полноэкранном режиме
   useEffect(() => {
     if (isFullscreen) {
       document.body.style.overflow = 'hidden';
@@ -204,6 +259,7 @@ const MapPage: React.FC = () => {
   return (
     <Layout theme={lorTheme} particleCount={15} overlayMode={isFullscreen}>
       <div className={isFullscreen ? 'p-0' : 'max-w-[1200px] mx-auto px-4 md:px-8 pb-20 pt-16'}>
+        {/* Header (только если не в полноэкранном режиме) */}
         {!isFullscreen && (
           <motion.header
             initial={{ opacity: 0, y: 20 }}
@@ -244,6 +300,7 @@ const MapPage: React.FC = () => {
           </motion.header>
         )}
 
+        {/* Главный контейнер карты */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -266,6 +323,7 @@ const MapPage: React.FC = () => {
           onTouchEnd={handleTouchEnd}
           onContextMenu={(e) => e.preventDefault()}
         >
+          {/* Изображение карты */}
           <img
             src={mapData.image}
             alt={mapData.title}
@@ -290,6 +348,7 @@ const MapPage: React.FC = () => {
             }}
           />
 
+          {/* Плавающая панель управления (Тулбар) */}
           <div
             className="absolute bottom-4 right-4 z-30 flex items-center gap-1.5 bg-[#0c0a08]/92 p-2 rounded-xl border shadow-2xl backdrop-blur-md"
             style={{ borderColor: `${lorTheme.primary}60` }}

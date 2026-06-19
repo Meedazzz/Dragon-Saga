@@ -7,6 +7,7 @@ import LoadingScreen from './LoadingScreen';
 import Particles from './Particles';
 import { getThemeByPath } from '@/types/theme';
 import type { ColorTheme } from '@/types/theme';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,6 +15,7 @@ interface LayoutProps {
   particleVariant?: 'default' | 'lightning' | 'arcane' | 'crimson' | 'mixed';
   particleCount?: number;
   showBack?: boolean;
+  overlayMode?: boolean;
 }
 
 const Layout: React.FC<LayoutProps> = ({
@@ -22,18 +24,20 @@ const Layout: React.FC<LayoutProps> = ({
   particleVariant = 'default',
   particleCount = 30,
   showBack = true,
+  overlayMode = false,
 }) => {
   const location = useLocation();
   const theme = customTheme || getThemeByPath(location.pathname);
+  const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1200);
+    }, isMobile ? 100 : 300);
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, [location.pathname, isMobile]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--scrollbar-track', theme.void);
@@ -64,10 +68,10 @@ const Layout: React.FC<LayoutProps> = ({
         />
       )}
 
-      <Particles theme={theme} count={particleCount} variant={particleVariant} />
+      {!isMobile && <Particles theme={theme} count={particleCount} variant={particleVariant} />}
       <SideMenu theme={theme} />
       <MusicButton theme={theme} />
-      {showBack && <BackButton theme={theme} />}
+      {showBack && !overlayMode && <BackButton theme={theme} />}
       <LoadingScreen theme={theme} isLoading={isLoading} />
 
       <div className="relative z-[1]">

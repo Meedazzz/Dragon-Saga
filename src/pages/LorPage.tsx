@@ -1,78 +1,146 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { lorTheme } from '@/types/theme';
+import { characters } from '@/data/characters';
+import { Search } from 'lucide-react';
+
+const allItems = [
+  {
+    id: 'valery',
+    title: 'Валерий Даркбейн',
+    desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.',
+    path: '/lore/valery',
+    category: 'characters' as const,
+    icon: '⚔️',
+  },
+  {
+    id: 'brin',
+    title: 'Брин дель Хессен',
+    desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда.',
+    path: '/lore/brin',
+    category: 'characters' as const,
+    icon: '⚔️',
+  },
+  {
+    id: 'sakris',
+    title: 'Сакрис Ульриаш',
+    desc: 'Амбициозный драконид искатель приключений переросший свой дом.',
+    path: '/lore/sakris',
+    category: 'characters' as const,
+    icon: '⚔️',
+  },
+  {
+    id: 'talis',
+    title: 'Таллис',
+    desc: 'Бродяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.',
+    path: '/lore/talis',
+    category: 'characters' as const,
+    icon: '⚔️',
+  },
+  {
+    id: 'stive',
+    title: 'Стив',
+    desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.',
+    path: '/lore/stive',
+    category: 'characters' as const,
+    icon: '⚔️',
+  },
+  {
+    title: 'Летопись мира',
+    desc: 'Сказание о мире: от Музыки Айнур до 425 года Третьей Эпохи. История, расы, календарь и глоссарий.',
+    path: '/letopis',
+    category: 'lore' as const,
+    icon: '📜',
+  },
+  {
+    title: 'Род Даркбейнов',
+    desc: 'Древний род, чья кровь связана с силами за гранью жизни и смерти.',
+    path: '/darkbain',
+    category: 'lore' as const,
+    icon: '📜',
+  },
+  {
+    title: 'Дом Хессен',
+    desc: 'Великий Дом Астарии, чья кровь хранит тайны Чёрного льда.',
+    path: '/hessen',
+    category: 'lore' as const,
+    icon: '📜',
+  },
+  {
+    title: 'Бергхейм',
+    desc: 'Суровый горный край на севере, где духи предков бродят по перевалам.',
+    path: '/berghheim',
+    category: 'lore' as const,
+    icon: '📜',
+  },
+  {
+    title: 'Клан Арантир',
+    desc: 'Последние Драконоборцы, чьи песни пережили века.',
+    path: '/arantir',
+    category: 'lore' as const,
+    icon: '📜',
+  },
+  {
+    title: 'Карта Севера',
+    desc: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.',
+    path: '/map/sever',
+    category: 'maps' as const,
+    icon: '🗺️',
+  },
+  {
+    title: 'Карта Нортвинда',
+    desc: 'Карта Нортвинда — оплота севера и его окрестностей.',
+    path: '/map/northwind',
+    category: 'maps' as const,
+    icon: '🗺️',
+  },
+];
+
+const categoryLabels: Record<string, string> = {
+  characters: 'Персонажи',
+  lore: 'Лор',
+  maps: 'Карты',
+};
 
 const LorPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState<'heroes' | 'lore'>('heroes');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const characters = [
-    {
-      name: 'Валерий Даркбейн',
-      title: 'Потомок сильнейшего Авантюриста, носитель тёмного проклятья',
-      ability: 'Личное умение — Ас',
-      path: '/valery',
-      color: '#2a5a8a',
-    },
-    {
-      name: 'Сакрис из Бергхейма',
-      title: 'Следопыт, сосуд древнего духа',
-      ability: 'Личное умение — Дух бесплотный',
-      path: '/sakris',
-      color: '#2a6a3a',
-    },
-    {
-      name: 'Брин дель Хессен',
-      title: 'Наследный Принц Астарии, владыка Чёрного льда',
-      ability: 'Личное умение — Ледяная крепость',
-      path: '/brin',
-      color: '#5a3a7a',
-    },
-  ];
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return allItems;
+    const q = searchQuery.toLowerCase();
+    return allItems.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.desc.toLowerCase().includes(q) ||
+        categoryLabels[item.category].toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
-  const loreCards = [
-    {
-      title: 'Род Даркбейнов',
-      desc: 'Древний род, чья кровь связана с силами за гранью жизни и смерти. Тайны, передаваемые из поколения в поколение.',
-      path: '/darkbain',
-    },
-    {
-      title: 'Летопись мира',
-      desc: 'Сказание о мире: от Музыки Айнур до 425 года Третьей Эпохи. История, расы, календарь и глоссарий.',
-      path: '/letopis',
-    },
-  ];
+  const groupedItems = useMemo(() => {
+    const groups: Record<string, typeof allItems> = {};
+    for (const item of filteredItems) {
+      if (!groups[item.category]) groups[item.category] = [];
+      groups[item.category].push(item);
+    }
+    return groups;
+  }, [filteredItems]);
+
+  const categoryOrder = ['characters', 'lore', 'maps'];
 
   return (
     <Layout theme={lorTheme} particleCount={35}>
-<<<<<<< HEAD
-      <div className="max-w-[1000px] mx-auto px-6 md:px-8 pb-20 pt-12">
-        {/* Header */}
-=======
       <div className="max-w-[900px] mx-auto px-4 md:px-8 pb-20 pt-10">
->>>>>>> 6b6b02308a0ac0c53a2bc9f64d2b3f629092826f
+        {/* Header — simplified */}
         <motion.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center pb-8 mb-8"
+          className="text-center pb-6 mb-6"
         >
-          <div
-            className="text-4xl md:text-6xl font-black tracking-[12px] uppercase mb-3"
-            style={{
-              fontFamily: "'Cinzel Decorative', serif",
-              color: lorTheme.parchment,
-              textShadow: '0 0 20px rgba(160,150,130,0.2), 0 2px 6px rgba(0,0,0,0.9)',
-            }}
-          >
-            DND
-          </div>
-          <div className="rune-divider" style={{ '--divider-color': lorTheme.primary, '--divider-text': lorTheme.primaryGlow } as React.CSSProperties}>
-            <span>LETO</span>
-          </div>
           <h1
-            className="text-xl md:text-3xl font-bold tracking-[3px] leading-tight my-3"
+            className="text-2xl md:text-4xl font-bold tracking-[4px] leading-tight"
             style={{
               fontFamily: "'Cinzel Decorative', serif",
               color: lorTheme.silver,
@@ -81,11 +149,8 @@ const LorPage: React.FC = () => {
           >
             Мир Игры
           </h1>
-          <div className="rune-divider" style={{ '--divider-color': lorTheme.primary, '--divider-text': lorTheme.primaryGlow } as React.CSSProperties}>
-            <span>PISE</span>
-          </div>
           <p
-            className="text-sm md:text-base italic max-w-[500px] mx-auto leading-relaxed mt-4"
+            className="text-sm italic max-w-[480px] mx-auto leading-relaxed mt-3"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               color: lorTheme.parchmentDim,
@@ -96,73 +161,46 @@ const LorPage: React.FC = () => {
           </p>
         </motion.header>
 
-<<<<<<< HEAD
-        {/* Nav */}
-        <motion.nav
-          initial={{ opacity: 0, y: 20 }}
-=======
+        {/* Search Bar */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
->>>>>>> 6b6b02308a0ac0c53a2bc9f64d2b3f629092826f
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-center gap-2 mb-10 flex-wrap"
+          transition={{ delay: 0.15 }}
+          className="mb-8"
         >
-          {[
-            { id: 'heroes' as const, label: 'Игровые персонажи', icon: '⚔' },
-            { id: 'lore' as const, label: 'Лор', icon: '📜' },
-          ].map((btn) => (
-            <button
-              key={btn.id}
-              onClick={() => setActiveSection(btn.id)}
-              className="px-5 py-2.5 rounded-sm text-xs md:text-sm font-bold tracking-[2px] uppercase transition-all duration-300 cursor-pointer"
-              style={{
-                fontFamily: "'Cinzel', serif",
-                background: activeSection === btn.id
-                  ? 'linear-gradient(180deg, rgba(30,25,15,0.5) 0%, rgba(15,12,8,0.4) 100%)'
-                  : 'linear-gradient(180deg, rgba(30,25,15,0.4) 0%, rgba(15,12,8,0.3) 100%)',
-                border: `1px solid ${activeSection === btn.id ? 'rgba(106,84,48,0.4)' : 'rgba(80,70,50,0.25)'}`,
-                color: activeSection === btn.id ? lorTheme.parchment : lorTheme.parchmentDim,
-                textShadow: activeSection === btn.id ? '0 0 8px rgba(160,144,96,0.2)' : 'none',
-                transform: activeSection === btn.id ? 'translateY(-1px)' : 'none',
-                boxShadow: activeSection === btn.id ? '0 3px 10px rgba(0,0,0,0.3)' : 'none',
-              }}
-            >
-              <span className="mr-2">{btn.icon}</span>
-              {btn.label}
-            </button>
-          ))}
-          <button
-            onClick={() => navigate('/letopis')}
-            className="px-5 py-2.5 rounded-sm text-xs md:text-sm font-bold tracking-[2px] uppercase transition-all duration-300 cursor-pointer"
+          <div
+            className="flex items-center gap-3 px-4 py-3 rounded-lg"
             style={{
-              fontFamily: "'Cinzel', serif",
-              background: 'linear-gradient(180deg, rgba(30,25,15,0.4) 0%, rgba(15,12,8,0.3) 100%)',
+              background: 'rgba(20,15,10,0.4)',
               border: '1px solid rgba(80,70,50,0.25)',
-              color: lorTheme.parchmentDim,
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.borderColor = 'rgba(106,84,48,0.4)';
-              (e.target as HTMLElement).style.color = lorTheme.parchment;
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.25)';
-              (e.target as HTMLElement).style.color = lorTheme.parchmentDim;
             }}
           >
-            <span className="mr-2">🌍</span>
-            Мир Игры
-          </button>
-        </motion.nav>
+            <Search size={18} style={{ color: lorTheme.parchmentDim, flexShrink: 0 }} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Поиск по миру..."
+              className="flex-1 bg-transparent outline-none text-sm"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                color: lorTheme.parchment,
+                letterSpacing: '1px',
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-xs cursor-pointer"
+                style={{ color: lorTheme.parchmentDim }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </motion.div>
 
-<<<<<<< HEAD
-        {/* Heroes Section */}
-        {activeSection === 'heroes' && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-=======
+        {/* Grouped Results */}
         {categoryOrder.map((cat) => {
           const items = groupedItems[cat];
           if (!items || items.length === 0) return null;
@@ -175,12 +213,7 @@ const LorPage: React.FC = () => {
               transition={{ delay: 0.25 }}
               className="mb-8"
             >
-              <div className="section-header !mt-1 !mb-3" style={{ 
-                '--section-border': 'rgba(80,70,50,0.15)', 
-                '--section-icon-color': lorTheme.primaryGlow, 
-                '--section-title-color': lorTheme.primaryGlow, 
-                '--section-line-color': lorTheme.primary 
-              } as React.CSSProperties}>
+              <div className="section-header !mt-1 !mb-3" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
                 <span className="section-icon">{items[0].icon}</span>
                 <h2 className="section-title">{categoryLabels[cat]}</h2>
                 <div className="section-line" />
@@ -190,17 +223,24 @@ const LorPage: React.FC = () => {
                 {items.map((item, idx) => {
                   const char = cat === 'characters' ? characters.find(c => c.id === item.id) : null;
                   return (
-                    <motion.div
+                    <motion.a
                       key={item.path}
+                      href={item.path}
+                      onClick={(e) => {
+                        if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+                          e.preventDefault();
+                          navigate(item.path);
+                        }
+                      }}
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + idx * 0.05 }}
-                      onClick={() => navigate(item.path)}
-                      className="rounded-md p-4 md:p-5 relative overflow-hidden cursor-pointer transition-all duration-300"
+                      className="rounded-md p-4 md:p-5 relative overflow-hidden cursor-pointer transition-all duration-300 block text-left"
                       style={{
                         background: 'linear-gradient(180deg, rgba(20,15,10,0.5) 0%, rgba(10,8,5,0.3) 100%)',
                         border: char ? `1px solid ${char.color}30` : '1px solid rgba(138,106,42,0.2)',
                         borderTop: char ? `2px solid ${char.color}` : undefined,
+                        textDecoration: 'none',
                       }}
                       whileHover={{
                         borderColor: char ? `${char.color}60` : 'rgba(184,144,58,0.3)',
@@ -238,7 +278,7 @@ const LorPage: React.FC = () => {
                       >
                         {item.desc}
                       </div>
-                    </motion.div>
+                    </motion.a>
                   );
                 })}
               </div>
@@ -246,161 +286,24 @@ const LorPage: React.FC = () => {
           );
         })}
 
+        {/* Empty search result */}
         {filteredItems.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-center py-12"
->>>>>>> 6b6b02308a0ac0c53a2bc9f64d2b3f629092826f
           >
-            <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
-              <span className="section-icon">&#9876;</span>
-              <h2 className="section-title">Игровые персонажи</h2>
-              <div className="section-line" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {characters.map((char, idx) => (
-                <motion.div
-                  key={char.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + idx * 0.1 }}
-                  onClick={() => navigate(char.path)}
-                  className="rounded-md p-6 relative overflow-hidden cursor-pointer transition-all duration-300"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(20,15,10,0.6) 0%, rgba(10,8,5,0.4) 100%)',
-                    border: `1px solid ${char.color}30`,
-                    borderTop: `2px solid ${char.color}`,
-                  }}
-                  whileHover={{
-                    borderColor: `${char.color}60`,
-                    y: -3,
-                    boxShadow: `0 8px 25px rgba(0,0,0,0.5)`,
-                  }}
-                >
-                  <div
-                    className="absolute top-0 left-0 right-0 h-0.5"
-                    style={{ background: `linear-gradient(90deg, transparent, ${char.color}, ${char.color}80, transparent)` }}
-                  />
-                  <div
-                    className="text-base md:text-xl font-bold tracking-[2px] mb-2"
-                    style={{
-                      fontFamily: "'Cinzel Decorative', serif",
-                      color: lorTheme.silver,
-                    }}
-                  >
-                    {char.name}
-                  </div>
-                  <div
-                    className="text-xs italic mb-4"
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      color: lorTheme.parchmentDim,
-                    }}
-                  >
-                    {char.title}
-                  </div>
-                  <div
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-sm text-xs tracking-[1px] transition-all duration-200"
-                    style={{
-                      fontFamily: "'Cinzel', serif",
-                      background: 'rgba(30,25,15,0.3)',
-                      border: '1px solid rgba(80,70,50,0.2)',
-                      color: lorTheme.parchmentDim,
-                    }}
-                  >
-                    <span style={{ color: lorTheme.primaryGlow, fontSize: '0.7rem' }}>&#9670;</span>
-                    {char.ability}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
+            <p
+              className="text-lg italic"
+              style={{ fontFamily: "'Cormorant Garamond', serif", color: lorTheme.parchmentDim }}
+            >
+              Ничего не найдено по запросу «{searchQuery}»
+            </p>
+          </motion.div>
         )}
 
-        {/* Lore Section */}
-        {activeSection === 'lore' && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <div className="section-header" style={{ '--section-border': 'rgba(80,70,50,0.15)', '--section-icon-color': lorTheme.primaryGlow, '--section-title-color': lorTheme.primaryGlow, '--section-line-color': lorTheme.primary } as React.CSSProperties}>
-              <span className="section-icon">&#128220;</span>
-              <h2 className="section-title">Лор</h2>
-              <div className="section-line" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {loreCards.map((card, idx) => (
-                <motion.div
-                  key={card.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + idx * 0.1 }}
-                  onClick={() => navigate(card.path)}
-                  className="rounded-md p-6 relative cursor-pointer transition-all duration-300"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(20,15,10,0.5) 0%, rgba(10,8,5,0.3) 100%)',
-                    border: '1px solid rgba(138,106,42,0.2)',
-                  }}
-                  whileHover={{
-                    borderColor: 'rgba(184,144,58,0.3)',
-                    y: -2,
-                  }}
-                >
-                  <div
-                    className="absolute top-0 left-0 right-0 h-0.5"
-                    style={{ background: `linear-gradient(90deg, transparent, ${lorTheme.primaryGlow}, transparent)` }}
-                  />
-                  <div
-                    className="text-base md:text-lg tracking-[2px] mb-2"
-                    style={{
-                      fontFamily: "'Cinzel Decorative', serif",
-                      color: lorTheme.primaryGlow,
-                    }}
-                  >
-                    {card.title}
-                  </div>
-                  <div
-                    className="text-sm leading-relaxed mb-4"
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      color: lorTheme.parchmentDim,
-                    }}
-                  >
-                    {card.desc}
-                  </div>
-                  <span
-                    className="inline-block px-5 py-2.5 rounded-sm text-xs tracking-[2px] uppercase transition-all duration-200 cursor-pointer"
-                    style={{
-                      fontFamily: "'Cinzel', serif",
-                      background: 'linear-gradient(180deg, rgba(30,25,15,0.4) 0%, rgba(15,12,8,0.3) 100%)',
-                      border: '1px solid rgba(80,70,50,0.25)',
-                      color: lorTheme.parchmentDim,
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.target as HTMLElement).style.borderColor = lorTheme.primary;
-                      (e.target as HTMLElement).style.color = lorTheme.parchment;
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.target as HTMLElement).style.borderColor = 'rgba(80,70,50,0.25)';
-                      (e.target as HTMLElement).style.color = lorTheme.parchmentDim;
-                    }}
-                  >
-                    Открыть
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-        )}
-
-        <div className="footer-ornament mt-12" style={{ 
-          '--footer-border': 'rgba(80,70,50,0.1)', 
-          '--footer-text-color': lorTheme.primary 
-        } as React.CSSProperties}>
+        {/* Footer */}
+        <div className="footer-ornament mt-12" style={{ '--footer-border': 'rgba(80,70,50,0.1)', '--footer-text-color': lorTheme.primary } as React.CSSProperties}>
           <div className="rune-string">L E T O P I S E</div>
         </div>
       </div>

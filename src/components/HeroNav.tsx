@@ -30,13 +30,19 @@ const HeroNav: React.FC<HeroNavProps> = ({ theme, characterId }) => {
       {char.pages.map((page, idx) => {
         const isActive = location.pathname === page.path;
         return (
-          <motion.button
+          <motion.a
             key={page.path}
+            href={page.path}
+            onClick={(e) => {
+              if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+                e.preventDefault();
+                navigate(page.path);
+              }
+            }}
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 + idx * 0.05 }}
-            onClick={() => navigate(page.path)}
-            className="px-4 py-2 rounded text-xs tracking-[1px] transition-all duration-200 cursor-pointer"
+            className="px-4 py-2 rounded text-xs tracking-[1px] transition-all duration-200 cursor-pointer block text-center"
             style={{
               fontFamily: "'Cinzel', serif",
               background: isActive
@@ -45,6 +51,7 @@ const HeroNav: React.FC<HeroNavProps> = ({ theme, characterId }) => {
               border: `1px solid ${isActive ? `${char.color}60` : 'rgba(80,70,50,0.2)'}`,
               color: isActive ? theme.parchment : theme.parchmentDim,
               boxShadow: isActive ? `0 0 12px ${char.color}20` : 'none',
+              textDecoration: 'none',
             }}
             whileHover={{
               borderColor: `${char.color}50`,
@@ -52,7 +59,7 @@ const HeroNav: React.FC<HeroNavProps> = ({ theme, characterId }) => {
             }}
           >
             {page.label}
-          </motion.button>
+          </motion.a>
         );
       })}
     </motion.nav>
