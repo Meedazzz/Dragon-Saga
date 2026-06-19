@@ -830,6 +830,18 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
     onExpandedChange?.(expanded);
   }, [expanded, onExpandedChange]);
 
+  // Block body scroll when a tarot card is expanded in 3D overlay
+  useEffect(() => {
+    if (expanded) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [expanded]);
+
   const openCard = (char: CharacterConfig) => {
     setOverlayStartsFlipped(false); // Always show front face (artwork) to the viewer initially!
     setExpanded(char);

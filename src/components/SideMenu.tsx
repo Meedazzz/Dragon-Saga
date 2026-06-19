@@ -118,6 +118,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
           border: `1px solid ${theme.buttonBorder}`,
           color: theme.menuAccent,
           backdropFilter: 'blur(10px)',
+          transform: 'translateZ(0)',
+          willChange: 'transform',
         }}
         data-tooltip={isOpen ? "Закрыть меню" : "Открыть меню"}
       >
@@ -150,6 +152,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               background: theme.menuBg,
               borderRight: `1px solid ${theme.buttonBorder}`,
               backdropFilter: 'blur(20px)',
+              transform: 'translateZ(0)',
+              willChange: 'transform',
             }}
           >
             {/* Header */}
