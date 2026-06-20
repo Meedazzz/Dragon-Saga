@@ -75,6 +75,8 @@ const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char
     className="tarot-card-back"
     style={{
       backgroundImage: `url(${BASE_URL}shirt.png)`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
     }}
   >
     <div className="tarot-card-back-lore">
