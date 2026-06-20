@@ -1,8 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { MusicProvider } from '@/contexts/MusicContext';
-import LoadingScreen from '@/components/LoadingScreen';
-import { homeTheme } from '@/types/theme';
+import Preloader from '@/components/Preloader';
 
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const LorePage = lazy(() => import('@/pages/LorePage'));
@@ -20,13 +19,35 @@ const MapPage = lazy(() => import('@/pages/MapPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
 const TalisPlaceholder = lazy(() => import('@/pages/TalisPlaceholder'));
 
+/**
+ * ScrollToTop — guarantees that every navigation lands at the very top
+ * of the page (requirement #3).
+ */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    // Disable the browser's auto-scroll-restoration so we control it.
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    // Reset scroll on every route change.
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    // Also reset any internal scroll containers.
+    const root = document.getElementById('root');
+    if (root) root.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   useEffect(() => {
     // 1. Prevent right click
     const preventContextMenu = (e: MouseEvent) => {
       e.preventDefault();
     };
-    
+
     // 2. Prevent dragging images
     const preventDragStart = (e: DragEvent) => {
       if (e.target instanceof HTMLElement && (e.target.tagName === 'IMG' || e.target.tagName === 'img')) {
@@ -41,7 +62,6 @@ function App() {
 
     // 4. Prevent common keyboard shortcuts for developer tools and saving
     const preventShortcuts = (e: KeyboardEvent) => {
-      // Prevent Ctrl+S, Ctrl+U, Ctrl+Shift+I, F12
       if (
         (e.ctrlKey && e.key === 's') ||
         (e.ctrlKey && e.key === 'u') ||
@@ -67,37 +87,40 @@ function App() {
 
   return (
     <MusicProvider>
-      <Suspense fallback={<LoadingScreen theme={homeTheme} isLoading={true} />}>
+      <ScrollToTop />
+      <Suspense fallback={<Preloader theme={{name:"home",void:"#07070c",raven:"#10111a",primary:"#b4283a",primaryGlow:"#e44a5a",primaryBright:"#ff6b7c",accent:"#4bc8e8",accentGlow:"#7de4ff",silver:"#c9d2e0",silverBright:"#eaf2ff",parchment:"#efe5d5",parchmentDim:"#b69f82",border:"rgba(180,40,58,0.28)",borderGlow:"rgba(228,74,90,0.45)",menuBg:"rgba(7,7,12,0.97)",menuText:"#efe5d5",menuAccent:"#e44a5a",buttonBg:"rgba(22,14,18,0.9)",buttonText:"#ff7a88",buttonBorder:"rgba(180,40,58,0.5)",particleColors:["#e44a5a","#4bc8e8","#ff6b7c"],fontFamily:"Cinzel",borderStyle:"linear-gradient(180deg, #b4283a 0%, transparent 22%, transparent 78%, rgba(180,40,58,0.55) 100%)",isDark:true}} isLoading={true} />}>
         <Routes>
+          {/* Home */}
           <Route path="/" element={<HomePage />} />
-          
-          {/* Лор персонажей */}
+
+          {/* Character lore */}
           <Route path="/lore/:characterId" element={<LorePage />} />
 
-          {/* Личные умения */}
+          {/* Personal abilities */}
           <Route path="/valery" element={<ValeryPage />} />
-          <Route path="/sakris" element={<SakrisPage />} />
           <Route path="/brin" element={<BrinPage />} />
-          <Route path="/darkbain" element={<DarkbainPage />} />
-
-          {/* Страницы для Стива и Таллиса */}
+          <Route path="/sakris" element={<SakrisPage />} />
           <Route path="/stive" element={<StivePlaceholder />} />
+
+          {/* Subclasses */}
+          <Route path="/subclass/:characterId" element={<SubclassPage />} />
           <Route path="/talis" element={<TalisPlaceholder />} />
 
-          {/* Подклассы */}
-          <Route path="/subclass/:characterId" element={<SubclassPage />} />
-
-          {/* Связанный лор */}
+          {/* Linked lore */}
+          <Route path="/darkbain" element={<DarkbainPage />} />
           <Route path="/hessen" element={<HessenPage />} />
           <Route path="/berghheim" element={<BerghheimPage />} />
           <Route path="/arantir" element={<ArantirPage />} />
 
-          {/* Карты */}
+          {/* Maps */}
           <Route path="/map/:mapId" element={<MapPage />} />
 
-          {/* Летопись и мир игры */}
+          {/* World chronicles */}
           <Route path="/letopis" element={<LetopisPage />} />
           <Route path="/lor" element={<LorPage />} />
+
+          {/* Catch-all */}
+          <Route path="*" element={<HomePage />} />
         </Routes>
       </Suspense>
     </MusicProvider>
