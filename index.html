@@ -1,22 +1,488 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/Dragon-Saga/favicon.png" />
-    <link rel="apple-touch-icon" href="/Dragon-Saga/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Драконья Сага — проект НРИ на базе D&D: летописи героев, личные умения и предыстории персонажей в авторском мире." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карты Таро — Dragon Saga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-      :root { background: #0c0c10; }
-      body { background: #0c0c10; margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap');
+        
+        :root {
+            --primary: #e44a5a;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: #0c0c10;
+            color: #efe5d5;
+        }
+        
+        .cinzel {
+            font-family: 'Cinzel', Georgia, serif;
+        }
+        
+        .tarot-card {
+            width: 212px;
+            height: 380px;
+            perspective: 1400px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .tarot-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .tarot-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .tarot-front, .tarot-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+        }
+        
+        .tarot-back {
+            transform: rotateY(180deg);
+            background-image: url('https://meedazzz.github.io/Dragon-Saga/shirt.png');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .tarot-front img {
+            width: 100%;
+            height: 100%;
+            -o-object-fit: cover;
+               object-fit: cover;
+        }
+        
+        .tarot-lore {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.72);
+            padding: 18px 16px;
+            color: #f6efe0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .tarot-tooltip {
+            position: absolute;
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(11, 8, 14, 0.95);
+            color: #efe5d5;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            box-shadow: 0 10px 15px rgb(0 0 0 / 0.3);
+            z-index: 50;
+        }
+        
+        .card-fan {
+            position: relative;
+            height: 460px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .fan-card {
+            position: absolute;
+            transition: all 0.4s cubic-bezier(0.23, 1.0, 0.32, 1);
+        }
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .overlay.active {
+            display: flex;
+        }
+        
+        .expanded-card {
+            width: 320px;
+            height: 574px;
+            perspective: 1500px;
+        }
+        
+        .expanded-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .expanded-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgb(0 0 0 / 0.6);
+        }
+        
+        .expanded-back {
+            transform: rotateY(180deg);
+        }
     </style>
-    <title>Драконья Сага — D&D Chronicles</title>
-    <script type="module" crossorigin src="/Dragon-Saga/assets/index-DYkYn3Mw.js"></script>
-    <link rel="stylesheet" crossorigin href="/Dragon-Saga/assets/index-BzwUdpG6.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+</head>
+<body class="bg-[#0c0c10] text-[#efe5d5]">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="text-[#ff6b7c] text-sm tracking-[6px] font-medium mb-2">D&amp;D CHRONICLES</div>
+            <h1 class="text-6xl font-bold cinzel tracking-wider text-[#ff6b7c]">Карты Таро</h1>
+            <p class="mt-4 text-xl text-[#b69f82]">Нажми на карту, чтобы узнать героя</p>
+        </div>
+
+        <!-- Tarot Fan -->
+        <div class="card-fan mb-16" id="tarot-fan">
+            <!-- Cards will be injected here by JS -->
+        </div>
+
+        <div class="text-center text-[#b69f82] text-sm">
+            Кликни по карте • Прокручивай колёсиком • Тяни для вращения
+        </div>
+    </div>
+
+    <!-- Expanded Card Overlay -->
+    <div id="overlay" class="overlay" onclick="closeOverlay()">
+        <div class="expanded-card" onclick="event.stopImmediatePropagation()">
+            <div id="expanded-inner" class="expanded-inner">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="flex justify-center gap-3 mt-6">
+                <button onclick="flipExpandedCard()" 
+                        class="px-6 py-2.5 text-sm rounded-full border border-[#e44a5a] hover:bg-[#e44a5a] hover:text-white transition-all">
+                    <span id="flip-text">Краткий лор</span>
+                </button>
+                <button onclick="closeOverlay()" 
+                        class="px-6 py-2.5 text-sm rounded-full border border-white/30 hover:bg-white/10 transition-all">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tailwind script
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#e44a5a');
+        }
+
+        const characters = [
+            {
+                id: 'valery',
+                name: 'Валерий Даркбейн',
+                color: '#e44a5a',
+                tarot: 'https://meedazzz.github.io/Dragon-Saga/optimized/tarot_valery.webp',
+                bio: [
+                    'Род Даркбейнов отмечен проклятием ещё со времён Падения Асов.',
+                    'Валерий превращает боль, смерть и последние мгновения врагов в оружие.',
+                    '«Нет добра или зла. Есть только жизнь и смерть.»'
+                ]
+            },
+            {
+                id: 'brin',
+                name: 'Брин дель Хессен',
+                color: '#a24ab8',
+                tarot: 'https://meedazzz.github.io/Dragon-Saga/optimized/tarot_brin.webp',
+                bio: [
+                    'Единственный сын герцога Астарии и наследник крови первых людей.',
+                    'В нём пробудилась сила Чёрного льда, веками спавшая в доме Хессен.',
+                    '«Лёд учит терпению. Терпение учит власти.»'
+                ]
+            },
+            {
+                id: 'sakris',
+                name: 'Сакрис Ульриаш',
+                color: '#35b85a',
+                tarot: 'https://meedazzz.github.io/Dragon-Saga/optimized/tarot_sakris.webp',
+                bio: [
+                    'Рождённый в Бергхейме, Сакрис перерос дом, стены и ожидания рода.',
+                    'В нём говорит древний дух-следопыт, знающий тропи между мирами.',
+                    '«Лес говорит со мной. Я лишь пересказываю его слова.»'
+                ]
+            },
+            {
+                id: 'talis',
+                name: 'Таллис',
+                color: '#FF5E00',
+                tarot: 'https://meedazzz.github.io/Dragon-Saga/optimized/tarot_tallis.webp',
+                bio: [
+                    'Последний носитель песен клана Драконоборцев.',
+                    'С лютней на плече и мечом за спиной он собирает истории мира.',
+                    '«Пока я дышу — я пою.»'
+                ]
+            },
+            {
+                id: 'stive',
+                name: 'Стив',
+                color: '#2a6a3a',
+                tarot: 'https://meedazzz.github.io/Dragon-Saga/optimized/tarot_stive.webp',
+                bio: [
+                    'Ученик травника и послушник круга.',
+                    'Он ищет лекарство для учителя и своё место среди легенд.',
+                    '«Деревья говорят тише людей, но говорят правду.»'
+                ]
+            }
+        ];
+
+        let expandedCard = null;
+        let isFlipped = false;
+        let rotX = 0, rotY = 0, rotZ = 0;
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0, rotX: 0, rotY: 0 };
+
+        // Create fan cards
+        function createFanCards() {
+            const container = document.getElementById('tarot-fan');
+            container.innerHTML = '';
+
+            const fanPositions = [
+                { x: -340, rotate: -22 },
+                { x: -170, rotate: -10 },
+                { x: 0, rotate: 0 },
+                { x: 170, rotate: 10 },
+                { x: 340, rotate: 22 }
+            ];
+
+            characters.forEach((char, index) => {
+                const card = document.createElement('div');
+                card.className = `fan-card tarot-card`;
+                card.style.left = '50%';
+                card.style.transform = `translateX(${fanPositions[index].x}px) rotate(${fanPositions[index].rotate}deg)`;
+                card.style.zIndex = 10 + index;
+
+                card.innerHTML = `
+                    <div class="tarot-inner">
+                        <!-- FRONT -->
+                        <div class="tarot-front">
+                            <img src="${char.tarot}" alt="${char.name}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30"></div>
+                        </div>
+                        
+                        <!-- BACK (hidden until expanded) -->
+                        <div class="tarot-back" style="background-image: url('https://meedazzz.github.io/Dragon-Saga/shirt.png'); background-size: cover;">
+                            <div class="tarot-lore">
+                                <div class="font-bold text-lg mb-2 cinzel" style="color: ${char.color}">${char.name}</div>
+                                ${char.bio.map(line => `<p class="mb-1.5 text-sm">${line}</p>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tarot-tooltip hidden" id="tooltip-${index}">
+                        Нажми на меня
+                    </div>
+                    
+                    <div class="mt-3 text-center">
+                        <div class="text-xs cinzel tracking-widest">${char.name}</div>
+                    </div>
+                `;
+
+                // Click to open expanded view
+                card.onclick = () => openExpandedCard(char, index);
+
+                // Show tooltip occasionally
+                setTimeout(() => {
+                    const tooltip = card.querySelector(`#tooltip-${index}`);
+                    if (tooltip) {
+                        tooltip.classList.remove('hidden');
+                        setTimeout(() => {
+                            tooltip.classList.add('hidden');
+                        }, 2400);
+                    }
+                }, 1400 + (index * 400));
+
+                container.appendChild(card);
+            });
+        }
+
+        function openExpandedCard(char, index) {
+            const overlay = document.getElementById('overlay');
+            const inner = document.getElementById('expanded-inner');
+            
+            expandedCard = char;
+            isFlipped = false;
+            rotX = 0; rotY = 0; rotZ = 0;
+            
+            inner.innerHTML = `
+                <div class="tarot-front expanded-face">
+                    <img src="${char.tarot}" class="w-full h-full object-cover">
+                </div>
+                <div class="tarot-back expanded-face" style="background-image: url('https://meedazzz.github.io/Dragon-Saga/shirt.png'); background-size: cover; background-position: center;">
+                    <div class="tarot-lore p-6 text-sm">
+                        <div class="font-bold text-xl mb-3 cinzel" style="color: ${char.color}">${char.name}</div>
+                        ${char.bio.map(line => `<p class="mb-2">${line}</p>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            inner.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`;
+            
+            // Add drag functionality
+            setupDragListeners(inner);
+            setupWheelListener(inner);
+            
+            overlay.style.display = 'flex';
+            overlay.classList.add('active');
+        }
+
+        function setupDragListeners(element) {
+            element.onmousedown = startDrag;
+            element.ontouchstart = startDragTouch;
+            
+            function startDrag(e) {
+                isDragging = true;
+                dragStart = { 
+                    x: e.clientX, 
+                    y: e.clientY, 
+                    rotX, 
+                    rotY 
+                };
+                document.onmousemove = dragMove;
+                document.onmouseup = endDrag;
+            }
+            
+            function startDragTouch(e) {
+                isDragging = true;
+                const t = e.touches[0];
+                dragStart = { 
+                    x: t.clientX, 
+                    y: t.clientY, 
+                    rotX, 
+                    rotY 
+                };
+                document.ontouchmove = dragMoveTouch;
+                document.ontouchend = endDrag;
+            }
+            
+            function dragMove(e) {
+                if (!isDragging) return;
+                const dx = e.clientX - dragStart.x;
+                const dy = e.clientY - dragStart.y;
+                
+                rotY = dragStart.rotY + dx * 0.45;
+                rotX = dragStart.rotX - dy * 0.45;
+                
+                element.style.transition = 'none';
+                element.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`;
+            }
+            
+            function dragMoveTouch(e) {
+                if (!isDragging || !e.touches[0]) return;
+                const t = e.touches[0];
+                const dx = t.clientX - dragStart.x;
+                const dy = t.clientY - dragStart.y;
+                
+                rotY = dragStart.rotY + dx * 0.45;
+                rotX = dragStart.rotX - dy * 0.45;
+                
+                element.style.transition = 'none';
+                element.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`;
+            }
+            
+            function endDrag() {
+                isDragging = false;
+                document.onmousemove = null;
+                document.onmouseup = null;
+                document.ontouchmove = null;
+                document.ontouchend = null;
+                
+                element.style.transition = 'transform 480ms cubic-bezier(.2,.8,.2,1)';
+            }
+        }
+
+        function setupWheelListener(element) {
+            element.onwheel = function(e) {
+                e.preventDefault();
+                rotZ += e.deltaY * 0.15;
+                element.style.transition = 'none';
+                element.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`;
+                
+                setTimeout(() => {
+                    element.style.transition = 'transform 480ms cubic-bezier(.2,.8,.2,1)';
+                }, 100);
+            };
+        }
+
+        function flipExpandedCard() {
+            const inner = document.getElementById('expanded-inner');
+            isFlipped = !isFlipped;
+            
+            if (isFlipped) {
+                inner.style.transform = `rotateY(180deg) rotateX(${rotX * 0.3}deg) rotateZ(${rotZ * 0.5}deg)`;
+                document.getElementById('flip-text').innerHTML = 'Лицевая сторона';
+            } else {
+                inner.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`;
+                document.getElementById('flip-text').innerHTML = 'Краткий лор';
+            }
+        }
+
+        function closeOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'none';
+            overlay.classList.remove('active');
+            
+            // Reset
+            expandedCard = null;
+            isFlipped = false;
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('overlay');
+                if (overlay.style.display === 'flex') {
+                    closeOverlay();
+                }
+            }
+        });
+
+        // Init
+        function init() {
+            initTailwind();
+            createFanCards();
+            
+            // Easter egg: random tooltip every 9 seconds
+            setInterval(() => {
+                const tooltips = document.querySelectorAll('.tarot-tooltip');
+                if (tooltips.length > 0 && Math.random() > 0.6) {
+                    const random = tooltips[Math.floor(Math.random() * tooltips.length)];
+                    random.classList.remove('hidden');
+                    setTimeout(() => random.classList.add('hidden'), 2200);
+                }
+            }, 9000);
+            
+            console.log('%c[Tarot] Dragon Saga Tarot Cards loaded successfully', 'color:#666');
+        }
+
+        window.onload = init;
+    </script>
+</body>
 </html>
