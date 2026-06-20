@@ -13,9 +13,288 @@
       body { background: #0c0c10; margin: 0; }
     </style>
     <title>Драконья Сага — D&D Chronicles</title>
+
+    <!-- ════════ Таро: рубашка + мобильный переворот ════════ -->
+    <style>
+      /* ── Рубашка на обратной стороне expanded-карты (десктоп) ── */
+      .tarot-shirt-back {
+        background-image: url('https://meedazzz.github.io/Dragon-Saga/shirt.png') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        position: relative !important;
+      }
+      .tarot-shirt-back > * {
+        position: relative;
+        z-index: 2;
+      }
+      .tarot-shirt-back::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.62);
+        z-index: 1;
+        border-radius: inherit;
+      }
+
+      /* ── Мобильная карта: 3D-переворот ── */
+      .mobile-tarot-wrapper {
+        perspective: 1200px;
+      }
+      .mobile-tarot-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .mobile-tarot-inner.flipped {
+        transform: rotateY(180deg);
+      }
+      .mobile-tarot-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: inherit;
+        overflow: hidden;
+      }
+      .mobile-tarot-back {
+        transform: rotateY(180deg);
+        background-image: url('https://meedazzz.github.io/Dragon-Saga/shirt.png');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+      }
+      .mobile-tarot-back::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.60);
+        border-radius: inherit;
+      }
+      .mobile-tarot-back > * {
+        position: relative;
+        z-index: 2;
+      }
+      .mobile-lore-name {
+        font-family: 'Cinzel', serif;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 6px;
+      }
+      .mobile-lore-line {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: #f6efe0;
+        margin-bottom: 4px;
+        text-align: center;
+        padding: 0 12px;
+      }
+      .mobile-lore-quote {
+        font-style: italic;
+        color: #cab094;
+      }
+      .mobile-flip-hint {
+        font-family: 'Cinzel', serif;
+        font-size: 0.65rem;
+        letter-spacing: 1.5px;
+        color: rgba(255,255,255,0.4);
+        margin-top: 8px;
+        padding-bottom: 14px;
+      }
+    </style>
   </head>
   <body>
+    <!-- Оригинальный React-корень — НЕ ТРОГАТЬ -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- ════════ Инъекция: рубашка + мобильный переворот ════════ -->
+    <script>
+    (function() {
+      const SHIRT = 'https://meedazzz.github.io/Dragon-Saga/shirt.png';
+      const BASE  = 'https://meedazzz.github.io/Dragon-Saga/optimized/';
+
+      const charData = [
+        { id:'valery', name:'Валерий Даркбейн', color:'#e6e6fa',
+          bio:['Род Даркбейнов отмечен проклятием ещё со времён Падения Асов.',
+               'Валерий превращает боль, смерть и последние мгновения врагов в оружие.',
+               '«Нет добра или зла. Есть только жизнь и смерть.»'] },
+        { id:'brin', name:'Брин дель Хессен', color:'#a78bfa',
+          bio:['Единственный сын герцога Астарии и наследник крови первых людей.',
+               'В нём пробудилась сила Чёрного льда, веками спавшая в доме Хессен.',
+               '«Лёд учит терпению. Терпение учит власти.»'] },
+        { id:'sakris', name:'Сакрис Ульриаш', color:'#60a5fa',
+          bio:['Рождённый в Бергхейме, Сакрис перерос дом, стены и ожидания рода.',
+               'В нём говорит древний дух-следопыт, знающий тропы между мирами.',
+               '«Лес говорит со мной. Я лишь пересказываю его слова.»'] },
+        { id:'talis', name:'Таллис', color:'#f97316',
+          bio:['Последний носитель песен клана Драконоборцев.',
+               'С лютней на плече и мечом за спиной он собирает истории мира.',
+               '«Пока я дышу — я пою.»'] },
+        { id:'stive', name:'Стив', color:'#34d399',
+          bio:['Ученик травника и послушник круга.',
+               'Он ищет лекарство для учителя и своё место среди легенд.',
+               '«Деревья говорят тише людей, но говорят правду.»'] }
+      ];
+
+      function getCharData(name) {
+        return charData.find(c => name.includes(c.name.split(' ')[0]));
+      }
+
+      /* ───────────────────────────────────────────
+         1. ДЕСКТОП: рубашка на обратной стороне
+         ─────────────────────────────────────────── */
+      function patchExpandedBack(node) {
+        // Ищем обратную сторону expanded-карты — элемент с rotateY(180deg)
+        const allDivs = node.querySelectorAll('div[style]');
+        allDivs.forEach(div => {
+          const s = div.getAttribute('style') || '';
+          if (s.includes('rotateY(180deg)') && !div.classList.contains('tarot-shirt-back')) {
+            div.classList.add('tarot-shirt-back');
+          }
+        });
+      }
+
+      /* ───────────────────────────────────────────
+         2. МОБИЛЬНЫЕ: переворот с рубашкой
+         ─────────────────────────────────────────── */
+      function isMobile() {
+        return window.innerWidth < 768;
+      }
+
+      function patchMobileCard(card) {
+        if (card.dataset.tarotPatched) return;
+        card.dataset.tarotPatched = '1';
+
+        // Определяем персонажа по alt картинки
+        const img = card.querySelector('img');
+        if (!img) return;
+        const charName = img.getAttribute('alt') || '';
+        const char = getCharData(charName);
+        if (!char) return;
+
+        // Сохраняем оригинальный обработчик клика (открытие expanded)
+        const origOnClick = card.onclick;
+
+        // Оборачиваем карту в 3D-контейнер
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mobile-tarot-wrapper';
+        wrapper.style.width = '100%';
+        wrapper.style.height = '100%';
+        wrapper.style.borderRadius = 'inherit';
+
+        const inner = document.createElement('div');
+        inner.className = 'mobile-tarot-inner';
+
+        // Лицевая сторона — клонируем текущее содержимое
+        const frontFace = document.createElement('div');
+        frontFace.className = 'mobile-tarot-face';
+        frontFace.innerHTML = card.innerHTML;
+
+        // Обратная сторона — рубашка + лор
+        const backFace = document.createElement('div');
+        backFace.className = 'mobile-tarot-face mobile-tarot-back';
+        let loreHTML = `<div style="padding:16px 12px;width:100%;text-align:center;">`;
+        loreHTML += `<div class="mobile-lore-name" style="color:${char.color}">${char.name}</div>`;
+        char.bio.forEach(line => {
+          const cls = line.startsWith('«') ? 'mobile-lore-line mobile-lore-quote' : 'mobile-lore-line';
+          loreHTML += `<p class="${cls}">${line}</p>`;
+        });
+        loreHTML += `<div class="mobile-flip-hint">НАЖМИТЕ ДЛЯ ВОЗВРАТА</div>`;
+        loreHTML += `</div>`;
+        backFace.innerHTML = loreHTML;
+
+        // Очищаем карту и вставляем обёртку
+        card.innerHTML = '';
+        inner.appendChild(frontFace);
+        inner.appendChild(backFace);
+        wrapper.appendChild(inner);
+        card.appendChild(wrapper);
+
+        card.style.overflow = 'visible';
+
+        // Клик: переворот вместо открытия expanded
+        let isFlipped = false;
+        card.onclick = (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          isFlipped = !isFlipped;
+          inner.classList.toggle('flipped', isFlipped);
+        };
+
+        // Убираем pointer events с внутренней картинки и overlay
+        frontFace.querySelectorAll('*').forEach(el => {
+          el.style.pointerEvents = 'none';
+        });
+      }
+
+      /* ───────────────────────────────────────────
+         3. MutationObserver — следим за DOM
+         ─────────────────────────────────────────── */
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType !== 1) return;
+
+            // Десктоп: патчим обратную сторону expanded-карты
+            patchExpandedBack(node);
+
+            // Мобильные: патчим карточки в карусели
+            if (isMobile()) {
+              // Ищем мобильные карты (с pointer events и аспектом 768/1376)
+              const cards = node.querySelectorAll('[style*="aspect-ratio"], [style*="aspectRatio"]');
+              cards.forEach(patchMobileCard);
+
+              // Также проверяем сам узел
+              if (node.style && node.style.aspectRatio) {
+                patchMobileCard(node);
+              }
+            }
+          });
+        });
+
+        // Периодически перепатчиваем expanded back (React может перерендерить)
+        document.querySelectorAll('.tarot-shirt-back').forEach(el => {
+          if (!el.style.backgroundImage || !el.style.backgroundImage.includes('shirt')) {
+            el.classList.remove('tarot-shirt-back');
+          }
+        });
+      });
+
+      // Запуск наблюдателя
+      observer.observe(document.getElementById('root'), {
+        childList: true,
+        subtree: true
+      });
+
+      // Первичный проход после загрузки React
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          // Десктоп: патчим все существующие back-элементы
+          document.querySelectorAll('div[style*="rotateY(180deg)"]').forEach(div => {
+            if (!div.classList.contains('tarot-shirt-back')) {
+              div.classList.add('tarot-shirt-back');
+            }
+          });
+
+          // Мобильные: патчим карты
+          if (isMobile()) {
+            document.querySelectorAll('[role="button"]').forEach(el => {
+              if (el.querySelector('img') && el.getAttribute('aria-label') && el.getAttribute('aria-label').includes('Открыть карту')) {
+                patchMobileCard(el);
+              }
+            });
+          }
+        }, 1500);
+      });
+
+    })();
+    </script>
   </body>
 </html>
