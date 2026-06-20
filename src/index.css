@@ -25,6 +25,11 @@
     --border: 351 30% 86%;
     --input: 351 30% 86%;
     --ring: 351 70% 44%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
     --radius: 0.72rem;
   }
 
@@ -57,17 +62,28 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    color: #efe5d5;
-    background: #0c0c10;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-  ::-webkit-scrollbar { width: 9px; height: 9px; }
-  ::-webkit-scrollbar-track { background: var(--scrollbar-track, #0b0a0f); }
-  ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb, #b4283a); border-radius: 6px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover, #e44a5a); }
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track, #0b0a0f);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb, #b4283a);
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover, #e44a5a);
+  }
 }
 
 @layer components {
@@ -77,31 +93,24 @@
     transition: background 0.45s ease;
   }
 
-  .page-border {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 50;
-  }
-
   .rune-divider {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
-    margin: 24px 0 16px;
+    margin: 15px 0;
   }
   .rune-divider::before,
   .rune-divider::after {
     content: '';
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #e44a5a, transparent);
+    background: linear-gradient(90deg, transparent, var(--divider-color, #e44a5a), transparent);
   }
   .rune-divider span {
     font-family: 'Cinzel Decorative', serif;
     font-size: 1.06rem;
-    color: #ff6b7c;
+    color: var(--divider-text, #ff6b7c);
     letter-spacing: 5px;
   }
 
@@ -111,12 +120,18 @@
     gap: 15px;
     margin: 34px 0 18px;
     padding-bottom: 10px;
-    border-bottom: 1px solid rgba(180, 40, 58, 0.22);
+    border-bottom: 1px solid var(--section-border, rgba(180, 40, 58, 0.22));
+  }
+  .section-icon {
+    font-size: 1.25rem;
+    color: var(--section-icon-color, #e44a5a);
+    flex-shrink: 0;
   }
   .section-title {
     font-family: 'Cinzel Decorative', serif;
     font-size: 1.18rem;
     font-weight: 700;
+    color: var(--section-title-color, #ff6b7c);
     letter-spacing: 3.5px;
     text-transform: uppercase;
     flex-shrink: 0;
@@ -124,12 +139,12 @@
   .section-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, #b4283a, transparent);
+    background: linear-gradient(90deg, var(--section-line-color, #b4283a), transparent);
   }
 
   .charge-box {
-    background: linear-gradient(180deg, rgba(28,14,18,0.62) 0%, rgba(14,8,12,0.5) 100%);
-    border: 1px solid rgba(180, 40, 58, 0.28);
+    background: linear-gradient(180deg, var(--charge-bg-start, rgba(28,14,18,0.62)) 0%, var(--charge-bg-end, rgba(14,8,12,0.5)) 100%);
+    border: 1px solid var(--charge-border, rgba(180, 40, 58, 0.28));
     border-radius: 12px;
     padding: 26px 30px;
     margin: 20px 0;
@@ -140,34 +155,41 @@
   .charge-box::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #e44a5a, transparent);
+    background: linear-gradient(90deg, transparent, var(--charge-line-color, #e44a5a), transparent);
   }
-  .charge-list { list-style: none; padding: 0; }
+
+  .charge-list {
+    list-style: none;
+    padding: 0;
+  }
   .charge-list li {
     position: relative;
     padding-left: 30px;
     margin-bottom: 14px;
     line-height: 1.85;
-    color: #efe5d5;
+    color: var(--charge-text, #efe5d5);
     font-size: 1.05rem;
     font-family: 'Cormorant Garamond', serif;
   }
   .charge-list li::before {
-    content: '\\25C6';
+    content: '◆';
     position: absolute;
     left: 0;
-    color: #e44a5a;
+    color: var(--charge-bullet, #e44a5a);
     font-size: 0.85rem;
     top: 2px;
   }
+
   .charge-note {
     margin-top: 15px;
     padding: 14px 18px;
-    background: rgba(228, 74, 90, 0.09);
-    border-left: 2px solid #e44a5a;
-    color: #cab094;
+    background: var(--charge-note-bg, rgba(228, 74, 90, 0.09));
+    border-left: 2px solid var(--charge-note-border, #e44a5a);
+    color: var(--charge-note-text, #cab094);
     font-size: 1rem;
     font-style: italic;
     font-family: 'Cormorant Garamond', serif;
@@ -180,24 +202,25 @@
     padding: 48px 34px;
     text-align: center;
     position: relative;
-    background: linear-gradient(135deg, rgba(10,8,12,0.98) 0%, rgba(22,12,18,0.96) 50%, rgba(10,8,12,0.98) 100%);
-    border: 1px solid rgba(180, 40, 58, 0.25);
+    background: var(--quote-bg, linear-gradient(135deg, rgba(10,8,12,0.98) 0%, rgba(22,12,18,0.96) 50%, rgba(10,8,12,0.98) 100%));
+    border: 1px solid var(--quote-border, rgba(180, 40, 58, 0.25));
     border-radius: 14px;
   }
   .quote-section::before,
   .quote-section::after {
     content: '';
     position: absolute;
-    left: 0; right: 0;
+    left: 0;
+    right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #e44a5a, transparent);
+    background: linear-gradient(90deg, transparent, var(--quote-line-color, #e44a5a), transparent);
   }
   .quote-section::before { top: 0; }
   .quote-section::after { bottom: 0; }
   .elven-quote {
     font-family: 'Cinzel Decorative', serif;
     font-size: 1.42rem;
-    color: #ff6b7c;
+    color: var(--quote-text, #ff6b7c);
     line-height: 2.15;
     letter-spacing: 3.5px;
     text-transform: uppercase;
@@ -208,6 +231,9 @@
     align-items: center;
     gap: 8px;
   }
+  .elven-line { display: block; padding: 0; }
+  .elven-quote .life { color: var(--quote-life, #7de4ff); font-weight: 700; }
+  .elven-quote .death { color: var(--quote-death, #e44a5a); font-weight: 700; }
 
   .gifts-table {
     width: 100%;
@@ -222,7 +248,7 @@
   }
   .gifts-table thead th {
     background: linear-gradient(180deg, rgba(34,18,22,0.82) 0%, rgba(16,10,14,0.95) 100%);
-    color: #ff6b7c;
+    color: var(--table-head-text, #ff6b7c);
     font-family: 'Cinzel', serif;
     font-weight: 700;
     font-size: 0.78rem;
@@ -230,13 +256,17 @@
     text-transform: uppercase;
     padding: 14px 12px;
     text-align: left;
-    border-bottom: 2px solid #b4283a;
+    border-bottom: 2px solid var(--table-border, #b4283a);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .gifts-table thead th:nth-child(1) { width: 18%; }
   .gifts-table thead th:nth-child(2) { width: 14%; }
   .gifts-table thead th:nth-child(3) { width: 16%; }
   .gifts-table thead th:nth-child(4) { width: 52%; }
-  .gifts-table tbody tr:nth-child(odd) { background: rgba(24, 14, 18, 0.62); }
+
+  .gifts-table tbody tr:nth-child(odd)  { background: rgba(24, 14, 18, 0.62); }
   .gifts-table tbody tr:nth-child(even) { background: rgba(16, 10, 14, 0.44); }
   .gifts-table tbody tr:hover { background: rgba(228, 74, 90, 0.11); }
   .gifts-table td {
@@ -245,23 +275,30 @@
     vertical-align: top;
     line-height: 1.72;
     overflow-wrap: break-word;
+    word-wrap: break-word;
     hyphens: auto;
   }
   .gifts-table td:first-child {
     font-family: 'Cinzel', serif;
     font-weight: 700;
-    color: #eaf2ff;
+    color: var(--table-name-color, #eaf2ff);
     font-size: 0.98rem;
     white-space: nowrap;
   }
-  .gifts-table td:nth-child(2) { color: #ff6b7c; font-weight: 700; white-space: nowrap; font-size: 0.9rem; }
-  .gifts-table td:nth-child(3) { color: #cab094; font-style: italic; white-space: nowrap; font-size: 0.86rem; }
-  .gifts-table td:last-child { color: #c9d2e0; font-family: 'Cormorant Garamond', serif; font-size: 1.04rem; line-height: 1.78; }
+  .gifts-table td:nth-child(2) { color: var(--table-cost-color, #ff6b7c); font-weight: 700; white-space: nowrap; font-size: 0.9rem; }
+  .gifts-table td:nth-child(3) { color: var(--table-action-color, #cab094); font-style: italic; white-space: nowrap; font-size: 0.86rem; }
+  .gifts-table td:last-child  { color: var(--table-effect-color, #c9d2e0); font-family: 'Cormorant Garamond', serif; font-size: 1.04rem; line-height: 1.78; }
+
   .gifts-table tbody tr.necro-row {
     background: linear-gradient(90deg, rgba(140, 28, 44, 0.18) 0%, rgba(28, 10, 16, 0.18) 50%, rgba(140, 28, 44, 0.18) 100%);
     border-left: 3px solid #b4283a;
   }
   .gifts-table tbody tr.necro-row td:first-child { color: #ff6b7c; }
+  .gifts-table tbody tr.cobalt-row {
+    background: linear-gradient(90deg, rgba(32, 28, 42, 0.5) 0%, rgba(14, 12, 18, 0.3) 50%, rgba(32, 28, 42, 0.5) 100%);
+    border-left: 3px solid #4bc8e8;
+  }
+  .gifts-table tbody tr.cobalt-row td:first-child { color: #7de4ff; }
 
   .spell-block {
     background: linear-gradient(180deg, rgba(10,8,14,0.98) 0%, rgba(18,12,20,0.96) 34%, rgba(10,8,14,0.98) 100%);
@@ -275,7 +312,9 @@
   .spell-block::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 1px;
     background: linear-gradient(90deg, #e44a5a, #ff6b7c, #4bc8e8);
   }
@@ -298,6 +337,7 @@
     margin-bottom: 25px;
     text-transform: uppercase;
   }
+
   .stat-row {
     display: flex;
     align-items: baseline;
@@ -321,6 +361,8 @@
     color: #d9dde8;
     font-size: 0.98rem;
     font-family: 'Cormorant Garamond', serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .footer-ornament {
@@ -336,1281 +378,109 @@
     letter-spacing: 8px;
     opacity: 0.55;
   }
-
-  .prose-readable,
-  .prose-readable p,
-  .prose-readable li {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.12rem;
-    line-height: 1.82;
-    color: #efe5d5;
-  }
-  .prose-readable strong { color: #ff7a88; font-weight: 700; }
-
-  :focus-visible {
-    outline: 2px solid #4bc8e8;
-    outline-offset: 3px;
-    border-radius: 6px;
-  }
-
-  /* Particles */
-  .particles {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-  }
-  .particle {
-    position: absolute;
-    bottom: -10vh;
-    border-radius: 50%;
-    box-shadow: 0 0 12px currentColor;
-  }
-  .particle.drift { animation: drift 12s linear infinite; }
-  .particle.lightning-drift { animation: lightning-drift 14s linear infinite; }
-  .particle.arcane-drift { animation: arcane-drift 13s linear infinite; }
-  .particle.crimson-drift { animation: crimson-drift 13s linear infinite; }
-
-  @keyframes drift {
-    0% { opacity: 0; transform: translateY(0) scale(0); }
-    10% { opacity: 0.65; }
-    50% { opacity: 0.33; }
-    90% { opacity: 0.6; }
-    100% { opacity: 0; transform: translateY(-110vh) scale(1.5); }
-  }
-  @keyframes lightning-drift {
-    0% { opacity: 0; transform: translateY(0) scale(0); }
-    5% { opacity: 0.9; } 15% { opacity: 0.3; } 25% { opacity: 0.85; }
-    50% { opacity: 0.25; } 75% { opacity: 0.75; }
-    100% { opacity: 0; transform: translateY(-110vh) scale(1.5); }
-  }
-  @keyframes arcane-drift {
-    0% { opacity: 0; transform: translateY(0) scale(0); }
-    10% { opacity: 0.7; } 30% { opacity: 0.4; } 60% { opacity: 0.82; }
-    100% { opacity: 0; transform: translateY(-110vh) scale(1.5); }
-  }
-  @keyframes crimson-drift {
-    0% { opacity: 0; transform: translateY(0) scale(0); }
-    8% { opacity: 0.85; } 20% { opacity: 0.32; } 40% { opacity: 0.92; } 70% { opacity: 0.26; }
-    100% { opacity: 0; transform: translateY(-110vh) scale(1.5); }
-  }
-
-  /* Music button */
-  .music-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 600;
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-  }
-  .music-btn:hover { transform: translateY(-1px); }
-  .music-btn-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #4bc8e8;
-    animation: pulseDot 1.6s ease-in-out infinite;
-  }
-  @keyframes pulseDot {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.4); opacity: 1; }
-  }
-
-  .music-promo {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 700;
-    padding: 14px 18px;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    backdrop-filter: blur(10px);
-    max-width: min(80vw, 380px);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: 'Cormorant Garamond', serif;
-  }
-  .music-promo-text { margin: 0; }
-  .music-promo-link {
-    text-decoration: none;
-    font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .music-promo-close {
-    background: none;
-    border: 0;
-    color: inherit;
-    cursor: pointer;
-    font-size: 0.7rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    opacity: 0.7;
-  }
-
-  /* Back button */
-  .back-btn {
-    position: fixed;
-    top: 20px;
-    right: 90px;
-    z-index: 600;
-    height: 40px;
-    padding: 0 16px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    backdrop-filter: blur(10px);
-  }
-
-  /* HeroNav */
-  .hero-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin: 24px 0 8px;
-    padding: 14px;
-  }
-  .hero-nav-link {
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-    cursor: pointer;
-    display: inline-block;
-    text-align: center;
-    transition: all 0.2s ease;
-  }
-
-  /* ====== SIDE MENU (req #1 sticky, #5.2 tooltip, #5.3 rounded) ====== */
-  .side-menu-trigger {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 700;
-    height: 40px;
-    padding: 0 16px;
-    border-radius: 999px;
-    background: rgba(7, 7, 12, 0.97);
-    border: 1px solid rgba(180, 40, 58, 0.5);
-    color: #e44a5a;
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: all 0.2s ease;
-  }
-  .side-menu-trigger:hover {
-    border-color: rgba(228, 74, 90, 0.8);
-    color: #ff6b7c;
-  }
-  .side-menu-tooltip {
-    position: fixed;
-    z-index: 750;
-    top: 42px;
-    left: 78px;
-    padding: 9px 18px;
-    border-radius: 999px;
-    background: rgba(11, 8, 14, 0.96);
-    border: 1px solid rgba(228, 74, 90, 0.62);
-    color: #efe5d5;
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    box-shadow: 0 14px 32px rgba(0,0,0,0.78), 0 0 22px rgba(228,74,90,0.22);
-    pointer-events: none;
-    white-space: nowrap;
-    transform: translateY(6px);
-  }
-  .side-menu-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 650;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(2px);
-  }
-  .side-menu-panel {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: min(82vw, 340px);
-    z-index: 680;
-    padding: 80px 22px 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    overflow-y: auto;
-    backdrop-filter: blur(20px);
-  }
-  .side-menu-header { padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .side-menu-eyebrow {
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    opacity: 0.6;
-  }
-  .side-menu-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.4rem;
-    margin-top: 4px;
-    color: #ff6b7c;
-  }
-  .side-menu-nav { display: flex; flex-direction: column; gap: 12px; }
-  .side-menu-group { display: flex; flex-direction: column; gap: 6px; }
-  .side-menu-group-btn {
-    background: none;
-    border: 0;
-    text-align: left;
-    font-family: 'Cinzel', serif;
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    padding: 8px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-decoration: none;
-  }
-  .side-menu-sublist { overflow: hidden; padding-left: 14px; }
-  .side-menu-char { display: flex; flex-direction: column; gap: 4px; }
-  .side-menu-char-btn {
-    background: none;
-    border: 0;
-    text-align: left;
-    padding: 6px 0;
-    cursor: pointer;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .side-menu-subgroups { padding-left: 14px; display: flex; flex-direction: column; gap: 8px; }
-  .side-menu-subgroup { display: flex; flex-direction: column; gap: 4px; }
-  .side-menu-subgroup-btn {
-    background: none;
-    border: 0;
-    text-align: left;
-    padding: 6px 0;
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .side-menu-leaf {
-    overflow: hidden;
-    padding-left: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .side-menu-leaf-link {
-    text-decoration: none;
-    padding: 5px 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.95rem;
-    transition: color 0.18s ease;
-  }
-  .side-menu-leaf-link:hover { opacity: 1 !important; }
-  .side-menu-caret {
-    font-family: 'Cinzel', serif;
-    font-size: 0.95rem;
-    opacity: 0.6;
-    margin-left: 8px;
-  }
-
-  .side-menu-contacts { margin-top: auto; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.08); }
-  .side-menu-contacts-title {
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    opacity: 0.7;
-    margin-bottom: 8px;
-  }
-  .side-menu-contacts-list { display: flex; flex-wrap: wrap; gap: 6px; }
-  .side-menu-contact {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid;
-    text-decoration: none;
-    font-size: 0.82rem;
-    transition: all 0.18s ease;
-  }
-
-  /* ====== TAROT CARDS (req #4.1 - no hover flip, #4.6 untouched layout) ====== */
-  .character-card-deck {
-    position: relative;
-    margin: 20px auto;
-    max-width: 1200px;
-    padding: 0 10px;
-  }
-  .tarot-fan-stage {
-    position: relative;
-    height: 460px;
-    margin: 30px 0 50px;
-    perspective: 1400px;
-  }
-  .tarot-card-btn {
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border: 0;
-    background: none;
-    cursor: pointer;
-    position: relative;
-    display: block;
-  }
-  .tarot-card-front {
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 26px 34px rgba(0,0,0,0.46), inset 0 0 0 1px rgba(255,255,255,0.04);
-  }
-  .tarot-card-front img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 14px;
-    -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-    user-select: none;
-    pointer-events: none;
-  }
-  .tarot-card-front-glare {
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.05), transparent 60%);
-    pointer-events: none;
-  }
-
-  .tarot-card-label {
-    text-align: center;
-    margin-top: 10px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.85rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: #efe5d5;
-    pointer-events: none;
-  }
-  .tarot-card-tooltip {
-    position: absolute;
-    top: -38px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: rgba(11, 8, 14, 0.94);
-    border: 1px solid rgba(228, 74, 90, 0.62);
-    color: #efe5d5;
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    pointer-events: none;
-    white-space: nowrap;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.72), 0 0 18px rgba(228,74,90,0.18);
-    z-index: 30;
-  }
-  .tarot-mobile-deck {
-    margin: 18px 0 40px;
-    padding: 0 6px;
-  }
-  .tarot-mobile-card-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-  }
-  .carousel { overflow: hidden; }
-  .carousel-content { display: flex; }
-  .carousel-item { flex: 0 0 auto; min-width: 0; }
-  .carousel-item-h { padding: 0 10px; }
-  .tarot-mobile-card {
-    width: min(72vw, 280px);
-    aspect-ratio: 212 / 380;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 14px 26px rgba(0,0,0,0.46), inset 0 0 0 1px rgba(255,255,255,0.04);
-  }
-  .tarot-mobile-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    user-select: none;
-    pointer-events: none;
-  }
-  .tarot-mobile-name {
-    margin-top: 14px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.95rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    text-align: center;
-    color: #efe5d5;
-  }
-  .tarot-mobile-hint {
-    margin-top: 4px;
-    font-size: 0.82rem;
-    color: #b69f82;
-    font-family: 'Cormorant Garamond', serif;
-    text-align: center;
-  }
-  .tarot-mobile-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 14px;
-  }
-  .tarot-mobile-dot {
-    height: 6px;
-    border: 0;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .tarot-mobile-foot {
-    margin-top: 12px;
-    text-align: center;
-    font-size: 0.78rem;
-    color: #b69f82;
-    font-family: 'Cormorant Garamond', serif;
-  }
-
-  /* Expanded overlay */
-  .tarot-overlay-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 800;
-    background: rgba(0,0,0,0.78);
-    backdrop-filter: blur(6px);
-    display: grid;
-    place-items: center;
-    padding: 20px;
-  }
-  .tarot-overlay-inner {
-    position: relative;
-    width: 100%;
-    max-width: 540px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-  }
-  .tarot-overlay-close {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    z-index: 2;
-    background: rgba(11, 8, 14, 0.94);
-    border: 1px solid rgba(228, 74, 90, 0.62);
-    color: #efe5d5;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-  .tarot-overlay-stage {
-    width: 320px;
-    height: 574px;
-    transform-style: preserve-3d;
-    position: relative;
-    user-select: none;
-    touch-action: none;
-    cursor: grab;
-  }
-  .tarot-overlay-stage:active { cursor: grabbing; }
-  .tarot-overlay-face {
-    position: absolute;
-    inset: 0;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-  }
-  .tarot-overlay-back {
-    transform: rotateY(180deg);
-  }
-  .tarot-overlay-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 4px;
-  }
-  .tarot-flip-btn,
-  .tarot-read-lore,
-  .tarot-subpage {
-    padding: 8px 16px;
-    border-radius: 999px;
-    background: rgba(26,18,26,0.78);
-    border: 1px solid rgba(255,255,255,0.1);
-    font-family: 'Cinzel', serif;
-    font-size: 0.74rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #efe5d5;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-  }
-  .tarot-flip-btn:hover,
-  .tarot-read-lore:hover,
-  .tarot-subpage:hover {
-    transform: translateY(-2px);
-  }
-  .tarot-overlay-hint {
-    margin-top: 6px;
-    font-size: 0.78rem;
-    color: #b69f82;
-    font-family: 'Cormorant Garamond', serif;
-    text-align: center;
-    max-width: 90%;
-  }
-
-  .tarot-open-letopis {
-    display: block;
-    margin: 24px auto 0;
-    padding: 10px 20px;
-    border-radius: 999px;
-    background: rgba(22,14,20,0.78);
-    font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
-    letter-spacing: 2.2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  .tarot-open-letopis:hover { transform: translateY(-2px); }
-
-  /* ====== CARD BACK (req #4.5) ====== */
-  .tarot-card-back {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: 14px;
-    overflow: hidden;
-  }
-  .tarot-card-back-lore {
-    position: absolute;
-    left: 8%;
-    right: 8%;
-    bottom: 10%;
-    padding: 16px 18px;
-    border-radius: 14px;
-    background: rgba(0, 0, 0, 0.62);
-    backdrop-filter: blur(12px) saturate(120%);
-    -webkit-backdrop-filter: blur(12px) saturate(120%);
-    color: #f6efe0;
-    text-align: center;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-  }
-  .tarot-card-back-name {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.05rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    color: #ff6b7c;
-  }
-  .tarot-card-back-line {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.92rem;
-    line-height: 1.55;
-    color: #f6efe0;
-    margin: 0 0 6px;
-  }
-
-  /* HOME */
-  .home-hero { text-align: center; padding: 80px 18px 30px; }
-  .home-hero-eyebrow {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 6px;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    color: #ff6b7c;
-  }
-  .home-hero-sub {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 4px;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: #b69f82;
-    margin-top: 4px;
-    opacity: 0.7;
-  }
-  .home-hero-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(2rem, 6vw, 4rem);
-    margin-top: 16px;
-    color: #ff6b7c;
-    letter-spacing: 4px;
-    text-shadow: 0 0 22px rgba(228, 74, 90, 0.38);
-  }
-  .home-hero-lead {
-    margin: 18px auto 0;
-    max-width: 720px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
-    line-height: 1.7;
-    color: #efe5d5;
-  }
-  .home-about { max-width: 760px; margin: 30px auto; padding: 0 22px; }
-  .home-about-p {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin-bottom: 14px;
-  }
-  .home-videos { max-width: 1100px; margin: 40px auto 0; padding: 0 22px; }
-  .home-videos-grid {
-    display: grid;
-    gap: 18px;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-  .home-video-card {
-    position: relative;
-    background: rgba(11, 8, 14, 0.7);
-    border: 1px solid rgba(180, 40, 58, 0.32);
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    padding: 0;
-    text-align: left;
-  }
-  .home-video-card img {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    display: block;
-  }
-  .home-video-play {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    font-family: 'Cinzel', serif;
-    letter-spacing: 3px;
-    font-size: 0.85rem;
-    color: #efe5d5;
-    background: rgba(0,0,0,0.32);
-    text-transform: uppercase;
-  }
-  .home-video-meta { padding: 10px 14px 14px; }
-  .home-video-part {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-size: 0.7rem;
-    color: #ff6b7c;
-  }
-  .home-video-title {
-    display: block;
-    margin-top: 4px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem;
-  }
-  .home-socials {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 26px;
-  }
-  .home-social-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(180, 40, 58, 0.32);
-    background: rgba(11, 8, 14, 0.7);
-    text-decoration: none;
-    color: #efe5d5;
-    font-size: 0.88rem;
-    transition: all 0.2s ease;
-  }
-  .home-footer {
-    margin-top: 60px;
-    padding: 24px 0;
-    text-align: center;
-    font-family: 'Cinzel', serif;
-    letter-spacing: 6px;
-    font-size: 0.78rem;
-    color: #b69f82;
-    border-top: 1px solid rgba(180, 40, 58, 0.18);
-  }
-
-  .home-video-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 850;
-    background: rgba(0,0,0,0.88);
-    display: grid;
-    place-items: center;
-    padding: 20px;
-  }
-  .home-video-modal-inner {
-    position: relative;
-    width: min(96vw, 980px);
-    aspect-ratio: 16 / 9;
-    background: #000;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  }
-  .home-video-modal-inner iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-  }
-  .home-video-modal-close {
-    position: absolute;
-    top: -42px;
-    right: 0;
-    background: rgba(11, 8, 14, 0.94);
-    border: 1px solid rgba(228, 74, 90, 0.62);
-    color: #efe5d5;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-
-  /* LORE PAGE */
-  .tome-page { max-width: 980px; margin: 0 auto; padding: 110px 22px 80px; }
-  .tome-header { margin-bottom: 24px; text-align: center; }
-  .tome-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.6rem, 4vw, 2.6rem);
-    color: #ff6b7c;
-    margin-bottom: 8px;
-  }
-  .tome-lead {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
-    line-height: 1.7;
-    color: #efe5d5;
-    margin: 0 auto;
-    max-width: 640px;
-  }
-  .lore-header { text-align: center; margin-bottom: 30px; }
-  .lore-avatar {
-    width: min(220px, 60vw);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(228, 74, 90, 0.62);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-  }
-  .lore-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.7rem, 4vw, 2.6rem);
-    margin-top: 14px;
-    color: #ff6b7c;
-  }
-  .lore-subtitle {
-    font-family: 'Cinzel', serif;
-    margin-top: 6px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-size: 0.82rem;
-    color: #cab094;
-  }
-  .lore-bio, .lore-deeds, .lore-traits { margin-bottom: 16px; }
-  .darkbain-card {
-    background: linear-gradient(180deg, rgba(20,14,22,0.58), rgba(12,8,14,0.46));
-    border: 1px solid rgba(180, 40, 58, 0.32);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin: 10px 0;
-  }
-  .darkbain-grid {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  }
-  .darkbain-card-name {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.05rem;
-    color: #ff6b7c;
-    margin-bottom: 4px;
-  }
-  .darkbain-card-role {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-size: 0.7rem;
-    color: #b69f82;
-    margin-bottom: 8px;
-  }
-
-  /* LOR PAGE */
-  .lor-page { padding: 110px 22px 60px; max-width: 1100px; margin: 0 auto; }
-  .lor-header { text-align: center; margin-bottom: 24px; }
-  .lor-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.8rem, 5vw, 3rem);
-    color: #ff6b7c;
-  }
-  .lor-lead {
-    margin: 14px auto 0;
-    max-width: 600px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
-  }
-  .lor-search {
-    display: flex;
-    gap: 8px;
-    margin: 18px auto 26px;
-    max-width: 520px;
-    padding: 6px 8px;
-    border-radius: 999px;
-    background: rgba(11, 8, 14, 0.7);
-    border: 1px solid rgba(228, 74, 90, 0.4);
-    align-items: center;
-  }
-  .lor-search-input {
-    flex: 1;
-    background: transparent;
-    border: 0;
-    outline: none;
-    padding: 8px 14px;
-    font-family: 'Cormorant Garamond', serif;
-    color: #efe5d5;
-    font-size: 0.95rem;
-  }
-  .lor-search-clear {
-    background: none;
-    border: 0;
-    color: #cab094;
-    cursor: pointer;
-    padding: 4px 10px;
-    font-size: 0.72rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .lor-section { margin-top: 20px; }
-  .lor-section-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.2rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #ff6b7c;
-    margin-bottom: 12px;
-  }
-  .lor-grid {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  }
-  .lor-card {
-    padding: 18px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    text-decoration: none;
-  }
-  .lor-card-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    letter-spacing: 2px;
-    color: #ff6b7c;
-    margin-bottom: 6px;
-  }
-  .lor-card-desc {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.98rem;
-    color: #cab094;
-  }
-  .lor-empty {
-    text-align: center;
-    color: #cab094;
-    font-style: italic;
-    margin: 30px 0;
-  }
-  .lor-footer {
-    margin-top: 40px;
-    text-align: center;
-    font-family: 'Cinzel', serif;
-    letter-spacing: 6px;
-    color: #b69f82;
-  }
-
-  /* LETOPIS */
-  .letopis-page {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 110px 24px 80px;
-    position: relative;
-  }
-  .letopis-border {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border: 1px solid rgba(168, 30, 46, 0.32);
-    border-radius: 6px;
-    margin: 6px;
-  }
-  .letopis-header { text-align: center; margin-bottom: 30px; }
-  .letopis-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.8rem, 5vw, 2.8rem);
-    color: #a81e2e;
-  }
-  .letopis-subtitle {
-    margin-top: 6px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    color: #4a3028;
-  }
-  .letopis-ornament {
-    margin-top: 14px;
-    font-family: 'Cinzel', serif;
-    letter-spacing: 6px;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    color: #a81e2e;
-  }
-  .letopis-section { margin-bottom: 28px; }
-  .letopis-section-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.3rem;
-    color: #a81e2e;
-    margin-bottom: 12px;
-    border-bottom: 1px solid rgba(168, 30, 46, 0.3);
-    padding-bottom: 6px;
-  }
-  .letopis-h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.05rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #a81e2e;
-    margin: 18px 0 8px;
-  }
-  .letopis-prose {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
-    line-height: 1.85;
-    margin-bottom: 10px;
-    color: #221410;
-  }
-  .letopis-list {
-    margin: 8px 0 16px 24px;
-    padding: 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.08rem;
-    line-height: 1.75;
-    color: #221410;
-  }
-  .letopis-list li { margin-bottom: 10px; }
-  .letopis-cards {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  }
-  .letopis-card {
-    padding: 14px 16px;
-    border: 1px solid rgba(168, 30, 46, 0.28);
-    border-radius: 8px;
-    background: rgba(250, 246, 237, 0.6);
-  }
-  .letopis-card-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    color: #a81e2e;
-    margin-bottom: 4px;
-  }
-  .letopis-card-desc {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.98rem;
-    line-height: 1.6;
-    color: #221410;
-  }
-  .letopis-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 12px 0;
-    font-family: 'Cormorant Garamond', serif;
-  }
-  .letopis-table th,
-  .letopis-table td {
-    padding: 8px 10px;
-    text-align: left;
-    border-bottom: 1px solid rgba(168, 30, 46, 0.2);
-  }
-  .letopis-table th {
-    font-family: 'Cinzel', serif;
-    text-transform: uppercase;
-    font-size: 0.78rem;
-    letter-spacing: 2px;
-    color: #a81e2e;
-  }
-  .letopis-glossary {
-    display: grid;
-    gap: 10px;
-  }
-  .letopis-glossary-row {
-    display: grid;
-    grid-template-columns: minmax(160px, 0.4fr) 1fr;
-    gap: 14px;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(168, 30, 46, 0.18);
-  }
-  .letopis-glossary dt {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    color: #a81e2e;
-  }
-  .letopis-glossary dd {
-    margin: 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    line-height: 1.7;
-  }
-  .letopis-footer {
-    margin-top: 30px;
-    text-align: center;
-    font-family: 'Cinzel', serif;
-    letter-spacing: 6px;
-    color: #a81e2e;
-  }
-
-  /* DARKBAIN extras */
-  .darkbain-page { position: relative; }
-  .darkbain-pattern {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at 50% 30%, rgba(180,40,58,0.16), transparent 60%);
-  }
-  .darkbain-corner {
-    position: absolute;
-    top: 80px;
-    right: 24px;
-    z-index: 1;
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 4rem;
-    color: rgba(180, 40, 58, 0.08);
-    pointer-events: none;
-    letter-spacing: 4px;
-  }
-  .darkbain-crest {
-    width: 200px;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid rgba(216, 74, 80, 0.5);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-  }
-  .darkbain-header { text-align: center; margin-bottom: 30px; }
-  .darkbain-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.7rem, 4vw, 2.8rem);
-    color: #ff6b72;
-    margin-top: 14px;
-  }
-  .darkbain-subtitle {
-    font-family: 'Cinzel', serif;
-    margin-top: 6px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #d4aa4a;
-  }
-
-  /* MAP PAGE */
-  .map-page { padding: 110px 22px 60px; max-width: 1200px; margin: 0 auto; }
-  .map-header { text-align: center; margin-bottom: 18px; }
-  .map-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(1.5rem, 4vw, 2.4rem);
-    color: #ff6b7c;
-  }
-  .map-lead {
-    margin: 8px auto 0;
-    max-width: 640px;
-    font-family: 'Cormorant Garamond', serif;
-  }
-  .map-hint {
-    margin-top: 8px;
-    font-size: 0.85rem;
-    color: #b69f82;
-    font-family: 'Cormorant Garamond', serif;
-  }
-  .map-frame {
-    position: relative;
-    background: rgba(11, 8, 14, 0.6);
-    border: 1px solid rgba(180, 40, 58, 0.32);
-    border-radius: 12px;
-    overflow: hidden;
-    width: 100%;
-    margin: 0 auto;
-  }
-  .map-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    user-select: none;
-    pointer-events: none;
-  }
-  .map-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin: 18px 0;
-    flex-wrap: wrap;
-  }
-  .map-tool-btn {
-    background: rgba(11, 8, 14, 0.7);
-    border: 1px solid rgba(228, 74, 90, 0.4);
-    color: #efe5d5;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-family: 'Cinzel', serif;
-    font-size: 0.74rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  .map-tool-btn:hover { transform: translateY(-1px); }
-  .map-tool-scale {
-    font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
-    letter-spacing: 1.5px;
-    color: #cab094;
-    min-width: 50px;
-    text-align: center;
-  }
 }
 
-/* ====== PRELOADER with OUROBOROS (req #8) ====== */
-  .preloader {
-    position: fixed;
-    inset: 0;
-    z-index: 9500;
-    background: #0b0b0f;
-    display: grid;
-    place-items: center;
-    pointer-events: all;
-  }
-  .preloader-inner {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: min(80vw, 360px);
-    height: min(80vw, 360px);
-  }
-  .preloader-glow-ring {
-    position: absolute;
-    inset: 8%;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--preloader-color) 0%, transparent 70%);
-    opacity: 0.28;
-    filter: blur(28px);
-    animation: ouroboros-pulse 3.4s ease-in-out infinite;
-    pointer-events: none;
-  }
-  .preloader-icon {
-    /* color and mask below; fallback path also hardcoded */
-    position: relative;
-    width: 60%;
-    aspect-ratio: 1 / 1;
-    background-color: var(--preloader-color);
-    -webkit-mask-image: var(--preloader-mask-url);
-            mask-image: var(--preloader-mask-url);
-    -webkit-mask-size: contain;
-            mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-            mask-position: center;
-    filter:
-      drop-shadow(0 0 18px var(--preloader-color))
-      drop-shadow(0 0 42px var(--preloader-color))
-      drop-shadow(0 0 78px var(--preloader-color-accent, var(--preloader-color)));
-    animation: ouroboros-spin 9s linear infinite;
-    will-change: transform;
-  }
-  .preloader-label {
-    position: absolute;
-    bottom: -8%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Cinzel', serif;
-    letter-spacing: 6px;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    color: var(--preloader-color);
-    opacity: 0.85;
-    animation: ouroboros-pulse 3.4s ease-in-out infinite;
-  }
+/* Particle drift */
+@keyframes drift { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 10% { opacity: 0.65; } 50% { opacity: 0.33; } 90% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(-10vh) scale(1.5); } }
+@keyframes lightning-drift { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 5% { opacity: 0.9; } 15% { opacity: 0.3; } 25% { opacity: 0.85; } 50% { opacity: 0.25; } 75% { opacity: 0.75; } 100% { opacity: 0; transform: translateY(-10vh) scale(1.5); } }
+@keyframes arcane-drift { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 10% { opacity: 0.7; } 30% { opacity: 0.4; } 60% { opacity: 0.82; } 100% { opacity: 0; transform: translateY(-10vh) scale(1.5); } }
+@keyframes crimson-drift { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 8% { opacity: 0.85; } 20% { opacity: 0.32; } 40% { opacity: 0.92; } 70% { opacity: 0.26; } 100% { opacity: 0; transform: translateY(-10vh) scale(1.5); } }
 
-  @keyframes ouroboros-spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-  }
-  @keyframes ouroboros-pulse {
-    0%, 100% { opacity: 0.65; transform: scale(1); }
-    50%      { opacity: 1;    transform: scale(1.05); }
-  }
+/* Smart tooltip with viewport clamping */
+.custom-tooltip {
+  position: relative;
+}
+.custom-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px) scale(0.96);
+  background: rgba(11, 8, 14, 0.97);
+  border: 1px solid rgba(228, 74, 90, 0.62);
+  color: #efe5d5;
+  padding: 7px 11px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .18s cubic-bezier(.2,.8,.2,1);
+  box-shadow: 0 10px 28px rgba(0,0,0,.72), 0 0 18px rgba(228,74,90,.18);
+  z-index: 9950;
+  max-width: min(74vw, 300px);
+  white-space: normal;
+  text-align: center;
+  line-height: 1.45;
+}
+.custom-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(228, 74, 90, 0.62);
+  opacity: 0;
+  transition: opacity .18s ease;
+  z-index: 9950;
+}
+.custom-tooltip:hover::after,
+.custom-tooltip:hover::before,
+.custom-tooltip:focus-visible::after,
+.custom-tooltip:focus-visible::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
 
-  @media (max-width: 640px) {
-    .preloader-inner {
-      width: min(82vw, 320px);
-      height: min(82vw, 320px);
-    }
-    .preloader-label { font-size: 0.7rem; letter-spacing: 4px; }
-  }
+/* When near screen edges, flip toward center */
+.custom-tooltip.tooltip-left::after  { left: auto; right: 0; transform: translateX(0) translateY(4px) scale(.96); }
+.custom-tooltip.tooltip-left:hover::after { transform: translateX(0) translateY(0) scale(1); }
+.custom-tooltip.tooltip-left::before { left:auto; right:16px; transform:none; }
 
+.custom-tooltip.tooltip-right::after { left: 0; transform: translateX(0) translateY(4px) scale(.96); }
+.custom-tooltip.tooltip-right:hover::after { transform: translateX(0) translateY(0) scale(1); }
+.custom-tooltip.tooltip-right::before { left:16px; transform:none; }
+
+/* Auto-flip below if near top */
+@media (max-height: 620px) {
+  .custom-tooltip::after { bottom:auto; top: calc(100% + 10px); }
+  .custom-tooltip::before { bottom:auto; top: calc(100% + 4px); border-top-color: transparent; border-bottom-color: rgba(228,74,90,.62); }
+}
+
+/* Buttons – Blood Ice style */
+button:not(:disabled), a:not(.no-glow), [role="button"] {
+  transition: all 0.19s cubic-bezier(.25,.8,.25,1);
+}
+button:not(:disabled):hover, a:not(.no-glow):hover, [role="button"]:hover {
+  filter: brightness(1.14);
+  box-shadow: 0 0 18px rgba(228, 74, 90, .28), 0 0 30px rgba(75,200,232,.07);
+}
+button:not(:disabled):active, a:not(.no-glow):active, [role="button"]:active {
+  transform: scale(0.975);
+}
+
+/* Reader-friendly body text */
+.prose-readable,
+.prose-readable p,
+.prose-readable li {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.12rem;
+  line-height: 1.82;
+  color: #efe5d5;
+}
+.prose-readable strong { color: #ff7a88; font-weight: 700; }
+
+/* Focus */
+:focus-visible {
+  outline: 2px solid #4bc8e8;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Mobile readability */
 @media (max-width: 640px) {
   .section-title { font-size: 1rem; letter-spacing: 2.2px; }
   .spell-name { font-size: 1.55rem; letter-spacing: 2.5px; }
@@ -1618,8 +488,17 @@
   .gifts-table { font-size: 0.88rem; }
   .gifts-table thead th { font-size: 0.68rem; padding: 10px 8px; }
   .gifts-table td { padding: 12px 8px; }
-  .tome-page { padding: 100px 16px 60px; }
-  .letopis-glossary-row { grid-template-columns: 1fr; }
-  .music-promo { bottom: 12px; right: 12px; left: 12px; }
-  .tarot-overlay-stage { width: 280px; height: 502px; }
+}
+
+/* Utilities */
+.glow-promo {
+  animation: promoGlow 2.8s ease-in-out infinite;
+}
+@keyframes promoGlow {
+  0%, 100% { box-shadow: 0 0 14px rgba(228,74,90,.22), 0 0 30px rgba(75,200,232,.08); }
+  50% { box-shadow: 0 0 22px rgba(228,74,90,.38), 0 0 40px rgba(75,200,232,.14); }
+}
+.tarot-no-glow:hover {
+  box-shadow: none !important;
+  filter: none !important;
 }
