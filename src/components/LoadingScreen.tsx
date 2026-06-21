@@ -598,52 +598,24 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.4 }}
-              className="flex flex-col items-center gap-8 z-20"
+              className="flex items-center justify-center z-20"
             >
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                style={{ filter: `drop-shadow(0 0 12px ${theme.primaryGlow}80)` }}
-              >
-                <OuroborosDragon color={theme.primaryGlow} glowColor={theme.parchment ?? '#fff'} />
-              </motion.div>
-
-              <div
-                className="text-2xl tracking-[8px] uppercase font-bold"
-                style={{
-                  fontFamily: theme.fontFamily,
-                  color: theme.parchment,
-                  textShadow: `0 0 20px ${theme.primaryGlow}40`,
+                transition={{ duration: 3.2, repeat: Infinity, ease: 'linear' }}
+                style={{ 
+                  filter: `hue-rotate(${theme.hue || 0}deg) drop-shadow(0 0 16px ${theme.primaryGlow}99)`,
+                  width: 'min(28vw, 140px)',
+                  height: 'min(28vw, 140px)',
                 }}
               >
-                Загрузка
-              </div>
-
-              <div
-                className="w-64 h-1 rounded-full overflow-hidden"
-                style={{ background: `${theme.primary}40` }}
-              >
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{
-                    background: `linear-gradient(90deg, ${theme.primary}, ${theme.primaryGlow})`,
-                    boxShadow: `0 0 10px ${theme.primaryGlow}60`,
-                  }}
-                  initial={{ width: '0%' }}
-                  animate={{ width: `${Math.min(progress, 100)}%` }}
-                  transition={{ duration: 0.3 }}
+                <img 
+                  src="/ouroboros.png" 
+                  alt="" 
+                  className="w-full h-full object-contain"
+                  style={{ filter: `drop-shadow(0 0 18px ${theme.primaryGlow}88)` }}
                 />
-              </div>
-
-              <div
-                className="text-sm tracking-[4px] uppercase"
-                style={{
-                  fontFamily: theme.fontFamily,
-                  color: theme.parchmentDim,
-                }}
-              >
-                {Math.min(Math.round(progress), 100)}%
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </motion.div>

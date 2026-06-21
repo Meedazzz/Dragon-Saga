@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Youtube, Send, MessageCircle, Users, Search } from 'lucide-react';
+import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
-import { SmartTooltip } from './SmartTooltip';
 
 interface SideMenuProps {
   theme: ColorTheme;
@@ -109,7 +108,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
 
   return (
     <>
-      <SmartTooltip content={isOpen ? "Закрыть меню" : "Открыть меню"} side="right">
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -125,7 +123,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
       >
         {isOpen ? <X size={22} /> : <Menu size={22} />}
       </motion.button>
-      </SmartTooltip>
 
       <AnimatePresence>
         {isOpen && (

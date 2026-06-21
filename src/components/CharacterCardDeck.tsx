@@ -11,6 +11,9 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel';
 
+// Import shirt image for card backs
+import shirtPng from '/public/shirt.png';
+
 type TiltState = {
   rotateX: number;
   rotateY: number;
@@ -252,38 +255,50 @@ const CardFront: React.FC<{ char: CharacterConfig; isMobile?: boolean }> = ({ ch
 
 const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char, compact = false }) => (
   <div
-    className={`absolute inset-0 flex flex-col items-center justify-center rounded-[16px] text-center ${compact ? 'p-4' : 'p-7'}`}
+    className={`absolute inset-0 rounded-[16px] overflow-hidden ${compact ? 'p-4' : 'p-7'}`}
     style={{
       backfaceVisibility: 'hidden',
       WebkitBackfaceVisibility: 'hidden',
       transform: 'rotateY(180deg)',
-      background: `radial-gradient(circle at 50% 0%, ${char.color}2d, transparent 44%), linear-gradient(158deg, rgba(10,8,14,0.995), rgba(20,14,20,0.995) 52%, ${char.color}1a)`,
-      border: `1px solid ${char.color}66`,
-      boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 44px rgba(0,0,0,0.62), 0 0 34px ${char.color}18`,
     }}
   >
-    <div
-      className={compact ? 'mb-3 text-[11px] uppercase tracking-[2.4px]' : 'mb-5 text-sm uppercase tracking-[3px]'}
-      style={{ fontFamily: "'Cinzel Decorative', serif", color: char.color, textShadow: `0 0 18px ${char.color}55` }}
-    >
-      ✦ {char.name} ✦
-    </div>
-
-    {(cardBios[char.id] || []).map((line, idx) => (
-      <p
-        key={idx}
-        className={compact ? 'mb-2 text-[11.5px] leading-[1.45] last:mb-0' : 'mb-3 text-[15.5px] leading-relaxed last:mb-0'}
-        style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}
+    {/* Shirt image as full background - sharp and visible everywhere except text area */}
+    <img
+      src={shirtPng}
+      alt="Card back design"
+      className="absolute inset-0 w-full h-full object-cover"
+      style={{ filter: 'none' }}
+      draggable={false}
+    />
+    
+    {/* Semi-transparent dark overlay with blur ONLY behind lore text */}
+    <div className="absolute inset-x-0 bottom-0 flex items-end justify-center" style={{ padding: compact ? '12px' : '28px' }}>
+      <div
+        className="relative z-10 w-full max-w-[88%] rounded-xl p-4"
+        style={{
+          background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          border: `1px solid ${char.color}40`,
+        }}
       >
-        {line}
-      </p>
-    ))}
-
-    <div
-      className={compact ? 'mt-3 text-[9.5px] italic tracking-[1.2px]' : 'mt-5 text-xs italic tracking-[1px]'}
-      style={{ color: homeTheme.parchmentDim }}
-    >
-      Клик — раскрыть карту
+        <div
+          className="mb-3 text-center text-sm uppercase tracking-[2.4px]"
+          style={{ fontFamily: "'Cinzel Decorative', serif", color: char.color, textShadow: `0 0 14px ${char.color}66` }}
+        >
+          {char.name}
+        </div>
+        
+        {(cardBios[char.id] || []).map((line, idx) => (
+          <p
+            key={idx}
+            className="mb-2 text-[13.5px] leading-relaxed text-center last:mb-0"
+            style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}
+          >
+            {line}
+          </p>
+        ))}
+      </div>
     </div>
   </div>
 );
