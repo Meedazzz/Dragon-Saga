@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Search } from 'lucide-react';
+import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Search, Youtube, Users, Send, MessageCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
