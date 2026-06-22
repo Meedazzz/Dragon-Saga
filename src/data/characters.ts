@@ -50,6 +50,7 @@ export const characters: CharacterConfig[] = [
     pages: [
       { label: 'Личное умение', path: '/brin' },
       { label: 'Подкласс', path: '/subclass/brin' },
+      { label: 'Научная работа', path: '/black-ice-research' },
       { label: 'Дом Хессен', path: '/hessen' },
     ],
   },
@@ -57,7 +58,7 @@ export const characters: CharacterConfig[] = [
     id: 'sakris',
     name: 'Сакрис Ульриаш',
     title: 'Следопыт, сосуд древнего духа',
-    desc: 'Амбициозный драконид искатель приключений переросший свой дом, в котором ему было слишком тесно.',
+    desc: 'Драконид из сурового Бергхейма, покинувший дом ради дорог, знаний и собственного пути.',
     color: '#2a5a8a',
     tarot: `${BASE}optimized/tarot_sakris.webp`,
     avatar: `${BASE}avatar_sakris.png`,
@@ -105,7 +106,7 @@ export function getCharacterById(id: string): CharacterConfig | undefined {
 /** Определить id персонажа по текущему пути */
 export function getCharacterIdByPath(pathname: string): string | undefined {
   if (pathname.includes('valery') || pathname.includes('darkbain')) return 'valery';
-  if (pathname.includes('brin') || pathname.includes('hessen')) return 'brin';
+  if (pathname.includes('brin') || pathname.includes('hessen') || pathname.includes('black-ice-research')) return 'brin';
   if (pathname.includes('sakris') || pathname.includes('berghheim')) return 'sakris';
   if (pathname.includes('talis') || pathname.includes('arantir')) return 'talis';
   if (pathname.includes('stive')) return 'stive';

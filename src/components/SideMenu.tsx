@@ -65,6 +65,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
             { label: 'Летопись мира', path: '/letopis' },
             { label: 'Род Даркбейнов', path: '/darkbain' },
             { label: 'Дом Хессен', path: '/hessen' },
+            { label: 'Феноменология Чёрного льда', path: '/black-ice-research' },
             { label: 'Бергхейм', path: '/berghheim' },
             { label: 'Клан Арантир', path: '/arantir' },
           ],

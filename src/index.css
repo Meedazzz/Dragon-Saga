@@ -673,3 +673,125 @@ img, video, canvas, svg {
     color: var(--muted, #a99a84);
   }
 }
+
+/* Reliable page scrolling on desktop browsers and embedded mobile webviews */
+html,
+body,
+#root {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+.tome-container {
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+/* Medieval scientific manuscript page */
+.manuscript-page {
+  position: relative;
+  overflow: hidden;
+}
+.manuscript-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(90, 48, 18, 0.16), transparent 24%),
+    radial-gradient(circle at 88% 92%, rgba(60, 28, 12, 0.14), transparent 28%),
+    linear-gradient(90deg, rgba(82, 45, 18, 0.10), transparent 9%, transparent 91%, rgba(82, 45, 18, 0.10));
+  mix-blend-mode: multiply;
+}
+.manuscript-page > * {
+  position: relative;
+  z-index: 1;
+}
+.manuscript-page .dropcap::first-letter {
+  float: left;
+  font-family: 'Cinzel Decorative', Georgia, serif;
+  font-size: 4.4rem;
+  line-height: 0.84;
+  padding-right: 0.14em;
+  color: #5f2634;
+}
+.manuscript-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 248, 232, 0.28);
+  border: 1px solid rgba(80, 42, 20, 0.34);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+.manuscript-table th {
+  padding: 12px 10px;
+  text-align: left;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.74rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #5f2634;
+  background: rgba(80, 42, 20, 0.12);
+  border-bottom: 1px solid rgba(80, 42, 20, 0.32);
+}
+.manuscript-table td {
+  padding: 12px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(80, 42, 20, 0.18);
+  color: #2a1812;
+  line-height: 1.55;
+}
+.manuscript-table td:first-child {
+  font-family: 'Cinzel', Georgia, serif;
+  color: #5f2634;
+  font-weight: 700;
+  width: 72px;
+}
+.manuscript-table td:nth-child(2) {
+  font-weight: 700;
+  width: 210px;
+}
+
+@media (max-width: 640px) {
+  .manuscript-page .dropcap::first-letter {
+    font-size: 3.2rem;
+  }
+  .mobile-card-table .manuscript-table,
+  .mobile-card-table .manuscript-table thead,
+  .mobile-card-table .manuscript-table tbody,
+  .mobile-card-table .manuscript-table tr,
+  .mobile-card-table .manuscript-table th,
+  .mobile-card-table .manuscript-table td {
+    display: block;
+    width: 100%;
+  }
+  .mobile-card-table .manuscript-table {
+    border: 0;
+    background: transparent;
+  }
+  .mobile-card-table .manuscript-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .mobile-card-table .manuscript-table tr {
+    margin-bottom: 12px;
+    border: 1px solid rgba(80, 42, 20, 0.28);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 248, 232, 0.22);
+  }
+  .mobile-card-table .manuscript-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 3px;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 0.68rem;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    color: #7c4b2a;
+  }
+}

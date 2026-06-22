@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import type React from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { MusicProvider } from '@/contexts/MusicContext';
 import LoadingScreen from '@/components/LoadingScreen';
 import { homeTheme } from '@/types/theme';
@@ -11,6 +12,8 @@ const ValerySubclassPage = lazy(() => import('@/pages/ValerySubclassPage'));
 const SakrisPage = lazy(() => import('@/pages/SakrisPage'));
 const SakrisSubclassPage = lazy(() => import('@/pages/SakrisSubclassPage'));
 const BrinPage = lazy(() => import('@/pages/BrinPage'));
+const BrinSubclassPage = lazy(() => import('@/pages/BrinSubclassPage'));
+const BlackIceResearchPage = lazy(() => import('@/pages/BlackIceResearchPage'));
 const DarkbainPage = lazy(() => import('@/pages/DarkbainPage'));
 const LetopisPage = lazy(() => import('@/pages/LetopisPage'));
 const LorPage = lazy(() => import('@/pages/LorPage'));
@@ -21,6 +24,18 @@ const ArantirPage = lazy(() => import('@/pages/ArantirPage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
 const TalisSubclassPage = lazy(() => import('@/pages/TalisSubclassPage'));
+
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    document.body.style.overflow = '';
+    document.documentElement.style.overflowY = 'auto';
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
+};
 
 function App() {
   useEffect(() => {
@@ -69,6 +84,7 @@ function App() {
 
   return (
     <MusicProvider>
+      <ScrollToTop />
       <Suspense fallback={<LoadingScreen theme={homeTheme} isLoading={true} />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -88,11 +104,13 @@ function App() {
 
           {/* Подклассы */}
           <Route path="/subclass/valery" element={<ValerySubclassPage />} />
+          <Route path="/subclass/brin" element={<BrinSubclassPage />} />
           <Route path="/subclass/sakris" element={<SakrisSubclassPage />} />
           <Route path="/subclass/talis" element={<TalisSubclassPage />} />
           <Route path="/subclass/:characterId" element={<SubclassPage />} />
 
           {/* Связанный лор */}
+          <Route path="/black-ice-research" element={<BlackIceResearchPage />} />
           <Route path="/hessen" element={<HessenPage />} />
           <Route path="/berghheim" element={<BerghheimPage />} />
           <Route path="/arantir" element={<ArantirPage />} />

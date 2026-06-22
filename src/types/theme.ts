@@ -218,7 +218,7 @@ export const lorTheme: ColorTheme = {
 export const getThemeByPath = (pathname: string): ColorTheme => {
   if (pathname.includes('valery')) return valeryTheme;
   if (pathname.includes('sakris')) return sakrisTheme;
-  if (pathname.includes('brin')) return brinTheme;
+  if (pathname.includes('brin') || pathname.includes('black-ice-research')) return brinTheme;
   if (pathname.includes('darkbain')) return darkbainTheme;
   if (pathname.includes('hessen')) return brinTheme;
   if (pathname.includes('berghheim')) return sakrisTheme;
