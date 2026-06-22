@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
-import HeroNav from '@/components/HeroNav';
 import type { ColorTheme } from '@/types/theme';
 
 /** Тема для Таллиса — огненно-оранжевые тона */
