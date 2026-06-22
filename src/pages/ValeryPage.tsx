@@ -27,7 +27,7 @@ const ValeryPage: React.FC = () => {
             AC
           </div>
           <div className="rune-divider" style={{ '--divider-color': valeryTheme.primaryGlow, '--divider-text': valeryTheme.parchment } as React.CSSProperties}>
-            <span>&#9840;&#9856;&#9848;&#9850;&#9853;</span>
+            <span></span>
           </div>
           <h1
             className="text-xl md:text-[2.2rem] font-bold tracking-[3px] leading-tight my-4"
@@ -40,7 +40,7 @@ const ValeryPage: React.FC = () => {
             Личное умение<br />Валерия Даркбейна
           </h1>
           <div className="rune-divider" style={{ '--divider-color': valeryTheme.primaryGlow, '--divider-text': valeryTheme.parchment } as React.CSSProperties}>
-            <span>&#9840;&#9856;&#9848;&#9850;&#9853;</span>
+            <span></span>
           </div>
           <p
             className="text-sm md:text-base italic max-w-[900px] mx-auto leading-relaxed mt-6"
@@ -63,7 +63,7 @@ const ValeryPage: React.FC = () => {
           transition={{ delay: 0.2 }}
         >
           <div className="section-header" style={{ '--section-border': 'rgba(42,90,138,0.3)', '--section-icon-color': valeryTheme.accentGlow, '--section-title-color': valeryTheme.parchment, '--section-line-color': valeryTheme.primaryGlow } as React.CSSProperties}>
-            <span className="section-icon">&#9876;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Получение зарядов энергии</h2>
             <div className="section-line" />
           </div>
@@ -102,7 +102,7 @@ const ValeryPage: React.FC = () => {
           transition={{ delay: 0.4 }}
         >
           <div className="section-header" style={{ '--section-border': 'rgba(42,90,138,0.3)', '--section-icon-color': valeryTheme.accentGlow, '--section-title-color': valeryTheme.parchment, '--section-line-color': valeryTheme.primaryGlow } as React.CSSProperties}>
-            <span className="section-icon">&#10022;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Трата зарядов</h2>
             <div className="section-line" />
           </div>
@@ -185,7 +185,7 @@ const ValeryPage: React.FC = () => {
           transition={{ delay: 0.6 }}
         >
           <div className="section-header" style={{ '--section-border': 'rgba(42,90,138,0.3)', '--section-icon-color': valeryTheme.accentGlow, '--section-title-color': valeryTheme.parchment, '--section-line-color': valeryTheme.primaryGlow } as React.CSSProperties}>
-            <span className="section-icon">&#9760;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Дополнительное заклинание</h2>
             <div className="section-line" />
           </div>
@@ -268,7 +268,7 @@ const ValeryPage: React.FC = () => {
 
         {/* Footer */}
         <div className="footer-ornament" style={{ '--footer-border': 'rgba(42,90,138,0.2)', '--footer-text-color': valeryTheme.primaryGlow } as React.CSSProperties}>
-          <div className="rune-string">&#9840; &#9856; &#9848; &#9850; &#9853;</div>
+          <div className="rune-string">    </div>
         </div>
       </div>
     </Layout>

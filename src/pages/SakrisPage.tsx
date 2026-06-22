@@ -27,7 +27,7 @@ const SakrisPage: React.FC = () => {
             Дух бесплотный Единение
           </div>
           <div className="rune-divider" style={{ '--divider-color': sakrisTheme.primaryGlow, '--divider-text': sakrisTheme.parchment } as React.CSSProperties}>
-            <span>&#9856;&#9857;&#9858;&#9859;</span>
+            <span></span>
           </div>
           <h1
             className="text-xl md:text-[2.2rem] font-bold tracking-[3px] leading-tight my-4"
@@ -40,7 +40,7 @@ const SakrisPage: React.FC = () => {
             Личное умение<br />Сакриса Ульриаша
           </h1>
           <div className="rune-divider" style={{ '--divider-color': sakrisTheme.primaryGlow, '--divider-text': sakrisTheme.parchment } as React.CSSProperties}>
-            <span>&#9856;&#9857;&#9858;&#9859;</span>
+            <span></span>
           </div>
         </motion.header>
 
@@ -51,7 +51,7 @@ const SakrisPage: React.FC = () => {
           transition={{ delay: 0.2 }}
         >
           <div className="section-header" style={{ '--section-border': 'rgba(42,138,42,0.2)', '--section-icon-color': sakrisTheme.primaryGlow, '--section-title-color': sakrisTheme.parchment, '--section-line-color': sakrisTheme.primaryGlow } as React.CSSProperties}>
-            <span className="section-icon">&#10169;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Умение Покровителя</h2>
             <div className="section-line" />
           </div>
@@ -113,7 +113,7 @@ const SakrisPage: React.FC = () => {
 
         {/* Footer */}
         <div className="footer-ornament" style={{ '--footer-border': 'rgba(42,138,42,0.2)', '--footer-text-color': sakrisTheme.primaryGlow } as React.CSSProperties}>
-          <div className="rune-string">&#9856; &#9857; &#9858; &#9859;</div>
+          <div className="rune-string">   </div>
         </div>
       </div>
     </Layout>

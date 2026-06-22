@@ -27,7 +27,7 @@ const BrinPage: React.FC = () => {
             Ледяная крепость
           </div>
           <div className="rune-divider" style={{ '--divider-color': brinTheme.primaryGlow, '--divider-text': brinTheme.parchment } as React.CSSProperties}>
-            <span>&#9840;&#9857;</span>
+            <span></span>
           </div>
           <h1
             className="text-xl md:text-[2.2rem] font-bold tracking-[3px] leading-tight my-4"
@@ -40,7 +40,7 @@ const BrinPage: React.FC = () => {
             Личное умение<br />Брина дель Хессена
           </h1>
           <div className="rune-divider" style={{ '--divider-color': brinTheme.primaryGlow, '--divider-text': brinTheme.parchment } as React.CSSProperties}>
-            <span>&#9840;&#9857;</span>
+            <span></span>
           </div>
         </motion.header>
 
@@ -51,7 +51,7 @@ const BrinPage: React.FC = () => {
           transition={{ delay: 0.2 }}
         >
           <div className="section-header" style={{ '--section-border': 'rgba(138,42,90,0.2)', '--section-icon-color': brinTheme.accentGlow, '--section-title-color': brinTheme.parchment, '--section-line-color': brinTheme.primaryGlow } as React.CSSProperties}>
-            <span className="section-icon">&#10052;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Ледяная крепость</h2>
             <div className="section-line" />
           </div>
@@ -122,7 +122,7 @@ const BrinPage: React.FC = () => {
 
         {/* Footer */}
         <div className="footer-ornament" style={{ '--footer-border': 'rgba(138,42,90,0.2)', '--footer-text-color': brinTheme.primaryGlow } as React.CSSProperties}>
-          <div className="rune-string">&#9840; &#9857;</div>
+          <div className="rune-string"> </div>
         </div>
       </div>
     </Layout>

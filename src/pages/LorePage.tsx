@@ -246,21 +246,21 @@ const LorePage: React.FC = () => {
           </div>
         </div>
 
-        <SectionHeader icon="📜" title="Биография и путь" theme={theme} accent={accent} />
+        <SectionHeader icon="" title="Биография и путь" theme={theme} accent={accent} />
         <div className="charge-box prose-readable" style={{ borderLeftColor: accent }}>
           {lore.bio.map((paragraph, idx) => (
             <p key={idx} className="mb-3 last:mb-0 text-justify">{paragraph}</p>
           ))}
         </div>
 
-        <SectionHeader icon="⚔️" title="Ключевые свершения" theme={theme} accent={accent} />
+        <SectionHeader icon="" title="Ключевые свершения" theme={theme} accent={accent} />
         <ul className="charge-list pl-1 mb-8">
           {lore.deeds.map((deed, idx) => (
             <li key={idx} style={{ color: theme.silver } as any}>{deed}</li>
           ))}
         </ul>
 
-        <SectionHeader icon="🌟" title="Личные особенности" theme={theme} accent={accent} />
+        <SectionHeader icon="" title="Личные особенности" theme={theme} accent={accent} />
         <div className="grid md:grid-cols-2 gap-4 mb-8">
           {([
             { key: 'character', label: 'Черта характера' },

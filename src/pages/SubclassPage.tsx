@@ -94,7 +94,7 @@ const SubclassPage: React.FC = () => {
             {data.name}
           </h1>
           <div className="rune-divider" style={{ '--divider-color': accent, '--divider-text': theme.parchment } as React.CSSProperties}>
-            <span>&#9876;</span>
+            <span></span>
           </div>
         </motion.header>
 
@@ -111,7 +111,7 @@ const SubclassPage: React.FC = () => {
               border: `1px solid ${accent}30`,
             }}
           >
-            <div className="text-4xl mb-4" style={{ opacity: 0.4 }}>📜</div>
+            <div className="text-4xl mb-4" style={{ opacity: 0.4 }}></div>
             <p
               className="text-lg italic mb-4"
               style={{
@@ -141,7 +141,7 @@ const SubclassPage: React.FC = () => {
           className="mt-8"
         >
           <div className="section-header" style={{ '--section-border': `${accent}30`, '--section-icon-color': accent, '--section-title-color': theme.parchment, '--section-line-color': accent } as React.CSSProperties}>
-            <span className="section-icon">&#10022;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Особенности</h2>
             <div className="section-line" />
           </div>
@@ -178,7 +178,7 @@ const SubclassPage: React.FC = () => {
 
         {/* Footer */}
         <div className="footer-ornament mt-12" style={{ '--footer-border': `${accent}20`, '--footer-text-color': accent } as React.CSSProperties}>
-          <div className="rune-string">&#9876; &#9876; &#9876;</div>
+          <div className="rune-string">  </div>
         </div>
       </div>
     </Layout>

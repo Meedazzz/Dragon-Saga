@@ -210,7 +210,7 @@ const FanCard: React.FC<FanCardProps> = ({ char, index, onOpen }) => {
             transition: 'color .2s',
           }}
         >
-          ✦ {char.name} ✦
+           {char.name} 
         </span>
       </div>
     </motion.div>
@@ -266,7 +266,7 @@ const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char
       className={compact ? 'mb-3 text-[11px] uppercase tracking-[2.4px]' : 'mb-5 text-sm uppercase tracking-[3px]'}
       style={{ fontFamily: "'Cinzel Decorative', serif", color: char.color, textShadow: `0 0 18px ${char.color}55` }}
     >
-      ✦ {char.name} ✦
+       {char.name} 
     </div>
 
     {(cardBios[char.id] || []).map((line, idx) => (
@@ -619,7 +619,7 @@ const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, onClose
               boxShadow: `0 0 16px ${char.color}38`,
             }}
           >
-            📜 Читать лор →
+             Читать лор →
           </a>
         </div>
 
@@ -696,7 +696,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
               boxShadow: `0 0 18px ${homeTheme.primaryGlow}18`,
             }}
           >
-            📖 Открыть летопись мира
+             Открыть летопись мира
           </button>
         </div>
       </div>

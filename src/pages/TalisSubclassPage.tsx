@@ -66,7 +66,7 @@ const TalisSubclassPage: React.FC = () => {
             Мастер Меча Арантир
           </h1>
           <div className="rune-divider" style={{ '--divider-color': theme.accentGlow, '--divider-text': theme.parchment } as React.CSSProperties}>
-            <span>&#9876;</span>
+            <span></span>
           </div>
           <div
             className="inline-flex max-w-full items-center justify-center rounded px-4 py-2 text-xs md:text-sm tracking-[1.5px] font-bold"
@@ -82,7 +82,7 @@ const TalisSubclassPage: React.FC = () => {
           </div>
         </motion.header>
 
-        <Section theme={theme} icon="⚔" title="3-й уровень: Песни Клинка" delay={0.1}>
+        <Section theme={theme} icon="" title="3-й уровень: Песни Клинка" delay={0.1}>
           <Paragraph theme={theme}>
             Вы постигли базовые стойки древнего искусства. В свой ход вы можете бонусным действием переключиться между ними.
           </Paragraph>
@@ -99,7 +99,7 @@ const TalisSubclassPage: React.FC = () => {
           </div>
         </Section>
 
-        <Section theme={theme} icon="🛡" title="Песнь Обороны (Серебряная Чешуя)" delay={0.16} accent={defenseColor}>
+        <Section theme={theme} icon="" title="Песнь Обороны (Серебряная Чешуя)" delay={0.16} accent={defenseColor}>
           <Lead theme={theme}>Стиль, направленный на защиту соратников, подобно непробиваемой драконьей чешуе.</Lead>
           <Callout theme={theme} label="Пассивное умение («Живой бастион»)" accent={defenseColor}>
             Ваш КД увеличивается на 2.
@@ -118,7 +118,7 @@ const TalisSubclassPage: React.FC = () => {
           </Uses>
         </Section>
 
-        <Section theme={theme} icon="🗡" title="Песнь Атаки (Алый Коготь)" delay={0.22} accent={attackColor}>
+        <Section theme={theme} icon="" title="Песнь Атаки (Алый Коготь)" delay={0.22} accent={attackColor}>
           <Lead theme={theme}>Стиль агрессивного наступления, подобный смертоносным драконьим когтям, направленный на поиск уязвимых точек и стремительное сближение.</Lead>
           <Callout theme={theme} label="Пассивное умение («Рассечение чешуи»)" accent={attackColor}>
             Ваши атаки оружием совершают критическое попадание при выпадении 19 или 20 на кости d20.
@@ -133,7 +133,7 @@ const TalisSubclassPage: React.FC = () => {
           </Uses>
         </Section>
 
-        <Section theme={theme} icon="🐉" title="3-й уровень: Танец Драконов" delay={0.28}>
+        <Section theme={theme} icon="" title="3-й уровень: Танец Драконов" delay={0.28}>
           <Paragraph theme={theme}>
             Это визитная карточка ордена Арантир — прием, который меняет ход битвы. Вы можете использовать Танец Драконов в качестве Действия. Эффект зависит от вашей текущей Песни Клинка.
           </Paragraph>
@@ -150,7 +150,7 @@ const TalisSubclassPage: React.FC = () => {
           </div>
         </Section>
 
-        <Section theme={theme} icon="🏅" title="7-й уровень: Статус Ордена" delay={0.34}>
+        <Section theme={theme} icon="" title="7-й уровень: Статус Ордена" delay={0.34}>
           <Paragraph theme={theme}>
             Открытая демонстрация ваших красно-серебряных цветов и герба с пронзенным драконом заставляет эльфов относиться к вам с почтением или опаской.
           </Paragraph>
@@ -161,7 +161,7 @@ const TalisSubclassPage: React.FC = () => {
           ]} />
         </Section>
 
-        <Section theme={theme} icon="🎵" title="10-й уровень: Эхо Древних Песен" delay={0.4}>
+        <Section theme={theme} icon="" title="10-й уровень: Эхо Древних Песен" delay={0.4}>
           <Paragraph theme={theme}>
             На 10-м уровне ваши Танцы Драконов выходят за пределы общих человеческих (или эльфийских) возможностей:
           </Paragraph>
@@ -175,13 +175,13 @@ const TalisSubclassPage: React.FC = () => {
           </div>
         </Section>
 
-        <Section theme={theme} icon="⏳" title="15-й уровень: Безупречный Ритм" delay={0.46}>
+        <Section theme={theme} icon="" title="15-й уровень: Безупречный Ритм" delay={0.46}>
           <Paragraph theme={theme}>
             Вы больше не можете оказаться застигнутым врасплох без козыря в рукаве. Если при броске инициативы у вас не осталось использований «Танца Драконов» или «Песен Клинка», вы восстанавливаете по одному использованию каждого умения.
           </Paragraph>
         </Section>
 
-        <Section theme={theme} icon="✦" title="18-й уровень: Macillindalë" delay={0.52}>
+        <Section theme={theme} icon="" title="18-й уровень: Macillindalë" delay={0.52}>
           <Paragraph theme={theme}>
             Вы достигаете вершины искусства, сливая две песни в единую симфонию стали. Когда вы используете бонусное действие для активации Песни Клинка, вы можете активировать обе песни одновременно. В течение 1 минуты вы получаете преимущества пассивных и активных умений обеих песен. «Танец Драконов» в этом состоянии позволяет вам сначала совершить Смертоносный Вихрь, а в конце движения автоматически активировать Стальную Мельницу до вашего следующего хода.
           </Paragraph>
@@ -191,7 +191,7 @@ const TalisSubclassPage: React.FC = () => {
         </Section>
 
         <div className="footer-ornament mt-12" style={{ '--footer-border': `${theme.accentGlow}20`, '--footer-text-color': theme.accentGlow } as React.CSSProperties}>
-          <div className="rune-string">&#9876; &#9835; &#9876;</div>
+          <div className="rune-string">  </div>
         </div>
       </main>
     </Layout>
@@ -229,6 +229,7 @@ const Section: React.FC<SectionProps> = ({ theme, icon, title, children, delay =
         background: 'linear-gradient(135deg, rgba(20,14,10,0.82), rgba(12,8,6,0.66))',
         border: `1px solid ${(accent || theme.accentGlow)}28`,
         boxShadow: `0 18px 50px rgba(0,0,0,0.24), inset 0 0 28px ${(accent || theme.accentGlow)}08`,
+        WebkitBackdropFilter: 'blur(4px)',
         backdropFilter: 'blur(4px)',
       }}
     >
@@ -316,7 +317,7 @@ const BulletList: React.FC<BulletListProps> = ({ theme, accent, items }) => (
   <ul className="space-y-3 my-4">
     {items.map((item) => (
       <li key={item} className="flex gap-3 text-base md:text-lg leading-7" style={{ fontFamily: "'Cormorant Garamond', serif", color: theme.silver }}>
-        <span aria-hidden="true" className="mt-1 shrink-0" style={{ color: accent }}>✦</span>
+        <span aria-hidden="true" className="mt-1 shrink-0" style={{ color: accent }}></span>
         <span>{item}</span>
       </li>
     ))}

@@ -73,7 +73,7 @@ const TalisSubclassPage: React.FC = () => {
         </motion.div>
 
         {/* 3-й уровень: Песни Клинка */}
-        <Section theme={theme} icon="⚔" title="3-й уровень: Песни Клинка">
+        <Section theme={theme} icon="" title="3-й уровень: Песни Клинка">
           <p className="mb-4 leading-relaxed" style={{ color: theme.silver }}>
             Вы постигли базовые стойки древнего искусства. В свой ход вы можете бонусным действием переключиться между ними.
           </p>
@@ -107,7 +107,7 @@ const TalisSubclassPage: React.FC = () => {
         </Section>
 
         {/* Песнь Обороны */}
-        <Section theme={theme} icon="🛡" title="Песнь Обороны (Серебряная Чешуя)">
+        <Section theme={theme} icon="" title="Песнь Обороны (Серебряная Чешуя)">
           <p className="mb-4 italic" style={{ color: theme.parchmentDim }}>
             Стиль, направленный на защиту соратников, подобно непробиваемой драконьей чешуе.
           </p>
@@ -146,7 +146,7 @@ const TalisSubclassPage: React.FC = () => {
         </Section>
 
         {/* Песнь Атаки */}
-        <Section theme={theme} icon="🗡" title="Песнь Атаки (Алый Коготь)">
+        <Section theme={theme} icon="" title="Песнь Атаки (Алый Коготь)">
           <p className="mb-4 italic" style={{ color: theme.parchmentDim }}>
             Стиль агрессивного наступления, подобный смертоносным драконьим когтям, направленный на поиск уязвимых точек и стремительное сближение.
           </p>
@@ -175,7 +175,7 @@ const TalisSubclassPage: React.FC = () => {
         </Section>
 
         {/* 3-й уровень: Танец Драконов */}
-        <Section theme={theme} icon="🐉" title="3-й уровень: Танец Драконов">
+        <Section theme={theme} icon="" title="3-й уровень: Танец Драконов">
           <p className="mb-4 leading-relaxed" style={{ color: theme.silver }}>
             Это визитная карточка ордена Арантир — приём, который меняет ход битвы. Вы можете использовать <strong>Танец Драконов</strong> в качестве Действия. Эффект зависит от вашей текущей Песни Клинка.
           </p>
@@ -215,7 +215,7 @@ const TalisSubclassPage: React.FC = () => {
         </Section>
 
         {/* 7-й уровень */}
-        <Section theme={theme} icon="🏅" title="7-й уровень: Статус Ордена">
+        <Section theme={theme} icon="" title="7-й уровень: Статус Ордена">
           <p className="mb-4 leading-relaxed" style={{ color: theme.silver }}>
             Открытая демонстрация ваших красно-серебряных цветов и герба с пронзённым драконом заставляет эльфов относиться к вам с почтением или опаской.
           </p>
@@ -240,7 +240,7 @@ const TalisSubclassPage: React.FC = () => {
         </Section>
 
         {/* 10-й уровень */}
-        <Section theme={theme} icon="🎵" title="10-й уровень: Эхо Древних Песен">
+        <Section theme={theme} icon="" title="10-й уровень: Эхо Древних Песен">
           <p className="mb-4 leading-relaxed" style={{ color: theme.silver }}>
             Ваши Танцы Драконов выходят за пределы общих человеческих (или эльфийских) возможностей:
           </p>
@@ -271,14 +271,14 @@ const TalisSubclassPage: React.FC = () => {
         </Section>
 
         {/* 15-й уровень */}
-        <Section theme={theme} icon="⏳" title="15-й уровень: Безупречный Ритм">
+        <Section theme={theme} icon="" title="15-й уровень: Безупречный Ритм">
           <p className="leading-relaxed" style={{ color: theme.silver }}>
             Вы больше не можете оказаться застигнутым врасплох без козыря в рукаве. Если при броске инициативы у вас не осталось использований «Танца Драконов» или «Песен Клинка», вы восстанавливаете <strong>по одному использованию</strong> каждого умения.
           </p>
         </Section>
 
         {/* 18-й уровень */}
-        <Section theme={theme} icon="✨" title="18-й уровень: Macillindalë">
+        <Section theme={theme} icon="" title="18-й уровень: Macillindalë">
           <p className="mb-4 leading-relaxed" style={{ color: theme.silver }}>
             Вы достигаете вершины искусства, сливая две песни в единую симфонию стали.
           </p>
@@ -310,7 +310,7 @@ const TalisSubclassPage: React.FC = () => {
           className="mt-16 text-center"
         >
           <div className="text-2xl tracking-[8px]" style={{ color: theme.parchmentDim }}>
-            ⚔ 🎵 ⚔
+              
           </div>
           <p className="mt-4 text-xs tracking-[2px]" style={{ color: theme.parchmentDim }}>
             «Танец стали и песни — последнее наследие клана Арантир»

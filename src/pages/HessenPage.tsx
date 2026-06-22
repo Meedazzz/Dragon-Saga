@@ -55,7 +55,7 @@ const HessenPage: React.FC = () => {
             Дом Хессен
           </h1>
           <div className="rune-divider" style={{ '--divider-color': accent, '--divider-text': theme.parchment } as React.CSSProperties}>
-            <span>&#10052;</span>
+            <span></span>
           </div>
           <p
             className="text-base italic mt-4"
@@ -73,7 +73,7 @@ const HessenPage: React.FC = () => {
           className="mb-10"
         >
           <div className="section-header" style={{ '--section-border': `${accent}30`, '--section-icon-color': accent, '--section-title-color': theme.parchment, '--section-line-color': accent } as React.CSSProperties}>
-            <span className="section-icon">&#128220;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Предания Дома</h2>
             <div className="section-line" />
           </div>
@@ -97,7 +97,7 @@ const HessenPage: React.FC = () => {
           className="mb-10"
         >
           <div className="section-header" style={{ '--section-border': `${accent}30`, '--section-icon-color': accent, '--section-title-color': theme.parchment, '--section-line-color': accent } as React.CSSProperties}>
-            <span className="section-icon">&#9876;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Члены Дома</h2>
             <div className="section-line" />
           </div>
@@ -132,7 +132,7 @@ const HessenPage: React.FC = () => {
           transition={{ delay: 0.4 }}
         >
           <div className="section-header" style={{ '--section-border': `${accent}30`, '--section-icon-color': accent, '--section-title-color': theme.parchment, '--section-line-color': accent } as React.CSSProperties}>
-            <span className="section-icon">&#10022;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Глоссарий</h2>
             <div className="section-line" />
           </div>
@@ -159,7 +159,7 @@ const HessenPage: React.FC = () => {
 
         {/* Footer */}
         <div className="footer-ornament mt-12" style={{ '--footer-border': `${accent}20`, '--footer-text-color': accent } as React.CSSProperties}>
-          <div className="rune-string">&#10052; &#10052; &#10052;</div>
+          <div className="rune-string">  </div>
         </div>
       </div>
     </Layout>

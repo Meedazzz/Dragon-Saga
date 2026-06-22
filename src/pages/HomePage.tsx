@@ -46,7 +46,7 @@ const HomePage: React.FC = () => {
         {/* Tarot */}
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mb-6 md:mb-8">
           <div className="section-header !mt-2 !mb-1">
-            <span className="section-icon">✦</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Карты Таро</h2>
             <div className="section-line" />
           </div>
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
         {/* About */}
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }} className="mb-8 md:mb-10">
           <div className="section-header">
-            <span className="section-icon">📖</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">О игре</h2>
             <div className="section-line" />
           </div>
@@ -73,7 +73,7 @@ const HomePage: React.FC = () => {
         {/* Videos */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34 }} className="mb-12">
           <div className="section-header">
-            <span className="section-icon">▶</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Видео</h2>
             <div className="section-line" />
           </div>
@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
                 <div className="w-full h-40 flex items-center justify-center relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(28,14,22,0.6), rgba(10,8,14,0.5))' }}>
                   <img src={`${BASE}videos/thumbnail.jpg`} alt={video.title} className="absolute inset-0 w-full h-full object-cover opacity-62" loading="lazy" decoding="async" />
                   <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg z-10" style={{ background: 'rgba(0,0,0,0.55)', border: `2px solid ${homeTheme.primaryGlow}`, color: homeTheme.primaryGlow }}>
-                    ▶
+                    
                   </div>
                 </div>
                 <div className="p-4">

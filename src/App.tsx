@@ -7,7 +7,9 @@ import { homeTheme } from '@/types/theme';
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const LorePage = lazy(() => import('@/pages/LorePage'));
 const ValeryPage = lazy(() => import('@/pages/ValeryPage'));
+const ValerySubclassPage = lazy(() => import('@/pages/ValerySubclassPage'));
 const SakrisPage = lazy(() => import('@/pages/SakrisPage'));
+const SakrisSubclassPage = lazy(() => import('@/pages/SakrisSubclassPage'));
 const BrinPage = lazy(() => import('@/pages/BrinPage'));
 const DarkbainPage = lazy(() => import('@/pages/DarkbainPage'));
 const LetopisPage = lazy(() => import('@/pages/LetopisPage'));
@@ -85,6 +87,8 @@ function App() {
           <Route path="/talis" element={<TalisSubclassPage />} />
 
           {/* Подклассы */}
+          <Route path="/subclass/valery" element={<ValerySubclassPage />} />
+          <Route path="/subclass/sakris" element={<SakrisSubclassPage />} />
           <Route path="/subclass/talis" element={<TalisSubclassPage />} />
           <Route path="/subclass/:characterId" element={<SubclassPage />} />
 

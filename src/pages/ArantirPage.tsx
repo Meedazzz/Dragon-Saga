@@ -78,7 +78,7 @@ const ArantirPage: React.FC = () => {
             Клан Арантир
           </h1>
           <div className="rune-divider" style={{ '--divider-color': accent, '--divider-text': theme.parchment } as React.CSSProperties}>
-            <span>&#9835;</span>
+            <span></span>
           </div>
           <p
             className="text-base italic mt-4"
@@ -96,7 +96,7 @@ const ArantirPage: React.FC = () => {
           className="mb-10"
         >
           <div className="section-header" style={{ '--section-border': `${accent}30`, '--section-icon-color': accent, '--section-title-color': theme.parchment, '--section-line-color': accent } as React.CSSProperties}>
-            <span className="section-icon">&#128220;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Предания клана</h2>
             <div className="section-line" />
           </div>
@@ -120,7 +120,7 @@ const ArantirPage: React.FC = () => {
           className="mb-10"
         >
           <div className="section-header" style={{ '--section-border': `${accent}30`, '--section-icon-color': accent, '--section-title-color': theme.parchment, '--section-line-color': accent } as React.CSSProperties}>
-            <span className="section-icon">&#9876;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Известные личности</h2>
             <div className="section-line" />
           </div>
@@ -155,7 +155,7 @@ const ArantirPage: React.FC = () => {
           transition={{ delay: 0.4 }}
         >
           <div className="section-header" style={{ '--section-border': `${accent}30`, '--section-icon-color': accent, '--section-title-color': theme.parchment, '--section-line-color': accent } as React.CSSProperties}>
-            <span className="section-icon">&#10022;</span>
+            <span className="section-icon"></span>
             <h2 className="section-title">Глоссарий</h2>
             <div className="section-line" />
           </div>
@@ -182,7 +182,7 @@ const ArantirPage: React.FC = () => {
 
         {/* Footer */}
         <div className="footer-ornament mt-12" style={{ '--footer-border': `${accent}20`, '--footer-text-color': accent } as React.CSSProperties}>
-          <div className="rune-string">&#9835; &#9835; &#9835;</div>
+          <div className="rune-string">  </div>
         </div>
       </div>
     </Layout>

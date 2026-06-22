@@ -110,7 +110,7 @@ const LetopisPage: React.FC = () => {
             От Музыки Айнур до 425 года Третьей Эпохи
           </p>
 
-          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>&#10086; &#10086; &#10086;</div>
+          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>  </div>
 
           {/* Introduction */}
           <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
@@ -142,7 +142,7 @@ const LetopisPage: React.FC = () => {
             </div>
           </motion.section>
 
-          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>&#10087; &#10087; &#10087;</div>
+          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>  </div>
 
           {/* History */}
           <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
@@ -224,7 +224,7 @@ const LetopisPage: React.FC = () => {
             </p>
           </motion.section>
 
-          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>&#9756; &#10087;</div>
+          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}> </div>
 
           {/* Political Map */}
           <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
@@ -264,7 +264,7 @@ const LetopisPage: React.FC = () => {
             ))}
           </motion.section>
 
-          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>&#10086; &#10086; &#10086;</div>
+          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>  </div>
 
           {/* Races */}
           <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
@@ -305,7 +305,7 @@ const LetopisPage: React.FC = () => {
             ))}
           </motion.section>
 
-          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>&#9756; &#10087;</div>
+          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}> </div>
 
           {/* Calendar */}
           <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
@@ -402,7 +402,7 @@ const LetopisPage: React.FC = () => {
             </div>
           </motion.section>
 
-          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>&#10086; &#10086; &#10086;</div>
+          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>  </div>
 
           {/* Glossary */}
           <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
@@ -447,7 +447,7 @@ const LetopisPage: React.FC = () => {
             ))}
           </motion.section>
 
-          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>&#10086; &#10086; &#10086;</div>
+          <div className="text-center text-2xl tracking-[10px] my-6 md:my-8" style={{ color: '#8b4513' }}>  </div>
 
           {/* Footer */}
           <footer className="text-center mt-10 text-[10pt] italic" style={{ color: '#8b7355' }}>

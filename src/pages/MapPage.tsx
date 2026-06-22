@@ -248,7 +248,7 @@ const MapPage: React.FC = () => {
             <button onClick={() => setIsFullscreen(!isFullscreen)}
               className="px-3 py-[7px] rounded-lg text-[11px] tracking-wider font-semibold transition-all hover:-translate-y-px tarot-no-glow"
               style={{ fontFamily: "'Cinzel', serif", color: lorTheme.parchment, background: 'rgba(255,255,255,0.04)', border: `1px solid ${lorTheme.primary}44` }}
-            >{isFullscreen ? '✕ Выйти' : '⛶ Экран'}</button>
+            >{isFullscreen ? '× Выйти' : ' Экран'}</button>
           </div>
         </motion.div>
       </div>

@@ -7,18 +7,18 @@ import { characters } from '@/data/characters';
 import { Search } from 'lucide-react';
 
 const allItems = [
-  { id: 'valery', title: 'Валерий Даркбейн', desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.', path: '/lore/valery', category: 'characters' as const, icon: '⚔️' },
-  { id: 'brin', title: 'Брин дель Хессен', desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда.', path: '/lore/brin', category: 'characters' as const, icon: '⚔️' },
-  { id: 'sakris', title: 'Сакрис Ульриаш', desc: 'Амбициозный драконид искатель приключений переросший свой дом.', path: '/lore/sakris', category: 'characters' as const, icon: '⚔️' },
-  { id: 'talis', title: 'Таллис', desc: 'Бродяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.', path: '/lore/talis', category: 'characters' as const, icon: '⚔️' },
-  { id: 'stive', title: 'Стив', desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.', path: '/lore/stive', category: 'characters' as const, icon: '⚔️' },
-  { title: 'Летопись мира', desc: 'Сказание о мире: от Музыки Айнур до 425 года Третьей Эпохи. История, расы, календарь и глоссарий.', path: '/letopis', category: 'lore' as const, icon: '📜' },
-  { title: 'Род Даркбейнов', desc: 'Древний род, чья кровь связана с силами за гранью жизни и смерти.', path: '/darkbain', category: 'lore' as const, icon: '📜' },
-  { title: 'Дом Хессен', desc: 'Великий Дом Астарии, чья кровь хранит тайны Чёрного льда.', path: '/hessen', category: 'lore' as const, icon: '📜' },
-  { title: 'Бергхейм', desc: 'Суровый горный край на севере, где духи предков бродят по перевалам.', path: '/berghheim', category: 'lore' as const, icon: '📜' },
-  { title: 'Клан Арантир', desc: 'Последние Драконоборцы, чьи песни пережили века.', path: '/arantir', category: 'lore' as const, icon: '📜' },
-  { title: 'Карта Севера', desc: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.', path: '/map/sever', category: 'maps' as const, icon: '🗺️' },
-  { title: 'Карта Нортвинда', desc: 'Карта Нортвинда — оплота севера и его окрестностей.', path: '/map/northwind', category: 'maps' as const, icon: '🗺️' },
+  { id: 'valery', title: 'Валерий Даркбейн', desc: 'Паладин ищущий силы и славы, чья кровь связана с силами за гранью смертных.', path: '/lore/valery', category: 'characters' as const, icon: '' },
+  { id: 'brin', title: 'Брин дель Хессен', desc: 'Чародей и наследный Лорд, черпающий силу из Чёрного льда.', path: '/lore/brin', category: 'characters' as const, icon: '' },
+  { id: 'sakris', title: 'Сакрис Ульриаш', desc: 'Амбициозный драконид искатель приключений переросший свой дом.', path: '/lore/sakris', category: 'characters' as const, icon: '' },
+  { id: 'talis', title: 'Таллис', desc: 'Бродяга с лютней, носитель культурного наследия некогда великого клана Драконоборцев.', path: '/lore/talis', category: 'characters' as const, icon: '' },
+  { id: 'stive', title: 'Стив', desc: 'Странствует в поисках лекарства для своего учителя и в поисках себя.', path: '/lore/stive', category: 'characters' as const, icon: '' },
+  { title: 'Летопись мира', desc: 'Сказание о мире: от Музыки Айнур до 425 года Третьей Эпохи. История, расы, календарь и глоссарий.', path: '/letopis', category: 'lore' as const, icon: '' },
+  { title: 'Род Даркбейнов', desc: 'Древний род, чья кровь связана с силами за гранью жизни и смерти.', path: '/darkbain', category: 'lore' as const, icon: '' },
+  { title: 'Дом Хессен', desc: 'Великий Дом Астарии, чья кровь хранит тайны Чёрного льда.', path: '/hessen', category: 'lore' as const, icon: '' },
+  { title: 'Бергхейм', desc: 'Суровый горный край на севере, где духи предков бродят по перевалам.', path: '/berghheim', category: 'lore' as const, icon: '' },
+  { title: 'Клан Арантир', desc: 'Последние Драконоборцы, чьи песни пережили века.', path: '/arantir', category: 'lore' as const, icon: '' },
+  { title: 'Карта Севера', desc: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.', path: '/map/sever', category: 'maps' as const, icon: '' },
+  { title: 'Карта Нортвинда', desc: 'Карта Нортвинда — оплота севера и его окрестностей.', path: '/map/northwind', category: 'maps' as const, icon: '' },
 ];
 
 const categoryLabels: Record<string, string> = { characters: 'Персонажи', lore: 'Лор', maps: 'Карты' };
@@ -57,7 +57,7 @@ const LorPage: React.FC = () => {
           <div className="flex items-center gap-3 px-4 py-3 rounded-[12px]" style={{ background: 'rgba(18,12,20,0.52)', border: `1px solid ${lorTheme.primary}33` }}>
             <Search size={18} style={{ color: lorTheme.parchmentDim, flexShrink: 0 }} />
             <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Поиск по миру..." className="flex-1 bg-transparent outline-none text-sm" style={{ fontFamily: "'Cormorant Garamond', serif", color: lorTheme.parchment, letterSpacing: '0.5px' }} />
-            {searchQuery && <button onClick={() => setSearchQuery('')} className="text-xs cursor-pointer tarot-no-glow" style={{ color: lorTheme.parchmentDim }}>✕</button>}
+            {searchQuery && <button onClick={() => setSearchQuery('')} className="text-xs cursor-pointer tarot-no-glow" style={{ color: lorTheme.parchmentDim }}>×</button>}
           </div>
         </motion.div>
 

@@ -176,7 +176,7 @@
     font-family: 'Cormorant Garamond', serif;
   }
   .charge-list li::before {
-    content: '◆';
+    content: '-';
     position: absolute;
     left: 0;
     color: var(--charge-bullet, #e44a5a);
@@ -501,4 +501,175 @@ button:not(:disabled):active, a:not(.no-glow):active, [role="button"]:active {
 .tarot-no-glow:hover {
   box-shadow: none !important;
   filter: none !important;
+}
+
+/* Cross-browser and mobile app readability */
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  width: 100%;
+  min-width: 320px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.tome-container {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.subclass-page {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.subclass-page p,
+.subclass-page li,
+.subclass-page td,
+.subclass-page blockquote {
+  hyphens: auto;
+}
+
+.subclass-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid color-mix(in srgb, var(--accent, #3e8de0) 38%, transparent);
+  border-radius: 12px;
+  overflow: hidden;
+  table-layout: fixed;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.subclass-table th {
+  padding: 14px 12px;
+  text-align: left;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #e9e0d0;
+  background: rgba(62, 141, 224, 0.18);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent, #3e8de0) 48%, transparent);
+}
+
+.subclass-table td {
+  padding: 14px 12px;
+  vertical-align: top;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: #d0d8e8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.subclass-table td:first-child {
+  width: 120px;
+  color: var(--accent, #3e8de0);
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700;
+}
+
+@supports not (color: color-mix(in srgb, white, black)) {
+  .subclass-table {
+    border-color: rgba(62, 141, 224, 0.38);
+  }
+  .subclass-table th {
+    border-bottom-color: rgba(62, 141, 224, 0.48);
+  }
+}
+
+@supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
+  .subclass-page .rounded-lg,
+  .charge-box {
+    background-color: rgba(8, 8, 12, 0.92) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .section-title {
+    flex-shrink: 1;
+    line-height: 1.35;
+  }
+  .section-line {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .subclass-page {
+    padding-top: max(3.5rem, env(safe-area-inset-top, 0px));
+  }
+
+  .subclass-page .text-justify {
+    text-align: left;
+  }
+
+  .mobile-card-table {
+    overflow: visible;
+  }
+
+  .mobile-card-table .subclass-table,
+  .mobile-card-table .subclass-table thead,
+  .mobile-card-table .subclass-table tbody,
+  .mobile-card-table .subclass-table tr,
+  .mobile-card-table .subclass-table th,
+  .mobile-card-table .subclass-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .mobile-card-table .subclass-table {
+    border: 0;
+    background: transparent;
+  }
+
+  .mobile-card-table .subclass-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .mobile-card-table .subclass-table tr {
+    margin-bottom: 12px;
+    border: 1px solid rgba(62, 141, 224, 0.28);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.18);
+  }
+
+  .mobile-card-table .subclass-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 12px;
+  }
+
+  .mobile-card-table .subclass-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 3px;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 0.68rem;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted, #a99a84);
+  }
 }

@@ -112,7 +112,7 @@ const DarkbainPage: React.FC = () => {
         >
           <div className="absolute top-0 left-0 right-0 h-1.5 opacity-50" style={{ background: darkbainTheme.primaryGlow }} />
           {/* Corner Ornaments */}
-          {['❧', '❧', '❧', '❧'].map((orn, i) => (
+          {['', '', '', ''].map((orn, i) => (
             <div
               key={i}
               className="absolute text-6xl opacity-30"
@@ -236,7 +236,7 @@ const DarkbainPage: React.FC = () => {
           {/* Divider */}
           <div className="flex items-center justify-center py-8 px-6">
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
-            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow, textShadow: '0 0 15px rgba(74,63,42,0.3)' }}>&#10086;</div>
+            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow, textShadow: '0 0 15px rgba(74,63,42,0.3)' }}></div>
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
           </div>
 
@@ -287,7 +287,7 @@ const DarkbainPage: React.FC = () => {
                     className="absolute top-4 right-5 text-xl opacity-20"
                     style={{ color: darkbainTheme.primaryGlow }}
                   >
-                    &#10022;
+                    
                   </div>
                   <div
                     className="text-lg md:text-[22px] tracking-[2px] mb-2"
@@ -321,7 +321,7 @@ const DarkbainPage: React.FC = () => {
           {/* Divider */}
           <div className="flex items-center justify-center py-8 px-6">
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
-            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}>&#10086;</div>
+            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}></div>
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
           </div>
 
@@ -406,7 +406,7 @@ const DarkbainPage: React.FC = () => {
           {/* Divider */}
           <div className="flex items-center justify-center py-8 px-6">
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
-            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}>&#10086;</div>
+            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}></div>
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
           </div>
 
@@ -469,7 +469,7 @@ const DarkbainPage: React.FC = () => {
           {/* Divider */}
           <div className="flex items-center justify-center py-8 px-6">
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
-            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}>&#10086;</div>
+            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}></div>
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
           </div>
 
@@ -514,7 +514,7 @@ const DarkbainPage: React.FC = () => {
                     className="absolute left-5 top-4 md:top-5 text-sm opacity-50"
                     style={{ color: darkbainTheme.accentGlow }}
                   >
-                    &#10022;
+                    
                   </span>
                   {rumor}
                 </motion.li>
@@ -535,7 +535,7 @@ const DarkbainPage: React.FC = () => {
           {/* Divider */}
           <div className="flex items-center justify-center py-8 px-6">
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
-            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}>&#10086;</div>
+            <div className="mx-6 text-2xl opacity-50" style={{ color: darkbainTheme.primaryGlow }}></div>
             <div className="flex-1 h-px opacity-35" style={{ background: darkbainTheme.primaryGlow }} />
           </div>
 

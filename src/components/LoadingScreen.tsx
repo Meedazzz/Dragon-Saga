@@ -587,7 +587,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
                     color: theme.parchmentDim,
                   }}
                 >
-                  <span className="animate-pulse">✨ Созвездия жизни переплетаются...</span>
+                  <span className="animate-pulse"> Созвездия жизни переплетаются...</span>
                 </div>
               </motion.div>
             </div>
