@@ -1,5 +1,4 @@
 import Layout from '@/components/Layout';
-import HeroNav from '@/components/HeroNav';
 import type { ColorTheme } from '@/types/theme';
 
 /** Тёмно-оранжевая тема для Таллиса */
