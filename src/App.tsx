@@ -18,7 +18,7 @@ const BerghheimPage = lazy(() => import('@/pages/BerghheimPage'));
 const ArantirPage = lazy(() => import('@/pages/ArantirPage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
-const TalisPlaceholder = lazy(() => import('@/pages/TalisPlaceholder'));
+const TalisSubclassPage = lazy(() => import('@/pages/TalisSubclassPage'));
 
 function App() {
   useEffect(() => {
@@ -82,9 +82,10 @@ function App() {
 
           {/* Страницы для Стива и Таллиса */}
           <Route path="/stive" element={<StivePlaceholder />} />
-          <Route path="/talis" element={<TalisPlaceholder />} />
+          <Route path="/talis" element={<TalisSubclassPage />} />
 
           {/* Подклассы */}
+          <Route path="/subclass/talis" element={<TalisSubclassPage />} />
           <Route path="/subclass/:characterId" element={<SubclassPage />} />
 
           {/* Связанный лор */}
