@@ -2,7 +2,6 @@ import { characters, type CharacterConfig } from '@/data/characters';
 
 const BASE = import.meta.env.BASE_URL;
 
-<<<<<<< HEAD
 export type TarotPosition = 'Прошлое' | 'Настоящее' | 'Будущее';
 
 export interface TarotNarrative {
@@ -20,10 +19,6 @@ export interface TarotNarrative {
 export interface TarotCard extends CharacterConfig {
   backLore: string[];
   narrative: TarotNarrative;
-=======
-export interface TarotCard extends CharacterConfig {
-  backLore: string[];
->>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 }
 
 export const tarotBackImage = `${BASE}shirt.png`;
@@ -57,7 +52,6 @@ export const tarotBackLore: Record<string, string[]> = {
   ],
 };
 
-<<<<<<< HEAD
 export const tarotNarratives: Record<string, TarotNarrative> = {
   valery: {
     archetype: 'Кровь и Клятва',
@@ -156,11 +150,6 @@ export const tarotCards: TarotCard[] = characters.map((character) => ({
   ...character,
   backLore: tarotBackLore[character.id] ?? [character.desc],
   narrative: tarotNarratives[character.id] ?? fallbackNarrative,
-=======
-export const tarotCards: TarotCard[] = characters.map((character) => ({
-  ...character,
-  backLore: tarotBackLore[character.id] ?? [character.desc],
->>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 }));
 
 export const findTarotCard = (id: string) => tarotCards.find((card) => card.id === id);

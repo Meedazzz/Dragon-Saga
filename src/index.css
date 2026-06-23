@@ -1461,7 +1461,6 @@ body {
     margin-right: auto;
   }
 }
-<<<<<<< HEAD
 
 /* Final Dragon Saga polish: falling ash/snow, desktop fan, mobile carousel */
 @keyframes drift {
@@ -1729,5 +1728,3 @@ body {
 .tarot-gallery-card:nth-child(3) { z-index: 4; }
 .tarot-gallery-card:hover,
 .tarot-gallery-card:focus-visible { z-index: 50; }
-=======
->>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
