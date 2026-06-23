@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tarotCards } from '@/data/tarot';
 import { applyImageFallback } from '@/lib/imageFallback';
@@ -93,7 +93,6 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
   const getCardStyle = (index: number, total: number) => {
     const isSelected = selectedIndex === index;
     const isHovered = hoveredIndex === index;
-    const isFlipped = flippedCards.has(index);
 
     // Fan arc calculation
     const arcAngle = 35; // degrees for the fan spread
@@ -152,8 +151,7 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
         <div className="tarot-fan-stage">
           {tarotCards.map((card, index) => {
             const isSelected = selectedIndex === index;
-            const isFlipped = flippedCards.has(index);
-            const style = getCardStyle(index, tarotCards.length);
+                    const style = getCardStyle(index, tarotCards.length);
 
             return (
               <motion.div
@@ -248,7 +246,7 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
               <div className="tarot-detail-info">
                 <h2>{tarotCards[selectedIndex].name}</h2>
                 <p className="tarot-detail-title">{tarotCards[selectedIndex].title}</p>
-                <p className="tarot-detail-desc">{tarotCards[selectedIndex].description}</p>
+                <p className="tarot-detail-desc">{tarotCards[selectedIndex].desc}</p>
 
                 <button 
                   className="tarot-flip-btn"

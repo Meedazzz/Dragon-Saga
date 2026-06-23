@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
   Dices, Users, Compass, Scroll, Sparkles, BookOpen, 
-  Map, Clock, Shield, Sword, Heart, Brain, X, ChevronRight
+  Clock, Shield, Sword, Heart, X, ChevronRight
 } from 'lucide-react';
 import Layout from '@/components/Layout';
-import { activitiesTheme } from '@/types/theme';
+import { homeTheme } from '@/types/theme';
 
 interface Activity {
   id: string;
@@ -149,7 +149,7 @@ const ActivitiesPage: React.FC = () => {
   });
 
   return (
-    <Layout theme={activitiesTheme} particleCount={20}>
+    <Layout theme={homeTheme} particleCount={20}>
       <main className="activities-page">
         {/* Hero Header */}
         <motion.section 

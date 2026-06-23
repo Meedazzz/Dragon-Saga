@@ -24,7 +24,7 @@ const ArantirPage = lazy(() => import('@/pages/ArantirPage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
 const ActivitiesPage = lazy(() => import('@/pages/ActivitiesPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
-const TallisSubclassPage = lazy(() => import('@/pages/TallisSubclassPage'));
+const TallisSubclassPage = lazy(() => import('@/pages/TalisSubclassPage'));
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();

@@ -35,11 +35,9 @@ const HomePage: React.FC = () => {
   const BASE = import.meta.env.BASE_URL;
   const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
   const [expandedCard, setExpandedCard] = useState<CharacterConfig | null>(null);
-  const [activeSection, setActiveSection] = useState('hero');
 
   const scrollTo = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setActiveSection(id);
   }, []);
 
   return (
