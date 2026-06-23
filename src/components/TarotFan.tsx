@@ -151,7 +151,8 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
         <div className="tarot-fan-stage">
           {tarotCards.map((card, index) => {
             const isSelected = selectedIndex === index;
-                    const style = getCardStyle(index, tarotCards.length);
+            const isFlipped = flippedCards.has(index);
+            const style = getCardStyle(index, tarotCards.length);
 
             return (
               <motion.div
