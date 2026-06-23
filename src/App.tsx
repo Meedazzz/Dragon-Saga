@@ -28,22 +28,12 @@ const TalisSubclassPage = lazy(() => import('@/pages/TalisSubclassPage'));
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
-  }, []);
-
   useLayoutEffect(() => {
     document.body.style.overflow = '';
     document.documentElement.style.overflowY = 'auto';
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    const frame = window.requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    });
-    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   return null;
@@ -51,47 +41,9 @@ const ScrollToTop: React.FC = () => {
 
 function App() {
   useEffect(() => {
-    // 1. Prevent right click
-    const preventContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-    };
-    
-    // 2. Prevent dragging images
-    const preventDragStart = (e: DragEvent) => {
-      if (e.target instanceof HTMLElement && (e.target.tagName === 'IMG' || e.target.tagName === 'img')) {
-        e.preventDefault();
-      }
-    };
-
-    // 3. Prevent copying content
-    const preventCopy = (e: ClipboardEvent) => {
-      e.preventDefault();
-    };
-
-    // 4. Prevent common keyboard shortcuts for developer tools and saving
-    const preventShortcuts = (e: KeyboardEvent) => {
-      // Prevent Ctrl+S, Ctrl+U, Ctrl+Shift+I, F12
-      if (
-        (e.ctrlKey && e.key === 's') ||
-        (e.ctrlKey && e.key === 'u') ||
-        (e.ctrlKey && e.shiftKey && e.key === 'i') ||
-        e.key === 'F12'
-      ) {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener('contextmenu', preventContextMenu);
-    document.addEventListener('dragstart', preventDragStart);
-    document.addEventListener('copy', preventCopy);
-    document.addEventListener('keydown', preventShortcuts);
-
-    return () => {
-      document.removeEventListener('contextmenu', preventContextMenu);
-      document.removeEventListener('dragstart', preventDragStart);
-      document.removeEventListener('copy', preventCopy);
-      document.removeEventListener('keydown', preventShortcuts);
-    };
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
   }, []);
 
   return (
