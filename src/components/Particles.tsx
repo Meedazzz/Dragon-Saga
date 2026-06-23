@@ -1,6 +1,11 @@
 import React, { useMemo, useRef } from 'react';
 import type { ColorTheme } from '@/types/theme';
 
+const seededRandom = (seed: number) => {
+  const value = Math.sin(seed * 9301.13) * 10000;
+  return value - Math.floor(value);
+};
+
 interface ParticlesProps {
   theme: ColorTheme;
   count?: number;
@@ -11,7 +16,7 @@ const Particles: React.FC<ParticlesProps> = ({ theme, count = 30, variant = 'def
   const containerRef = useRef<HTMLDivElement>(null);
 
   const particles = useMemo(() => {
-    const items: { left: string; delay: string; duration: string; color: string; size: number; animType: string }[] = [];
+    const items: { left: string; delay: string; duration: string; color: string; size: number; animType: string; driftX: string }[] = [];
 
     const getAnimType = (i: number): string => {
       if (variant === 'mixed') {
@@ -28,13 +33,16 @@ const Particles: React.FC<ParticlesProps> = ({ theme, count = 30, variant = 'def
 
     for (let i = 0; i < count; i++) {
       const colorIndex = i % theme.particleColors.length;
+      const variantSeed = variant.length * 17 + count * 3;
+      const r = (salt: number) => seededRandom((i + 1) * (salt + variantSeed));
       items.push({
-        left: `${Math.random() * 100}%`,
-        delay: `${Math.random() * 15}s`,
-        duration: `${8 + Math.random() * 8}s`,
+        left: `${r(11) * 100}%`,
+        delay: `${r(23) * 15}s`,
+        duration: `${10 + r(37) * 12}s`,
         color: theme.particleColors[colorIndex],
-        size: variant === 'mixed' ? 2 + Math.random() * 2 : 1 + Math.random() * 2,
+        size: variant === 'mixed' ? 1.4 + r(41) * 2.4 : 1 + r(43) * 2.2,
         animType: getAnimType(i),
+        driftX: `${(r(53) - 0.5) * 96}px`,
       });
     }
     return items;
@@ -51,6 +59,7 @@ const Particles: React.FC<ParticlesProps> = ({ theme, count = 30, variant = 'def
           className="absolute rounded-full"
           style={{
             left: p.left,
+            top: '-10vh',
             width: `${p.size}px`,
             height: `${p.size}px`,
             background: p.color,
@@ -58,7 +67,8 @@ const Particles: React.FC<ParticlesProps> = ({ theme, count = 30, variant = 'def
             animation: `${p.animType} ${p.duration} infinite ease-in-out`,
             animationDelay: p.delay,
             opacity: 0,
-          }}
+            '--ash-drift': p.driftX,
+          } as React.CSSProperties}
         />
       ))}
     </div>

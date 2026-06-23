@@ -552,6 +552,15 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
             /* ── CHARACTER CONSTELLATION LOADER ── */
             <div className="relative w-full h-full flex flex-col items-center justify-center">
               <ConstellationCanvas characterId={characterId} isCrumbling={isCrumbling} />
+              <motion.div
+                className="absolute top-7 left-1/2 z-20 opacity-80"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+                style={{ marginLeft: -50, filter: `drop-shadow(0 0 14px ${activeConstellation.color}66)` }}
+                aria-hidden="true"
+              >
+                <OuroborosDragon color={activeConstellation.color} glowColor={theme.parchment ?? '#fff'} />
+              </motion.div>
               
               <motion.div
                 initial={{ opacity: 0, y: 15 }}

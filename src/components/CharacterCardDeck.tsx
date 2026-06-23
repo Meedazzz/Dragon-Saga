@@ -1,658 +1,467 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { characters, type CharacterConfig } from '@/data/characters';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { BookOpen, CalendarDays, Dices, Eye, RotateCcw, ScrollText, Shuffle, Sparkles } from 'lucide-react';
+import { tarotBackImage, tarotCards, type TarotCard, type TarotPosition } from '@/data/tarot';
+import type { CharacterConfig } from '@/data/characters';
 import { homeTheme } from '@/types/theme';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from '@/components/ui/carousel';
 
-type TiltState = {
-  rotateX: number;
-  rotateY: number;
-  glareX: number;
-  glareY: number;
-  glareOpacity: number;
-};
+type Orientation = 'upright' | 'reversed';
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-
-function useCardTilt(maxTilt = 9) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const frame = useRef<number | null>(null);
-  const [tilt, setTilt] = useState<TiltState>({
-    rotateX: 0,
-    rotateY: 0,
-    glareX: 50,
-    glareY: 35,
-    glareOpacity: 0,
-  });
-
-  const scheduleTilt = (next: TiltState) => {
-    if (frame.current !== null) window.cancelAnimationFrame(frame.current);
-    frame.current = window.requestAnimationFrame(() => {
-      setTilt(next);
-      frame.current = null;
-    });
-  };
-
-  const resetTilt = () => {
-    scheduleTilt({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 35, glareOpacity: 0 });
-  };
-
-  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!ref.current || event.pointerType === 'touch' || maxTilt === 0) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-    const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-    scheduleTilt({
-      rotateX: (0.5 - y) * maxTilt * 2,
-      rotateY: (x - 0.5) * maxTilt * 2,
-      glareX: x * 100,
-      glareY: y * 100,
-      glareOpacity: 0.24,
-    });
-  };
-
-  useEffect(() => {
-    return () => {
-      if (frame.current !== null) window.cancelAnimationFrame(frame.current);
-    };
-  }, []);
-
-  return {
-    ref,
-    tilt,
-    tiltHandlers: {
-      onPointerMove: handlePointerMove,
-      onPointerLeave: resetTilt,
-    },
-  };
+interface SpreadResult {
+  id: string;
+  position: TarotPosition;
+  card: TarotCard;
+  orientation: Orientation;
 }
 
-const cardBios: Record<string, string[]> = {
-  valery: [
-    'Род Даркбейнов отмечен проклятием ещё со времён Падения Асов.',
-    'Валерий превращает боль, смерть и последние мгновения врагов в оружие.',
-    '«Нет добра или зла. Есть только жизнь и смерть.»',
-  ],
-  brin: [
-    'Единственный сын герцога Астарии и наследник крови первых людей.',
-    'В нём пробудилась сила Чёрного льда, веками спавшая в доме Хессен.',
-    '«Лёд учит терпению. Терпение учит власти.»',
-  ],
-  sakris: [
-    'Сакрис вырос в Бергхейме — маленькой северной деревне, где ценят силу, пользу и выносливость.',
-    'Он уступал ровесникам в грубой мощи, но брал упорством, скрытностью и жаждой увидеть мир шире родных лесов.',
-    'Оставив записку семье, он ушёл за караваном к Нортвинду, чтобы самому выбрать свой путь.',
-  ],
-  talis: [
-    'Последний носитель песен клана Драконоборцев и памяти старого ордена.',
-    'С лютней на плече и мечом за спиной он собирает истории мира.',
-    '«Пока я дышу — я пою.»',
-  ],
-  stive: [
-    'Ученик травника и послушник круга, покинувший тихую жизнь ради пути.',
-    'Он ищет лекарство для учителя и собственное место среди живых легенд.',
-    '«Деревья говорят тише людей, но говорят правду.»',
-  ],
-};
-
-// desktop fan
-const desktopFan = [
-  { x: -340 * 1.4, y: 48, rotate: -22 },
-  { x: -170 * 1.4, y: 14, rotate: -10 },
-  { x: 0, y: 0, rotate: 0 },
-  { x: 170 * 1.4, y: 14, rotate: 10 },
-  { x: 340 * 1.4, y: 48, rotate: 22 },
-];
-
-interface FanCardProps {
-  char: CharacterConfig;
-  index: number;
-  onOpen: (char: CharacterConfig) => void;
+interface VisitorResult {
+  card: TarotCard;
+  orientation: Orientation;
+  question: string;
+  focus: string;
 }
 
-const FanCard: React.FC<FanCardProps> = ({ char, index, onOpen }) => {
-  const { ref, tilt, tiltHandlers } = useCardTilt(8);
-  const [isHovered, setIsHovered] = useState(false);
-  const fan = desktopFan[index];
-  const cardWidth = 212;
-  const cardHeight = Math.round(cardWidth * 1.79);
+interface SceneResult {
+  id: string;
+  card: TarotCard;
+  orientation: Orientation;
+  die: number;
+  outcome: 'Дар' | 'Цена' | 'Осложнение';
+}
 
-  return (
-    <motion.div
-      className="absolute left-1/2 top-1/2 tarot-no-glow"
-      style={{
-        width: cardWidth,
-        height: cardHeight,
-        marginLeft: -cardWidth / 2,
-        marginTop: -cardHeight / 2,
-        zIndex: isHovered ? 100 : 20 + index,
-        perspective: 1400,
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 70, scale: 0.9 }}
-      animate={{
-        opacity: 1,
-        x: fan.x,
-        y: 30 - fan.y,
-        rotateZ: fan.rotate,
-        scale: isHovered ? 1.045 : 0.99,
-      }}
-      transition={{ type: 'spring', stiffness: 110, damping: 20, mass: 0.85 }}
-    >
-      {/* slow wobble when hovered */}
-      <motion.div
-        animate={isHovered ? { rotateZ: [-0.8, 0.8, -0.8], y: [0, -3, 0] } : { rotateZ: 0, y: 0 }}
-        transition={isHovered ? { duration: 3.8, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.4 }}
-        className="w-full h-full"
-        style={{ transformStyle: 'preserve-3d' }}
-      >
-      <div
-        ref={ref}
-        {...tiltHandlers}
-        onClick={() => onOpen(char)}
-        className="group relative h-full w-full cursor-pointer select-none rounded-[16px] tarot-no-glow"
-        style={{
-          transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
-          transformStyle: 'preserve-3d',
-          transition: tilt.glareOpacity === 0 ? 'transform 620ms cubic-bezier(.2,.8,.2,1)' : 'none',
-          filter: `drop-shadow(0 26px 34px rgba(0,0,0,0.46))`,
-        }}
-        aria-label={`Открыть карту ${char.name}`}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') onOpen(char);
-        }}
-      >
-        <div
-          className="relative h-full w-full rounded-[16px] overflow-hidden"
-          style={{ transformStyle: 'preserve-3d' }}
-        >
-          <CardFront char={char} />
-        </div>
+const spreadPositions: TarotPosition[] = ['Прошлое', 'Настоящее', 'Будущее'];
 
-        {/* hover glow - hide when actively tilting / flipping */}
-        <div
-          className="pointer-events-none absolute inset-0 rounded-[16px] transition-opacity duration-300"
-          style={{
-            opacity: isHovered ? 0 : tilt.glareOpacity,
-            background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.42), rgba(255,255,255,0.1) 24%, transparent 58%)`,
-            mixBlendMode: 'screen' as const,
-          }}
-        />
-        {/* elegant edge glow */}
-        <div
-          className="pointer-events-none absolute inset-0 rounded-[16px] transition-opacity duration-500"
-          style={{
-            opacity: isHovered ? 0.95 : 0.45,
-            boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.085), 0 0 28px ${char.color}22`,
-          }}
-        />
-      </div>
-      </motion.div>
-      {/* card label below */}
-      <div className="absolute -bottom-9 left-0 right-0 text-center pointer-events-none">
-        <span
-          style={{
-            fontFamily: "'Cinzel', serif",
-            color: isHovered ? '#fff' : homeTheme.parchmentDim,
-            fontSize: 11,
-            letterSpacing: 2,
-            textShadow: `0 0 12px ${char.color}55`,
-            transition: 'color .2s',
-          }}
-        >
-           {char.name} 
-        </span>
-      </div>
-    </motion.div>
-  );
+const orientationLabel: Record<Orientation, string> = {
+  upright: 'Прямое положение',
+  reversed: 'Перевёрнутое положение',
 };
 
-const CardFront: React.FC<{ char: CharacterConfig; isMobile?: boolean }> = ({ char, isMobile }) => {
-  const imgSrc = isMobile ? char.tarot.replace('/optimized/', '/optimized/mobile/') : char.tarot;
-  return (
-    <div
-      className="absolute inset-0 overflow-hidden rounded-[16px]"
-      style={{
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-        background: `linear-gradient(160deg, rgba(255,255,255,0.035), ${char.color}14 38%, rgba(7,6,10,0.98))`,
-        border: `1px solid ${char.color}55`,
-        boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.065), inset 0 0 28px rgba(0,0,0,0.42)`,
-      }}
-    >
-      <img
-        src={imgSrc}
-        alt={char.name}
-        className="h-full w-full object-cover"
-        style={{ filter: 'none' }}
-        loading={isMobile ? 'lazy' : 'eager'}
-        decoding="async"
-        draggable={false}
-      />
-      {/* very light sheen, no darkening */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: 'linear-gradient(110deg, rgba(255,255,255,0.10), transparent 28%, transparent 68%, rgba(255,255,255,0.055))',
-        }}
-      />
-    </div>
-  );
+const safeQuestion = (value: string) => value.trim().replace(/\s+/g, ' ').slice(0, 220);
+const randomOrientation = (): Orientation => (Math.random() < 0.5 ? 'upright' : 'reversed');
+
+const drawUniqueCards = (count: number) => {
+  const pool = [...tarotCards].sort(() => Math.random() - 0.5);
+  return pool.slice(0, count);
 };
 
-const CardBack: React.FC<{ char: CharacterConfig; compact?: boolean }> = ({ char, compact = false }) => (
-  <div
-    className={`absolute inset-0 flex flex-col items-center justify-center rounded-[16px] text-center ${compact ? 'p-4' : 'p-7'}`}
-    style={{
-      backfaceVisibility: 'hidden',
-      WebkitBackfaceVisibility: 'hidden',
-      transform: 'rotateY(180deg)',
-      background: `radial-gradient(circle at 50% 0%, ${char.color}2d, transparent 44%), linear-gradient(158deg, rgba(10,8,14,0.995), rgba(20,14,20,0.995) 52%, ${char.color}1a)`,
-      border: `1px solid ${char.color}66`,
-      boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 44px rgba(0,0,0,0.62), 0 0 34px ${char.color}18`,
-    }}
-  >
-    <div
-      className={compact ? 'mb-3 text-[11px] uppercase tracking-[2.4px]' : 'mb-5 text-sm uppercase tracking-[3px]'}
-      style={{ fontFamily: "'Cinzel Decorative', serif", color: char.color, textShadow: `0 0 18px ${char.color}55` }}
-    >
-       {char.name} 
-    </div>
+const hashDate = (value: string) => {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+};
 
-    {(cardBios[char.id] || []).map((line, idx) => (
-      <p
-        key={idx}
-        className={compact ? 'mb-2 text-[11.5px] leading-[1.45] last:mb-0' : 'mb-3 text-[15.5px] leading-relaxed last:mb-0'}
-        style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchment }}
-      >
-        {line}
-      </p>
-    ))}
+const getTodayKey = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
-    <div
-      className={compact ? 'mt-3 text-[9.5px] italic tracking-[1.2px]' : 'mt-5 text-xs italic tracking-[1px]'}
-      style={{ color: homeTheme.parchmentDim }}
-    >
-      Клик — раскрыть карту
-    </div>
+const getDailyCard = () => {
+  const key = getTodayKey();
+  const index = hashDate(key) % tarotCards.length;
+  return { card: tarotCards[index], dateKey: key };
+};
+
+const getQuestionFocus = (question: string) => {
+  const prepared = question.toLowerCase();
+  if (/(бой|битв|враг|уби|сраж|дуэл|опасн|угроз)/i.test(prepared)) return 'конфликт';
+  if (/(люб|отнош|довер|друг|семь|союз|преда)/i.test(prepared)) return 'связь';
+  if (/(путь|куда|дорог|иск|найт|выбор|решит)/i.test(prepared)) return 'путь';
+  if (/(тайн|знан|маг|лед|исслед|правд|лож)/i.test(prepared)) return 'тайна';
+  if (/(леч|бол|спас|жив|смерт|исцел)/i.test(prepared)) return 'рана';
+  return 'знак';
+};
+
+const focusAdvice: Record<string, string> = {
+  конфликт: 'Сцена просит назвать ставку конфликта: кого защищают герои и что случится, если они победят слишком дорогой ценой.',
+  связь: 'Сцена строится вокруг доверия: кто говорит правду, кто молчит и чьё имя нельзя произносить без последствий.',
+  путь: 'Сцена требует выбора маршрута: короткая дорога ведёт через цену, длинная — через откровение.',
+  тайна: 'Сцена открывает скрытый слой мира: ответ есть, но его хранит тот, кому выгодна метель.',
+  рана: 'Сцена начинается с раны — телесной, родовой или духовной. Лечение потребует равноценного обмена.',
+  знак: 'Сцена отвечает символом, а не инструкцией: ведущий показывает знак, игрок решает, как его прочитать.',
+};
+
+const buildSpreadInterpretation = (card: TarotCard, orientation: Orientation, position: TarotPosition) => {
+  const base = card.narrative.positions[position];
+  const current = orientation === 'upright'
+    ? `Дар карты: ${card.narrative.boon}.`
+    : `Тень карты: ${card.narrative.reversed}.`;
+
+  return `${base}. ${current} Крючок для сцены: ${card.narrative.questHook}.`;
+};
+
+const buildQuestionInterpretation = (result: VisitorResult) => {
+  const { card, orientation, question, focus } = result;
+  const omen = orientation === 'upright' ? card.narrative.omen : card.narrative.reversed;
+  const action = orientation === 'upright' ? card.narrative.boon : card.narrative.challenge;
+
+  return `На вопрос «${question}» отвечает ${card.narrative.archetype}: ${omen}. ${card.narrative.questionLens}. ${focusAdvice[focus]} Практический ход: ${action}.`;
+};
+
+const buildDailyInterpretation = (card: TarotCard) => `Карта дня — ${card.narrative.archetype}: ${card.narrative.daily}. Если день станет сценой НРИ, используй крючок: ${card.narrative.questHook}.`;
+
+const getSceneOutcome = (die: number): SceneResult['outcome'] => {
+  if (die >= 15) return 'Дар';
+  if (die >= 8) return 'Цена';
+  return 'Осложнение';
+};
+
+const buildSceneText = (scene: SceneResult) => {
+  const { card, orientation, die, outcome } = scene;
+  const tone = orientation === 'upright' ? card.narrative.boon : card.narrative.reversed;
+  const resultLine = outcome === 'Дар'
+    ? 'герои получают преимущество, но должны описать, почему судьба на миг признала их достойными'
+    : outcome === 'Цена'
+      ? 'успех возможен только через жертву: ресурс, обещание, тайну или репутацию'
+      : 'ведущий вводит осложнение: появляется свидетель, враг, дурной знак или долг из прошлого';
+
+  return `d20 = ${die}. ${card.narrative.archetype} задаёт сцену: ${card.narrative.questHook}. Тон сцены: ${tone}. Итог «${outcome}»: ${resultLine}. Игрок отвечает одним действием персонажа, ведущий завершает сцену последствием.`;
+};
+
+const CardFace: React.FC<{ card: TarotCard }> = ({ card }) => (
+  <div className="tarot-card-side tarot-card-front" aria-hidden="true">
+    <img src={card.tarot} alt={card.name} loading="lazy" decoding="async" draggable={false} />
+    <span className="tarot-card-front-glaze" />
   </div>
 );
 
-/* ── Mobile carousel ── */
-const MobileCarouselCard: React.FC<{
-  char: CharacterConfig;
-  isActive: boolean;
-  onOpen: (char: CharacterConfig) => void;
-}> = ({ char, isActive, onOpen }) => {
-  const startPos = useRef<{x:number;y:number;t:number}|null>(null);
-  const [pressed, setPressed] = useState(false);
+const CardBackVisual: React.FC<{ card?: TarotCard; compact?: boolean }> = ({ card, compact = false }) => (
+  <div className="tarot-card-side tarot-card-back" aria-hidden="true">
+    <img src={tarotBackImage} alt="Рубашка карты" loading={compact ? 'lazy' : 'eager'} decoding="async" draggable={false} />
+    <span className="tarot-card-back-vignette" />
+    {card && !compact && <span className="tarot-card-back-name">{card.name}</span>}
+  </div>
+);
 
-  const handlePointerDown = (e: React.PointerEvent) => {
-    startPos.current = { x: e.clientX, y: e.clientY, t: Date.now() };
-    setPressed(true);
+const GalleryCard: React.FC<{
+  card: TarotCard;
+  index: number;
+  revealed: boolean;
+  loreMode: boolean;
+  onFlip: (card: TarotCard) => void;
+  onLore: (card: TarotCard) => void;
+}> = ({ card, index, revealed, loreMode, onFlip, onLore }) => {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const swipedRef = useRef(false);
+  const wheelLockRef = useRef(0);
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === 'touch') return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const px = (event.clientX - rect.left) / rect.width - 0.5;
+    const py = (event.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: Number((-py * 13).toFixed(2)), y: Number((px * 16).toFixed(2)) });
   };
-  const handlePointerUp = (e: React.PointerEvent) => {
-    setPressed(false);
-    if (!startPos.current) return;
-    const dx = e.clientX - startPos.current.x;
-    const dy = e.clientY - startPos.current.y;
-    const dt = Date.now() - startPos.current.t;
-    const dist = Math.hypot(dx, dy);
-    startPos.current = null;
-    if (dist < 10 && dt < 350) {
-      e.stopPropagation();
-      onOpen(char);
+
+  const handlePointerLeave = () => setTilt({ x: 0, y: 0 });
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === 'touch') {
+      touchStartRef.current = { x: event.clientX, y: event.clientY };
+      swipedRef.current = false;
     }
   };
-  const handlePointerCancel = () => { setPressed(false); startPos.current = null; };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const start = touchStartRef.current;
+    if (!start || event.pointerType !== 'touch') return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+      swipedRef.current = true;
+      if (loreMode) onLore(card);
+      else onFlip(card);
+    }
+    touchStartRef.current = null;
+  };
+
+  const handleWheel = (event: React.WheelEvent<HTMLButtonElement>) => {
+    if (Math.abs(event.deltaY) < 4) return;
+    event.preventDefault();
+    const now = window.performance.now();
+    if (now - wheelLockRef.current < 280) return;
+    wheelLockRef.current = now;
+    if (loreMode) onLore(card);
+    else onFlip(card);
+  };
+
+  const handleClick = () => {
+    if (swipedRef.current) {
+      swipedRef.current = false;
+      return;
+    }
+    if (loreMode) onLore(card);
+    else onFlip(card);
+  };
+
+  const fanAngle = (index - 2) * 7;
+  const fanY = Math.abs(index - 2) * 14;
 
   return (
-    <div
-      className="relative select-none rounded-[14px] overflow-hidden tarot-no-glow cursor-pointer transition-transform duration-200"
-      style={{
-        background: `linear-gradient(155deg, rgba(255,255,255,0.03), ${char.color}16 40%, rgba(9,6,12,0.98))`,
-        border: `1px solid ${char.color}55`,
-        boxShadow: isActive
-          ? `0 20px 44px rgba(0,0,0,0.55), 0 0 28px ${char.color}2a`
-          : `0 10px 22px rgba(0,0,0,0.42), 0 0 16px ${char.color}16`,
-        transform: pressed ? 'scale(0.985)' : 'scale(1)',
-        aspectRatio: '768 / 1376',
-      }}
+    <motion.button
+      type="button"
+      className={`tarot-gallery-card tarot-no-glow ${revealed ? 'is-revealed' : ''} ${loreMode ? 'is-lore-mode' : ''}`}
+      onClick={handleClick}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onPointerLeave={handlePointerCancel}
-      role="button"
-      aria-label={`Открыть карту ${char.name}`}
-      tabIndex={0}
+      onWheel={handleWheel}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.05 * index }}
+      aria-label={loreMode ? `Открыть лор карты ${card.name}` : revealed ? `Перевернуть карту ${card.name} рубашкой` : `Перевернуть карту ${card.name}`}
+      style={{
+        '--card-accent': card.color,
+        '--tilt-x': `${tilt.x}deg`,
+        '--tilt-y': `${tilt.y}deg`,
+        '--fan-angle': `${fanAngle}deg`,
+        '--fan-y': `${fanY}px`,
+      } as React.CSSProperties}
     >
-      <img
-        src={char.tarot.replace('/optimized/', '/optimized/mobile/')}
-        alt={char.name}
-        className="w-full h-full object-cover pointer-events-none"
-        draggable={false}
-        loading="eager"
-      />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.62) 0%, transparent 38%, rgba(255,255,255,0.06) 100%)' }} />
-      <div className="absolute bottom-0 left-0 right-0 text-center pb-3 pt-8" style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.78))' }}>
-        <div style={{ fontFamily: "'Cinzel Decorative', serif", color: '#fff', fontSize: 14, letterSpacing: 1.6, textShadow: `0 0 14px ${char.color}aa` }}>
-          {char.name}
-        </div>
-        <div style={{ fontFamily: "'Cormorant Garamond', serif", color: homeTheme.parchmentDim, fontSize: 11, fontStyle: 'italic', marginTop: 2 }}>
-          коснитесь, чтобы открыть
-        </div>
-      </div>
-    </div>
+      <span className="tarot-card-rotator">
+        <CardBackVisual card={card} />
+        <CardFace card={card} />
+      </span>
+      <span className="tarot-card-caption">
+        <span>{revealed ? card.name : 'Рубашка'}</span>
+        <small>{loreMode ? 'клик — лор' : 'мышь/колесо/свайп'}</small>
+      </span>
+    </motion.button>
   );
 };
 
-const MobileDeck: React.FC<{ onOpen: (char: CharacterConfig) => void }> = ({ onOpen }) => {
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    if (!api) return;
-    const onSelect = () => setCurrent(api.selectedScrollSnap());
-    onSelect();
-    api.on('select', onSelect);
-    return () => { api.off('select', onSelect); };
-  }, [api]);
-
-  return (
-    <div className="w-full max-w-[420px] mx-auto px-3">
-      <Carousel
-        opts={{ align: 'center', loop: true }}
-        setApi={setApi}
-        className="w-full"
-      >
-        <CarouselContent className="-ml-3">
-          {characters.map((char) => (
-            <CarouselItem key={char.id} className="pl-3 basis-[74%] sm:basis-[62%]">
-              <div className="py-4">
-                <MobileCarouselCard
-                  char={char}
-                  isActive={characters[current]?.id === char.id}
-                  onOpen={onOpen}
-                />
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-      <div className="flex justify-center gap-2 mt-1">
-        {characters.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => api?.scrollTo(i)}
-            aria-label={`Слайд ${i+1}`}
-            className="h-1.5 rounded-full transition-all"
-            style={{
-              width: current === i ? 22 : 8,
-              background: current === i ? homeTheme.primaryGlow : 'rgba(255,255,255,0.22)',
-            }}
-          />
-        ))}
-      </div>
-      <div className="text-center mt-2 text-[11px] tracking-wider" style={{ color: homeTheme.parchmentDim, fontFamily: "'Cinzel', serif" }}>
-        свайп — листать · тап — открыть
-      </div>
-    </div>
-  );
-};
-
-interface ExpandedCardOverlayProps {
-  char: CharacterConfig | null;
-  onClose: () => void;
-}
-
-const ExpandedCardOverlay: React.FC<ExpandedCardOverlayProps> = ({ char, onClose }) => {
+const LoreModal: React.FC<{ card: TarotCard | null; onClose: () => void }> = ({ card, onClose }) => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const [rotX, setRotX] = useState(0);
-  const [rotY, setRotY] = useState(0); // always start with front
-  const [rotZ, setRotZ] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  if (!card) return null;
 
-  const dragStart = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
-  const scrollAccum = useRef(0);
-  const cardWrapperRef = useRef<HTMLDivElement>(null);
-  const justDragged = useRef(false);
-  const dragMoved = useRef(false);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return;
-    setIsDragging(true);
-    dragMoved.current = false;
-    dragStart.current = { x: e.clientX, y: e.clientY, rotX, rotY };
-    e.preventDefault();
-    e.stopPropagation();
-  };
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length !== 1) return;
-    const t = e.touches[0];
-    setIsDragging(true);
-    dragMoved.current = false;
-    dragStart.current = { x: t.clientX, y: t.clientY, rotX, rotY };
-  };
-
-  useEffect(() => {
-    if (!isDragging) return;
-    const handleMove = (clientX: number, clientY: number) => {
-      const dx = clientX - dragStart.current.x;
-      const dy = clientY - dragStart.current.y;
-      if (Math.abs(dx) + Math.abs(dy) > 3) dragMoved.current = true;
-      setRotY(dragStart.current.rotY + dx * 0.5);
-      setRotX(dragStart.current.rotX - dy * 0.5);
-    };
-    const onMouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
-    const onTouchMove = (e: TouchEvent) => {
-      if (e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY);
-    };
-    const end = () => {
-      setIsDragging(false);
-      if (dragMoved.current) {
-        justDragged.current = true;
-        setTimeout(() => { justDragged.current = false; }, 120);
-      }
-    };
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', end);
-    window.addEventListener('touchmove', onTouchMove, { passive: true });
-    window.addEventListener('touchend', end);
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', end);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('touchend', end);
-    };
-  }, [isDragging]);
-
-  // wheel Z rotation
-  useEffect(() => {
-    const el = cardWrapperRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      scrollAccum.current += e.deltaY * 0.22;
-      setRotZ(scrollAccum.current);
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, []);
-
-  // snap back side upright when releasing
-  useEffect(() => {
-    if (isDragging) return;
-    const cosY = Math.cos((rotY * Math.PI) / 180);
-    const isBackFacing = cosY < 0;
-    if (isBackFacing) {
-      const snappedY = Math.round(rotY / 180) * 180;
-      const isOdd = Math.round(snappedY / 180) % 2 !== 0;
-      const finalY = isOdd ? snappedY : snappedY + 180;
-      const finalX = 0;
-      const finalZ = Math.round(rotZ / 360) * 360;
-      setRotX(finalX);
-      setRotY(finalY);
-      setRotZ(finalZ);
-      scrollAccum.current = finalZ;
-    }
-  }, [isDragging, rotX, rotY, rotZ]);
-
-  if (!char) return null;
-
-  const goTo = (path: string) => { onClose(); navigate(path); };
-  const handleChildLinkClick = (e: React.MouseEvent, path: string) => {
-    if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
-      e.preventDefault(); goTo(path);
-    }
-  };
-  const toggleFlip = () => setRotY((prev) => prev + 180);
-  const isBackSideActive = Math.cos((rotY * Math.PI) / 180) < 0;
-
-  const tryClose = () => {
-    if (justDragged.current) return;
+  const goTo = (path: string) => {
     onClose();
+    navigate(path);
   };
 
   return (
     <motion.div
-      className="fixed inset-0 z-[650] flex items-center justify-center bg-black/82 p-4 backdrop-blur-md"
+      className="tarot-modal-backdrop"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      onMouseDown={(e) => { if (e.target === e.currentTarget) tryClose(); }}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
     >
-      <motion.div
-        className="relative flex flex-col items-center justify-center max-h-[95vh] my-auto"
-        initial={{ opacity: 0, scale: 0.78, y: 28 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.78, y: 28 }}
-        transition={{ type: 'spring', damping: 23, stiffness: 210 }}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
-        style={{ perspective: 1500 }}
+      <motion.article
+        className="tarot-lore-modal"
+        initial={{ opacity: 0, y: 28, scale: 0.94 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 18, scale: 0.96 }}
+        transition={{ type: 'spring', damping: 24, stiffness: 210 }}
       >
-        <button
-          onClick={onClose}
-          className="absolute -right-2 -top-11 z-20 flex h-9 w-9 items-center justify-center rounded-full text-xl transition-transform hover:scale-110 cursor-pointer tarot-no-glow"
-          style={{ background: 'rgba(12,8,14,0.94)', border: `1px solid ${char.color}70`, color: homeTheme.parchment }}
-          aria-label="Закрыть карту"
-        >
-          ×
-        </button>
-
-        <div ref={cardWrapperRef} className="relative" style={{ perspective: 1500 }}>
-          <div
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
-            className="relative rounded-[18px] select-none cursor-grab active:cursor-grabbing tarot-no-glow"
-            style={{
-              width: isMobile ? 'min(58vw, 220px)' : '352px',
-              aspectRatio: '768 / 1376',
-              transform: `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`,
-              transformStyle: 'preserve-3d',
-              transition: isDragging ? 'none' : 'transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1)',
-              filter: `drop-shadow(0 36px 52px rgba(0,0,0,0.74))`,
-            }}
-          >
-            {/* Front */}
-            <div
-              className="absolute inset-0"
-              style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'translateZ(1px)' }}
-            >
-              <CardFront char={char} />
-            </div>
-            {/* Back */}
-            <div
-              className="absolute inset-0"
-              style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg) translateZ(1px)' }}
-            >
-              <CardBack char={char} />
-            </div>
-
-            {/* glow - hide while actively rotating */}
-            <div
-              className="pointer-events-none absolute inset-0 rounded-[18px] transition-opacity duration-200"
-              style={{
-                opacity: isDragging ? 0 : 0.14,
-                background: `radial-gradient(circle at 50% 35%, rgba(255,255,255,0.22), transparent 62%)`,
-                mixBlendMode: 'screen' as const,
-              }}
-            />
-          </div>
+        <button type="button" className="tarot-modal-close tarot-no-glow" onClick={onClose} aria-label="Закрыть">×</button>
+        <div className="tarot-modal-rune">ᚠ ᚱ ᚢ</div>
+        <h3>{card.name}</h3>
+        <p className="tarot-modal-title">{card.title}</p>
+        <div className="tarot-modal-lore-lines">
+          {card.backLore.map((line) => <p key={line}>{line}</p>)}
         </div>
-
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-          <button
-            onClick={toggleFlip}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-all hover:-translate-y-0.5 cursor-pointer tarot-no-glow"
-            style={{
-              fontFamily: "'Cinzel', serif",
-              background: 'rgba(22,14,20,0.95)',
-              border: `1px solid ${char.color}88`,
-              color: homeTheme.parchment,
-              boxShadow: `0 0 12px ${char.color}28`,
-            }}
-          >
-            {isBackSideActive ? '↩ Лицевая сторона' : '↕ Краткий лор'}
+        <div className="tarot-modal-oracle-note">
+          <strong>{card.narrative.archetype}</strong> — {card.narrative.omen}.<br />
+          Крючок НРИ: {card.narrative.questHook}.
+        </div>
+        <div className="tarot-modal-actions">
+          <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={() => goTo(card.lorePath)}>
+            Читать лор
           </button>
-          <a
-            href={char.lorePath}
-            onClick={(e) => handleChildLinkClick(e, char.lorePath)}
-            className="rounded-full px-4 py-2 text-xs tracking-[1.5px] transition-all hover:-translate-y-0.5 cursor-pointer block text-center tarot-no-glow"
-            style={{
-              fontFamily: "'Cinzel', serif",
-              background: `${char.color}28`,
-              border: `1.5px solid ${char.color}`,
-              color: '#fff',
-              textDecoration: 'none',
-              boxShadow: `0 0 16px ${char.color}38`,
-            }}
-          >
-             Читать лор →
-          </a>
-        </div>
-
-        <div
-          className="mt-2 text-center text-[11px] tracking-[1.2px] opacity-75"
-          style={{ fontFamily: "'Manrope', sans-serif", color: homeTheme.parchmentDim }}
-        >
-          {isMobile
-            ? 'Тяните для вращения · тап по кнопке — перевернуть'
-            : 'ЛКМ + движение — 3D осмотр · Колёсико — поворот'}
-        </div>
-
-        <div className="mt-3 flex max-w-[540px] flex-wrap items-center justify-center gap-2">
-          {char.pages.map((page) => (
-            <a
-              key={page.path}
-              href={page.path}
-              onClick={(e) => handleChildLinkClick(e, page.path)}
-              className="rounded-lg px-3 py-1.5 text-[11px] tracking-[0.8px] transition-all hover:-translate-y-0.5 cursor-pointer block text-center tarot-no-glow"
-              style={{
-                fontFamily: "'Cinzel', serif",
-                background: 'rgba(26,18,26,0.78)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: homeTheme.parchment,
-                textDecoration: 'none',
-              }}
-            >
+          {card.pages.map((page) => (
+            <button key={page.path} type="button" className="tarot-link-chip tarot-no-glow" onClick={() => goTo(page.path)}>
               {page.label}
-            </a>
+            </button>
           ))}
         </div>
-      </motion.div>
+      </motion.article>
     </motion.div>
+  );
+};
+
+const DailyCardPanel: React.FC = () => {
+  const daily = useMemo(() => getDailyCard(), []);
+
+  return (
+    <aside className="daily-card-panel" style={{ '--card-accent': daily.card.color } as React.CSSProperties}>
+      <div className="daily-card-kicker"><CalendarDays size={15} /> Карта дня</div>
+      <div className="daily-card-frame">
+        <img src={daily.card.tarot} alt={daily.card.name} loading="lazy" decoding="async" draggable={false} />
+      </div>
+      <h3>{daily.card.name}</h3>
+      <p className="daily-card-date">{daily.dateKey}</p>
+      <p>{buildDailyInterpretation(daily.card)}</p>
+    </aside>
+  );
+};
+
+const SpreadCardView: React.FC<{ result: SpreadResult }> = ({ result }) => (
+  <article className={`spread-card ${result.orientation === 'reversed' ? 'is-reversed' : ''}`} style={{ '--card-accent': result.card.color } as React.CSSProperties}>
+    <div className="spread-card-image">
+      <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
+    </div>
+    <div className="spread-card-body">
+      <span className="spread-position">{result.position}</span>
+      <h4>{result.card.name}</h4>
+      <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
+      <p>{buildSpreadInterpretation(result.card, result.orientation, result.position)}</p>
+    </div>
+  </article>
+);
+
+const VisitorReading: React.FC<{ result: VisitorResult | null }> = ({ result }) => {
+  if (!result) return null;
+  return (
+    <motion.article
+      className={`visitor-result ${result.orientation === 'reversed' ? 'is-reversed' : ''}`}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ '--card-accent': result.card.color } as React.CSSProperties}
+    >
+      <div className="visitor-result-image">
+        <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
+      </div>
+      <div>
+        <span className="spread-position">Вопрос · {result.focus}</span>
+        <h4>{result.card.name}</h4>
+        <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
+        <p>{buildQuestionInterpretation(result)}</p>
+      </div>
+    </motion.article>
+  );
+};
+
+const SceneReading: React.FC<{ result: SceneResult | null }> = ({ result }) => {
+  if (!result) return null;
+  return (
+    <motion.article
+      className={`visitor-result oracle-scene-result ${result.orientation === 'reversed' ? 'is-reversed' : ''}`}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ '--card-accent': result.card.color } as React.CSSProperties}
+    >
+      <div className="visitor-result-image">
+        <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
+      </div>
+      <div>
+        <span className="spread-position">Мини-игра · {result.outcome}</span>
+        <h4>{result.card.name}</h4>
+        <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
+        <p>{buildSceneText(result)}</p>
+      </div>
+    </motion.article>
+  );
+};
+
+const TarotRituals: React.FC = () => {
+  const [spread, setSpread] = useState<SpreadResult[]>([]);
+  const [question, setQuestion] = useState('');
+  const [visitorResult, setVisitorResult] = useState<VisitorResult | null>(null);
+  const [sceneResult, setSceneResult] = useState<SceneResult | null>(null);
+  const [questionError, setQuestionError] = useState('');
+
+  const drawSpread = () => {
+    const cards = drawUniqueCards(3);
+    setSpread(cards.map((card, index) => ({
+      id: `${card.id}-${Date.now()}-${index}`,
+      position: spreadPositions[index],
+      card,
+      orientation: randomOrientation(),
+    })));
+  };
+
+  const drawVisitor = () => {
+    const preparedQuestion = safeQuestion(question);
+    if (!preparedQuestion) {
+      setQuestionError('Введите вопрос перед раскладом.');
+      return;
+    }
+    setQuestionError('');
+    const [card] = drawUniqueCards(1);
+    setVisitorResult({ card, orientation: randomOrientation(), question: preparedQuestion, focus: getQuestionFocus(preparedQuestion) });
+  };
+
+  const drawScene = () => {
+    const [card] = drawUniqueCards(1);
+    const die = Math.floor(Math.random() * 20) + 1;
+    setSceneResult({
+      id: `${card.id}-${Date.now()}-${die}`,
+      card,
+      orientation: randomOrientation(),
+      die,
+      outcome: getSceneOutcome(die),
+    });
+  };
+
+  return (
+    <section className="tarot-rituals" aria-label="Расклады Таро">
+      <div className="tarot-ritual-card three-spread-card">
+        <div className="tarot-ritual-heading">
+          <Sparkles size={18} />
+          <div>
+            <h3>Самостоятельный расклад</h3>
+            <p>Прошлое · Настоящее · Будущее · 50% перевёрнутых</p>
+          </div>
+        </div>
+        <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={drawSpread}>
+          <Shuffle size={15} /> Вытянуть 3 карты
+        </button>
+        <AnimatePresence mode="popLayout">
+          {spread.length > 0 && (
+            <motion.div className="spread-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {spread.map((result) => <SpreadCardView key={result.id} result={result} />)}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="tarot-ritual-card visitor-spread-card">
+        <div className="tarot-ritual-heading">
+          <BookOpen size={18} />
+          <div>
+            <h3>Расклад по вопросу</h3>
+            <p>Один вопрос · одна персональная карта</p>
+          </div>
+        </div>
+        <textarea
+          value={question}
+          onChange={(event) => { setQuestion(event.target.value); if (questionError) setQuestionError(''); }}
+          placeholder="Введите вопрос: о пути, союзе, враге, тайне или цене..."
+          className="tarot-question-input"
+          rows={3}
+        />
+        {questionError && <div className="tarot-question-error">{questionError}</div>}
+        <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={drawVisitor}>
+          <Eye size={15} /> Вытянуть карту
+        </button>
+        <VisitorReading result={visitorResult} />
+      </div>
+
+      <div className="tarot-ritual-card narrative-game-card">
+        <div className="tarot-ritual-heading">
+          <Dices size={18} />
+          <div>
+            <h3>Мини-игра: сцена оракула</h3>
+            <p>Карта + d20 дают завязку для НРИ-сцены</p>
+          </div>
+        </div>
+        <p className="tarot-mini-rules">Вытяни карту, брось d20 и сыграй короткую сцену: игрок описывает действие, ведущий отвечает последствием.</p>
+        <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={drawScene}>
+          <ScrollText size={15} /> Сыграть сцену
+        </button>
+        <SceneReading result={sceneResult} />
+      </div>
+    </section>
   );
 };
 
@@ -662,49 +471,103 @@ interface CharacterCardDeckProps {
 
 const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange }) => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const [expanded, setExpanded] = useState<CharacterConfig | null>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
+  const [loreMode, setLoreMode] = useState(false);
+  const [selectedLore, setSelectedLore] = useState<TarotCard | null>(null);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
 
-  useEffect(() => { onExpandedChange?.(expanded); }, [expanded, onExpandedChange]);
+  useEffect(() => {
+    onExpandedChange?.(selectedLore);
+  }, [selectedLore, onExpandedChange]);
 
-  const openCard = (char: CharacterConfig) => {
-    setExpanded(char); // always front-first
+  const toggleCard = (card: TarotCard) => {
+    setRevealed((previous) => ({ ...previous, [card.id]: !previous[card.id] }));
+  };
+
+  const updateActiveIndex = useCallback(() => {
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+    const cards = Array.from(gallery.querySelectorAll<HTMLElement>('.tarot-gallery-card'));
+    const center = gallery.scrollLeft + gallery.clientWidth / 2;
+    const closest = cards.reduce((best, node, index) => {
+      const nodeCenter = node.offsetLeft + node.offsetWidth / 2;
+      const distance = Math.abs(nodeCenter - center);
+      return distance < best.distance ? { index, distance } : best;
+    }, { index: 0, distance: Number.POSITIVE_INFINITY });
+    setActiveCardIndex(closest.index);
+  }, []);
+
+  const scrollToCard = (index: number) => {
+    const gallery = galleryRef.current;
+    const card = gallery?.querySelectorAll<HTMLElement>('.tarot-gallery-card')[index];
+    card?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    setActiveCardIndex(index);
   };
 
   return (
-    <div className="relative min-h-[320px] md:min-h-[600px]">
-      <div className="flex min-h-[280px] flex-col items-center justify-center overflow-visible py-3 md:min-h-[540px] md:py-6">
-        {isMobile ? (
-          <MobileDeck onOpen={openCard} />
-        ) : (
-          <div className="relative w-full max-w-[1080px]" style={{ height: 430, perspective: 1600 }}>
-            {characters.map((char, index) => (
-              <FanCard key={char.id} char={char} index={index} onOpen={openCard} />
-            ))}
+    <div className="tarot-oracle-layout">
+      <div className="tarot-oracle-main">
+        <div className="tarot-gallery-toolbar">
+          <div>
+            <span className="tarot-toolbar-kicker">Галерея из пяти карт</span>
+            <p>На десктопе карты раскрываются веером: ведите мышью по карте и крутите колесо. На телефоне листайте и свайпайте карту.</p>
           </div>
-        )}
-
-        <div className="mt-8 md:mt-14 flex w-full max-w-[540px] flex-col items-center gap-3 px-5">
           <button
-            onClick={() => navigate('/letopis')}
-            className="rounded-full px-5 py-2.5 text-[11px] md:text-xs tracking-[2.2px] transition-transform hover:-translate-y-0.5 cursor-pointer"
-            style={{
-              fontFamily: "'Cinzel', serif",
-              background: 'rgba(22,14,20,0.78)',
-              border: `1px solid ${homeTheme.primaryGlow}66`,
-              color: homeTheme.parchment,
-              boxShadow: `0 0 18px ${homeTheme.primaryGlow}18`,
-            }}
+            type="button"
+            className={`tarot-mode-toggle tarot-no-glow ${loreMode ? 'is-active' : ''}`}
+            onClick={() => setLoreMode((value) => !value)}
+            aria-pressed={loreMode}
           >
-             Открыть летопись мира
+            {loreMode ? <BookOpen size={16} /> : <RotateCcw size={16} />}
+            {loreMode ? 'Режим лора' : 'Режим переворота'}
+          </button>
+        </div>
+
+        <div ref={galleryRef} className="tarot-gallery" aria-label="Галерея карт Таро" onScroll={updateActiveIndex}>
+          {tarotCards.map((card, index) => (
+            <GalleryCard
+              key={card.id}
+              card={card}
+              index={index}
+              revealed={!!revealed[card.id]}
+              loreMode={loreMode}
+              onFlip={toggleCard}
+              onLore={setSelectedLore}
+            />
+          ))}
+        </div>
+
+        <div className="tarot-mobile-indicator" aria-label="Индикатор карт">
+          {tarotCards.map((card, index) => (
+            <button
+              key={card.id}
+              type="button"
+              className={index === activeCardIndex ? 'is-active' : ''}
+              aria-label={`Показать карту ${card.name}`}
+              onClick={() => scrollToCard(index)}
+            />
+          ))}
+        </div>
+
+        <TarotRituals />
+
+        <div className="tarot-lore-link-row">
+          <button
+            type="button"
+            onClick={() => navigate('/letopis')}
+            className="tarot-ritual-button tarot-no-glow"
+            style={{ color: homeTheme.parchment } as React.CSSProperties}
+          >
+            Открыть летопись мира
           </button>
         </div>
       </div>
 
+      <DailyCardPanel />
+
       <AnimatePresence>
-        {expanded && (
-          <ExpandedCardOverlay char={expanded} onClose={() => setExpanded(null)} />
-        )}
+        {selectedLore && <LoreModal card={selectedLore} onClose={() => setSelectedLore(null)} />}
       </AnimatePresence>
     </div>
   );
