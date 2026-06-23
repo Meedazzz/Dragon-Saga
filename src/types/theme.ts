@@ -94,6 +94,42 @@ export const brinTheme: ColorTheme = {
   particleColors: ['#c3a15a', '#80627b', '#7b1d28'],
 };
 
+export const talisTheme: ColorTheme = {
+  name: 'talis',
+  ...baseDark,
+  primary: '#7a3418',
+  primaryGlow: '#d46a2c',
+  primaryBright: '#f2a45f',
+  accent: '#23324a',
+  accentGlow: '#e08040',
+  silver: '#b8ada1',
+  silverBright: '#ead8c4',
+  parchment: '#e5c59e',
+  parchmentDim: '#b28a64',
+  menuAccent: '#e08040',
+  buttonText: '#e08040',
+  buttonBorder: 'rgba(224, 128, 64, 0.46)',
+  particleColors: ['#e08040', '#c06020', '#6f111b'],
+};
+
+export const stiveTheme: ColorTheme = {
+  name: 'stive',
+  ...baseDark,
+  primary: '#2e5b38',
+  primaryGlow: '#6ea46d',
+  primaryBright: '#b9d99a',
+  accent: '#365a7a',
+  accentGlow: '#8fd37f',
+  silver: '#aab8a6',
+  silverBright: '#d8e7cc',
+  parchment: '#d7d3a6',
+  parchmentDim: '#9aa67d',
+  menuAccent: '#8fd37f',
+  buttonText: '#8fd37f',
+  buttonBorder: 'rgba(143, 211, 127, 0.42)',
+  particleColors: ['#8fd37f', '#6ea46d', '#365a7a'],
+};
+
 export const darkbainTheme: ColorTheme = {
   name: 'darkbain',
   ...baseDark,
@@ -138,9 +174,9 @@ export const getThemeByPath = (pathname: string): ColorTheme => {
   if (pathname.includes('darkbain')) return darkbainTheme;
   if (pathname.includes('hessen')) return brinTheme;
   if (pathname.includes('berghheim')) return sakrisTheme;
-  if (pathname.includes('arantir')) return homeTheme;
-  if (pathname.includes('stive')) return sakrisTheme;
-  if (pathname.includes('talis')) return homeTheme;
+  if (pathname.includes('arantir')) return talisTheme;
+  if (pathname.includes('stive')) return stiveTheme;
+  if (pathname.includes('talis') || pathname.includes('tallis')) return talisTheme;
   if (pathname.includes('subclass')) return homeTheme;
   if (pathname.includes('map')) return lorTheme;
   if (pathname.includes('letopis')) return letopisTheme;

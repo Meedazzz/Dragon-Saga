@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { tarotCards } from '@/data/tarot';
+import { tarotBackImage, tarotCards } from '@/data/tarot';
 import { applyImageFallback } from '@/lib/imageFallback';
 import { X, RotateCcw, Eye, EyeOff } from 'lucide-react';
 
@@ -8,6 +8,14 @@ interface TarotFanProps {
   onExpandedChange?: (card: typeof tarotCards[0] | null) => void;
 }
 
+/**
+ * TarotFan — интерактивная веерная колода.
+ *
+ * Важно:
+ * - `card.tarot` уже содержит BASE_URL, поэтому нельзя добавлять BASE второй раз;
+ * - рубашка берётся из `tarotBackImage`;
+ * - при ошибке WebP срабатывает `applyImageFallback` и подставляет PNG.
+ */
 const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
@@ -89,36 +97,29 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
     setTimeout(() => setIsDragging(false), 50);
   };
 
-  // Calculate card positions in fan
+  // Calculate card positions in fan.
+  // Карты должны реально раскрываться веером, а не лежать почти в одной точке.
+  // Поэтому используем не синус с маленькой амплитудой, а понятный шаг по X,
+  // который адаптируется под ширину устройства.
   const getCardStyle = (index: number, total: number) => {
-    const isSelected = selectedIndex === index;
     const isHovered = hoveredIndex === index;
+    const center = (total - 1) / 2;
+    const distanceFromCenter = index - center;
+    const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1440;
+    const spread = viewportWidth < 480 ? 72 : viewportWidth < 768 ? 96 : viewportWidth < 1024 ? 126 : 156;
+    const dragOffset = Math.max(-140, Math.min(140, scrollOffset * 0.22));
 
-    // Fan arc calculation
-    const arcAngle = 35; // degrees for the fan spread
-    const angleStep = arcAngle / (total - 1);
-    const baseAngle = -arcAngle / 2 + index * angleStep;
-
-    // Apply scroll offset
-    const scrollFactor = scrollOffset * 0.15;
-    const adjustedAngle = baseAngle + scrollFactor;
-
-    const radius = 280;
-    const rad = (adjustedAngle * Math.PI) / 180;
-
-    // 3D positioning
-    const x = Math.sin(rad) * radius * 0.5;
-    const y = Math.abs(Math.cos(rad)) * 20;
-    const z = isSelected ? 100 : isHovered ? 50 : 0;
-    const rotateY = adjustedAngle * 0.6;
-    const rotateZ = adjustedAngle * 0.3;
+    const x = distanceFromCenter * spread + dragOffset;
+    const y = Math.abs(distanceFromCenter) * 24;
+    const z = isHovered ? 56 : 0;
+    const rotateY = distanceFromCenter * -5 + dragOffset * 0.018;
+    const rotateZ = distanceFromCenter * 6 + dragOffset * 0.014;
+    const scale = isHovered ? 1.045 : 1;
 
     return {
-      transform: isSelected 
-        ? `translateX(-50%) translateY(-50%) translateZ(${z}px) scale(1.15) rotateY(0deg) rotateZ(0deg)`
-        : `translateX(calc(-50% + ${x}px)) translateY(${-y}px) translateZ(${z}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`,
-      zIndex: isSelected ? 100 : isHovered ? 50 : total - Math.abs(index - (total / 2)),
-      transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+      transform: `translateX(calc(-50% + ${x}px)) translateY(${-y}px) translateZ(${z}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`,
+      zIndex: isHovered ? 80 : 30 - Math.abs(distanceFromCenter),
+      transition: 'all 0.62s cubic-bezier(0.2, 0.86, 0.22, 1)',
     };
   };
 
@@ -155,24 +156,21 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
             const style = getCardStyle(index, tarotCards.length);
 
             return (
-              <motion.div
+              <div
                 key={card.id}
                 className={`tarot-fan-card ${isSelected ? 'selected' : ''} ${isFlipped ? 'flipped' : ''}`}
                 style={style}
                 onClick={() => handleCardClick(index)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                initial={{ opacity: 0, y: 100, rotateX: 45 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{ delay: index * 0.08, duration: 0.6, ease: 'easeOut' }}
               >
                 <div className="tarot-card-inner">
                   {/* Front (Face) */}
                   <div className="tarot-card-face">
                     <img 
-                      src={`${BASE}${card.tarot}`} 
+                      src={card.tarot} 
                       alt={card.name}
-                      loading="lazy"
+                      loading="eager"
                       draggable={false}
                       onError={applyImageFallback}
                     />
@@ -185,17 +183,17 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
                   {/* Back (Shirt) */}
                   <div className="tarot-card-back">
                     <img 
-                      src={`${BASE}shirt.png`} 
+                      src={tarotBackImage} 
                       alt="Рубашка"
                       draggable={false}
                       onError={applyImageFallback}
                     />
                     <div className="tarot-card-back-pattern">
-                      <div className="ouroboros-mini" />
+                      <div className="ouroboros-mini" style={{ backgroundImage: `url(${BASE}ouroboros.png)` }} />
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -227,7 +225,7 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
                 <div className="tarot-card-inner">
                   <div className="tarot-card-face">
                     <img 
-                      src={`${BASE}${tarotCards[selectedIndex].tarot}`} 
+                      src={tarotCards[selectedIndex].tarot} 
                       alt={tarotCards[selectedIndex].name}
                       draggable={false}
                       onError={applyImageFallback}
@@ -235,7 +233,7 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
                   </div>
                   <div className="tarot-card-back">
                     <img 
-                      src={`${BASE}shirt.png`} 
+                      src={tarotBackImage} 
                       alt="Рубашка"
                       draggable={false}
                       onError={applyImageFallback}

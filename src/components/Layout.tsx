@@ -5,10 +5,18 @@ import MusicButton from './MusicButton';
 import BackButton from './BackButton';
 import LoadingScreen from './LoadingScreen';
 import Particles from './Particles';
+import MythicVeil from './MythicVeil';
 import { getThemeByPath } from '@/types/theme';
 import type { ColorTheme } from '@/types/theme';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+/**
+ * Layout — общий каркас каждой страницы.
+ *
+ * Здесь подключаются: боковое меню, музыка, кнопка назад, загрузчик,
+ * фоновые частицы и новый MythicVeil с рунами/пеплом/сиянием.
+ * Если нужно изменить общую атмосферу всего сайта — начинай отсюда и из `src/index.css`.
+ */
 interface LayoutProps {
   children: React.ReactNode;
   theme?: ColorTheme;
@@ -69,6 +77,7 @@ const Layout: React.FC<LayoutProps> = ({
       )}
 
       <Particles theme={theme} count={isMobile ? Math.min(12, particleCount) : particleCount} variant={particleVariant} />
+      <MythicVeil />
       <SideMenu theme={theme} />
       <MusicButton theme={theme} />
       {showBack && !overlayMode && <BackButton theme={theme} />}

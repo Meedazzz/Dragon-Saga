@@ -1,0 +1,185 @@
+# Путеводитель по файлам Dragon Saga
+
+Документация на русском: что где лежит, за что отвечает и где менять нужную часть сайта.
+
+## Где менять чаще всего
+
+- **Динамика, дизайн, адаптив:** `src/index.css`
+- **Атмосферный слой рун/пепла:** `src/components/MythicVeil.tsx`
+- **Главная:** `src/pages/HomePage.tsx`
+- **Активности:** `src/pages/ActivitiesPage.tsx`
+- **Таро:** `src/components/TarotFan.tsx`, `src/data/tarot.ts`
+- **Цвета героев:** `src/types/theme.ts`, `src/data/characters.ts`
+- **URL/маршруты:** `src/App.tsx`
+- **UI-прогон:** `playwright.config.ts`, `tests/ui-smoke.spec.ts`
+- **GitHub Pages:** `vite.config.ts`, `scripts/spa-404.mjs`, `src/lib/routeHref.ts`
+
+## Все файлы
+
+- `.github/workflows/deploy.yml` — GitHub Action: собирает `npm run build` и публикует `dist` на GitHub Pages.
+- `.gitignore` — Служебный файл проекта.
+- `FINISH_NOTES.md` — Документация/заметки проекта.
+- `FIX_REPORT_REDESIGN_V2.md` — Документация/заметки проекта.
+- `IMAGES_GUIDE.md` — Документация/заметки проекта.
+- `PROMPTS_GUIDE.md` — Документация/заметки проекта.
+- `README.md` — Документация/заметки проекта.
+- `assets/shirt.png` — Медиа-ассет/исходник.
+- `assets/tarot_brin.webp` — Медиа-ассет/исходник.
+- `assets/tarot_sakris.webp` — Медиа-ассет/исходник.
+- `assets/tarot_stive.webp` — Медиа-ассет/исходник.
+- `assets/tarot_tallis.webp` — Медиа-ассет/исходник.
+- `assets/tarot_valery.webp` — Медиа-ассет/исходник.
+- `assets/thumbnail.jpg` — Медиа-ассет/исходник.
+- `components.json` — Конфиг shadcn/ui компонентов.
+- `docs/FILE_GUIDE_RU.md` — Этот путеводитель по файлам.
+- `docs/QA_REPORT_RU.md` — QA-отчёт: что проверено, какие тесты прошли, какие баги исправлены.
+- `eslint.config.js` — Правила lint-проверки кода. Настроено так, чтобы lint не шумел от shadcn/ui.
+- `index.html` — HTML-шаблон Vite, куда монтируется React.
+- `info.md` — Документация/заметки проекта.
+- `package-lock.json` — Зафиксированные версии npm-зависимостей. Руками не редактировать.
+- `package.json` — Список npm-скриптов и зависимостей. Скрипты: build, lint, preview, test:assets, test:ui.
+- `playwright.config.ts` — Конфиг UI-прогона в Chromium: baseURL, preview-сервер, репорты, скриншоты.
+- `postcss.config.js` — PostCSS-пайплайн для Tailwind.
+- `public/apple-touch-icon.png` — Публичное изображение. Используется через BASE_URL.
+- `public/avatar_brin.png` — Публичное изображение. Используется через BASE_URL.
+- `public/avatar_sakris.png` — Публичное изображение. Используется через BASE_URL.
+- `public/avatar_stive.png` — Публичное изображение. Используется через BASE_URL.
+- `public/avatar_tallis.png` — Публичное изображение. Используется через BASE_URL.
+- `public/avatar_valery.png` — Публичное изображение. Используется через BASE_URL.
+- `public/docs/Fenomenologia_Chernogo_lda.pdf` — PDF/документ для сайта.
+- `public/favicon.png` — Публичное изображение. Используется через BASE_URL.
+- `public/map_northwind.png` — Публичное изображение. Используется через BASE_URL.
+- `public/map_sever.png` — Публичное изображение. Используется через BASE_URL.
+- `public/music/ambient.mp3` — Фоновая музыка.
+- `public/optimized/mobile/tarot_brin.webp` — Мобильная оптимизированная карта.
+- `public/optimized/mobile/tarot_darkbain.webp` — Мобильная оптимизированная карта.
+- `public/optimized/mobile/tarot_sakris.webp` — Мобильная оптимизированная карта.
+- `public/optimized/mobile/tarot_stive.webp` — Мобильная оптимизированная карта.
+- `public/optimized/mobile/tarot_tallis.webp` — Мобильная оптимизированная карта.
+- `public/optimized/mobile/tarot_valery.webp` — Мобильная оптимизированная карта.
+- `public/optimized/shirt.webp` — Оптимизированная текстура/карта для сайта.
+- `public/optimized/tarot_brin.webp` — Оптимизированная текстура/карта для сайта.
+- `public/optimized/tarot_darkbain.webp` — Оптимизированная текстура/карта для сайта.
+- `public/optimized/tarot_sakris.webp` — Оптимизированная текстура/карта для сайта.
+- `public/optimized/tarot_stive.webp` — Оптимизированная текстура/карта для сайта.
+- `public/optimized/tarot_tallis.webp` — Оптимизированная текстура/карта для сайта.
+- `public/optimized/tarot_valery.webp` — Оптимизированная текстура/карта для сайта.
+- `public/ouroboros.png` — Публичное изображение. Используется через BASE_URL.
+- `public/shirt.png` — Публичное изображение. Используется через BASE_URL.
+- `public/tarot_brin.png` — Публичное изображение. Используется через BASE_URL.
+- `public/tarot_darkbain.png` — Публичное изображение. Используется через BASE_URL.
+- `public/tarot_sakris.png` — Публичное изображение. Используется через BASE_URL.
+- `public/tarot_stive.png` — Публичное изображение. Используется через BASE_URL.
+- `public/tarot_tallis.png` — Публичное изображение. Используется через BASE_URL.
+- `public/tarot_valery.png` — Публичное изображение. Используется через BASE_URL.
+- `public/videos/thumbnail.jpg` — Публичное изображение. Используется через BASE_URL.
+- `qa-screenshots/activities-mobile.png` — Референс-скриншот после UI-прогона. Использовать для ручного сравнения дизайна.
+- `qa-screenshots/home-desktop.png` — Референс-скриншот после UI-прогона. Использовать для ручного сравнения дизайна.
+- `qa-screenshots/home-mobile.png` — Референс-скриншот после UI-прогона. Использовать для ручного сравнения дизайна.
+- `scripts/asset-smoke-test.mjs` — Проверяет, что важные ассеты существуют и не пустые.
+- `scripts/spa-404.mjs` — Создаёт `dist/404.html` после билда для GitHub Pages SPA.
+- `src/App.css` — Старый CSS от Vite. Почти не нужен.
+- `src/App.tsx` — Центральная таблица маршрутов. Добавлять новые URL/страницы сюда.
+- `src/components/BackButton.tsx` — Кнопка «Назад» на десктопе.
+- `src/components/CharacterCardDeck.tsx` — Альтернативная/старая колода с раскладами и текстовыми толкованиями.
+- `src/components/HeroNav.tsx` — Навигация на страницах персонажей, включая «Полный лор».
+- `src/components/Layout.tsx` — Общий каркас страниц: меню, музыка, загрузчик, частицы, MythicVeil.
+- `src/components/LoadingScreen.tsx` — Загрузчик: общий уроборос и созвездия персонажей.
+- `src/components/MusicButton.tsx` — Кнопка фоновой музыки и промо-сообщения соцсетей.
+- `src/components/MythicVeil.tsx` — Динамический атмосферный слой: руны, пепел, северное сияние.
+- `src/components/Particles.tsx` — Лёгкие фоновые частицы.
+- `src/components/SideMenu.tsx` — Боковое меню по героям, миру, картам и активностям.
+- `src/components/SmartTooltip.tsx` — Подсказки, которые стараются не выходить за экран.
+- `src/components/TarotFan.tsx` — Интерактивная веерная колода Таро. Не добавлять BASE к card.tarot второй раз.
+- `src/components/ui/accordion.tsx` — Базовый UI-компонент (accordion.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/alert-dialog.tsx` — Базовый UI-компонент (alert-dialog.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/alert.tsx` — Базовый UI-компонент (alert.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/aspect-ratio.tsx` — Базовый UI-компонент (aspect-ratio.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/avatar.tsx` — Базовый UI-компонент (avatar.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/badge.tsx` — Базовый UI-компонент (badge.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/breadcrumb.tsx` — Базовый UI-компонент (breadcrumb.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/button-group.tsx` — Базовый UI-компонент (button-group.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/button.tsx` — Базовый UI-компонент (button.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/calendar.tsx` — Базовый UI-компонент (calendar.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/card.tsx` — Базовый UI-компонент (card.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/carousel.tsx` — Базовый UI-компонент (carousel.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/chart.tsx` — Базовый UI-компонент (chart.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/checkbox.tsx` — Базовый UI-компонент (checkbox.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/collapsible.tsx` — Базовый UI-компонент (collapsible.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/command.tsx` — Базовый UI-компонент (command.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/context-menu.tsx` — Базовый UI-компонент (context-menu.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/dialog.tsx` — Базовый UI-компонент (dialog.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/drawer.tsx` — Базовый UI-компонент (drawer.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/dropdown-menu.tsx` — Базовый UI-компонент (dropdown-menu.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/empty.tsx` — Базовый UI-компонент (empty.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/field.tsx` — Базовый UI-компонент (field.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/form.tsx` — Базовый UI-компонент (form.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/hover-card.tsx` — Базовый UI-компонент (hover-card.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/input-group.tsx` — Базовый UI-компонент (input-group.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/input-otp.tsx` — Базовый UI-компонент (input-otp.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/input.tsx` — Базовый UI-компонент (input.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/item.tsx` — Базовый UI-компонент (item.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/kbd.tsx` — Базовый UI-компонент (kbd.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/label.tsx` — Базовый UI-компонент (label.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/menubar.tsx` — Базовый UI-компонент (menubar.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/navigation-menu.tsx` — Базовый UI-компонент (navigation-menu.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/pagination.tsx` — Базовый UI-компонент (pagination.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/popover.tsx` — Базовый UI-компонент (popover.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/progress.tsx` — Базовый UI-компонент (progress.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/radio-group.tsx` — Базовый UI-компонент (radio-group.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/resizable.tsx` — Базовый UI-компонент (resizable.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/scroll-area.tsx` — Базовый UI-компонент (scroll-area.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/select.tsx` — Базовый UI-компонент (select.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/separator.tsx` — Базовый UI-компонент (separator.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/sheet.tsx` — Базовый UI-компонент (sheet.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/sidebar.tsx` — Базовый UI-компонент (sidebar.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/skeleton.tsx` — Базовый UI-компонент (skeleton.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/slider.tsx` — Базовый UI-компонент (slider.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/sonner.tsx` — Базовый UI-компонент (sonner.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/spinner.tsx` — Базовый UI-компонент (spinner.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/switch.tsx` — Базовый UI-компонент (switch.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/table.tsx` — Базовый UI-компонент (table.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/tabs.tsx` — Базовый UI-компонент (tabs.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/textarea.tsx` — Базовый UI-компонент (textarea.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/toggle-group.tsx` — Базовый UI-компонент (toggle-group.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/toggle.tsx` — Базовый UI-компонент (toggle.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/components/ui/tooltip.tsx` — Базовый UI-компонент (tooltip.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
+- `src/contexts/MusicContext.tsx` — React-контекст фоновой музыки.
+- `src/data/characters.ts` — База персонажей: имена, цвета, описания, карты, аватары, ссылки.
+- `src/data/tarot.ts` — Данные Таро: рубашка, лор, толкования, нарративные крючки.
+- `src/hooks/use-mobile.ts` — Хук определения мобильного экрана.
+- `src/index.css` — Главный стиль: тема, codex-дизайн, динамика, адаптив, Таро, активности, MythicVeil.
+- `src/lib/imageFallback.ts` — Fallback WebP→PNG для старых браузеров/битых текстур.
+- `src/lib/routeHref.ts` — Создаёт правильные href с учётом `/Dragon-Saga/`.
+- `src/lib/utils.ts` — Утилита `cn` для объединения className.
+- `src/main.tsx` — Точка входа React. BrowserRouter использует basename `/Dragon-Saga`.
+- `src/pages/ActivitiesPage.tsx` — Страница активностей: оракул, связи, маршруты, архив, модальные инструменты.
+- `src/pages/ArantirPage.tsx` — Страница `ArantirPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/BerghheimPage.tsx` — Страница `BerghheimPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/BlackIceResearchPage.tsx` — Страница `BlackIceResearchPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/BrinPage.tsx` — Страница `BrinPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/BrinSubclassPage.tsx` — Страница `BrinSubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/DarkbainPage.tsx` — Страница `DarkbainPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/HessenPage.tsx` — Страница `HessenPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/Home.tsx` — Страница `Home`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/HomePage.tsx` — Главная страница-кодекс: hero, герои, Таро, атлас, активности, видео.
+- `src/pages/LetopisPage.tsx` — Большая летопись/хронология мира.
+- `src/pages/LorPage.tsx` — Общий каталог мира: персонажи, лор, активности, карты.
+- `src/pages/LorePage.tsx` — Персональный лор героя по `/lore/:characterId`.
+- `src/pages/MapPage.tsx` — Просмотр карт мира с масштабированием.
+- `src/pages/SakrisPage.tsx` — Страница `SakrisPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/SakrisSubclassPage.tsx` — Страница `SakrisSubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/StivePlaceholder.tsx` — Страница `StivePlaceholder`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/SubclassPage.tsx` — Страница `SubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/TalisPlaceholder.tsx` — Страница `TalisPlaceholder`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/TalisSubclassPage.tsx` — Страница `TalisSubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/ValeryPage.tsx` — Страница `ValeryPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/ValerySubclassPage.tsx` — Страница `ValerySubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/types/theme.ts` — Цветовые темы страниц. Здесь индивидуальные темы Валерия/Брина/Сакриса/Таллиса/Стива.
+- `tailwind.config.js` — Настройка Tailwind CSS.
+- `tests/ui-smoke.spec.ts` — Автоматический UI smoke-тест: desktop/tablet/mobile, Таро, активности, цвета героев.
+- `tsconfig.app.json` — Служебный файл проекта.
+- `tsconfig.json` — Служебный файл проекта.
+- `tsconfig.node.json` — Служебный файл проекта.
+- `videos/thumbnail.jpg` — Медиа-ассет/исходник.
+- `vite.config.ts` — Настройка Vite. Ключевое: `base: /Dragon-Saga/` для GitHub Pages.

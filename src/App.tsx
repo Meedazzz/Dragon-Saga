@@ -65,12 +65,14 @@ function App() {
 
           {/* Стив и Таллис */}
           <Route path="/stive" element={<StivePlaceholder />} />
+          <Route path="/talis" element={<TallisSubclassPage />} />
           <Route path="/tallis" element={<TallisSubclassPage />} />
 
           {/* Подклассы */}
           <Route path="/subclass/valery" element={<ValerySubclassPage />} />
           <Route path="/subclass/brin" element={<BrinSubclassPage />} />
           <Route path="/subclass/sakris" element={<SakrisSubclassPage />} />
+          <Route path="/subclass/talis" element={<TallisSubclassPage />} />
           <Route path="/subclass/tallis" element={<TallisSubclassPage />} />
           <Route path="/subclass/:characterId" element={<SubclassPage />} />
 
