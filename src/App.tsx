@@ -24,7 +24,7 @@ const ArantirPage = lazy(() => import('@/pages/ArantirPage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
 const ActivitiesPage = lazy(() => import('@/pages/ActivitiesPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
-const TalisSubclassPage = lazy(() => import('@/pages/TalisSubclassPage'));
+const TallisSubclassPage = lazy(() => import('@/pages/TallisSubclassPage'));
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -53,37 +53,37 @@ function App() {
       <Suspense fallback={<LoadingScreen theme={homeTheme} isLoading={true} />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          
+
           {/* Лор персонажей */}
           <Route path="/lore/:characterId" element={<LorePage />} />
 
-          {/* Личные умения */}
+          {/* Страницы персонажей */}
           <Route path="/valery" element={<ValeryPage />} />
           <Route path="/sakris" element={<SakrisPage />} />
           <Route path="/brin" element={<BrinPage />} />
           <Route path="/darkbain" element={<DarkbainPage />} />
 
-          {/* Страницы для Стива и Таллиса */}
+          {/* Стив и Таллис */}
           <Route path="/stive" element={<StivePlaceholder />} />
-          <Route path="/talis" element={<TalisSubclassPage />} />
+          <Route path="/tallis" element={<TallisSubclassPage />} />
 
           {/* Подклассы */}
           <Route path="/subclass/valery" element={<ValerySubclassPage />} />
           <Route path="/subclass/brin" element={<BrinSubclassPage />} />
           <Route path="/subclass/sakris" element={<SakrisSubclassPage />} />
-          <Route path="/subclass/talis" element={<TalisSubclassPage />} />
+          <Route path="/subclass/tallis" element={<TallisSubclassPage />} />
           <Route path="/subclass/:characterId" element={<SubclassPage />} />
 
-          {/* Связанный лор */}
+          {/* Дополнительный лор */}
           <Route path="/black-ice-research" element={<BlackIceResearchPage />} />
           <Route path="/hessen" element={<HessenPage />} />
           <Route path="/berghheim" element={<BerghheimPage />} />
           <Route path="/arantir" element={<ArantirPage />} />
 
-          {/* Карты */}
+          {/* Карта */}
           <Route path="/map/:mapId" element={<MapPage />} />
 
-          {/* Летопись, активности и мир игры */}
+          {/* Активности, летопись, общий лор */}
           <Route path="/activities" element={<ActivitiesPage />} />
           <Route path="/letopis" element={<LetopisPage />} />
           <Route path="/lor" element={<LorPage />} />
