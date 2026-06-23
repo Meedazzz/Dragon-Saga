@@ -1,16 +1,32 @@
+<<<<<<< HEAD
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, CalendarDays, Dices, Eye, RotateCcw, ScrollText, Shuffle, Sparkles } from 'lucide-react';
 import { tarotBackImage, tarotCards, type TarotCard, type TarotPosition } from '@/data/tarot';
+=======
+import React, { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { BookOpen, CalendarDays, Eye, RotateCcw, Shuffle, Sparkles } from 'lucide-react';
+import { tarotBackImage, tarotCards, type TarotCard } from '@/data/tarot';
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 import type { CharacterConfig } from '@/data/characters';
 import { homeTheme } from '@/types/theme';
 
 type Orientation = 'upright' | 'reversed';
+<<<<<<< HEAD
 
 interface SpreadResult {
   id: string;
   position: TarotPosition;
+=======
+type SpreadPosition = 'Прошлое' | 'Настоящее' | 'Будущее';
+
+interface SpreadResult {
+  id: string;
+  position: SpreadPosition;
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
   card: TarotCard;
   orientation: Orientation;
 }
@@ -19,6 +35,7 @@ interface VisitorResult {
   card: TarotCard;
   orientation: Orientation;
   question: string;
+<<<<<<< HEAD
   focus: string;
 }
 
@@ -32,12 +49,22 @@ interface SceneResult {
 
 const spreadPositions: TarotPosition[] = ['Прошлое', 'Настоящее', 'Будущее'];
 
+=======
+}
+
+const spreadPositions: SpreadPosition[] = ['Прошлое', 'Настоящее', 'Будущее'];
+
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 const orientationLabel: Record<Orientation, string> = {
   upright: 'Прямое положение',
   reversed: 'Перевёрнутое положение',
 };
 
 const safeQuestion = (value: string) => value.trim().replace(/\s+/g, ' ').slice(0, 220);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 const randomOrientation = (): Orientation => (Math.random() < 0.5 ? 'upright' : 'reversed');
 
 const drawUniqueCards = (count: number) => {
@@ -67,6 +94,7 @@ const getDailyCard = () => {
   return { card: tarotCards[index], dateKey: key };
 };
 
+<<<<<<< HEAD
 const getQuestionFocus = (question: string) => {
   const prepared = question.toLowerCase();
   if (/(бой|битв|враг|уби|сраж|дуэл|опасн|угроз)/i.test(prepared)) return 'конфликт';
@@ -121,6 +149,22 @@ const buildSceneText = (scene: SceneResult) => {
       : 'ведущий вводит осложнение: появляется свидетель, враг, дурной знак или долг из прошлого';
 
   return `d20 = ${die}. ${card.narrative.archetype} задаёт сцену: ${card.narrative.questHook}. Тон сцены: ${tone}. Итог «${outcome}»: ${resultLine}. Игрок отвечает одним действием персонажа, ведущий завершает сцену последствием.`;
+=======
+const loreAnchor = (card: TarotCard, orientation: Orientation) => {
+  const lines = card.backLore.length > 0 ? card.backLore : [card.desc];
+  if (orientation === 'upright') {
+    return [card.title, card.desc, lines[0], lines[2]].filter(Boolean).join(' ');
+  }
+  return [card.title, card.desc, lines[1] ?? lines[0], lines[2]].filter(Boolean).join(' ');
+};
+
+const buildInterpretation = (card: TarotCard, orientation: Orientation, context: string) => {
+  const anchor = loreAnchor(card, orientation);
+  if (orientation === 'upright') {
+    return `${context}: ${anchor}`;
+  }
+  return `${context}: та же карта читается через препятствие, задержку или внутренний спор. Основа толкования: ${anchor}`;
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 };
 
 const CardFace: React.FC<{ card: TarotCard }> = ({ card }) => (
@@ -134,17 +178,27 @@ const CardBackVisual: React.FC<{ card?: TarotCard; compact?: boolean }> = ({ car
   <div className="tarot-card-side tarot-card-back" aria-hidden="true">
     <img src={tarotBackImage} alt="Рубашка карты" loading={compact ? 'lazy' : 'eager'} decoding="async" draggable={false} />
     <span className="tarot-card-back-vignette" />
+<<<<<<< HEAD
     {card && !compact && <span className="tarot-card-back-name">{card.name}</span>}
+=======
+    {card && !compact && (
+      <span className="tarot-card-back-name">{card.name}</span>
+    )}
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
   </div>
 );
 
 const GalleryCard: React.FC<{
   card: TarotCard;
+<<<<<<< HEAD
   index: number;
+=======
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
   revealed: boolean;
   loreMode: boolean;
   onFlip: (card: TarotCard) => void;
   onLore: (card: TarotCard) => void;
+<<<<<<< HEAD
 }> = ({ card, index, revealed, loreMode, onFlip, onLore }) => {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -202,12 +256,20 @@ const GalleryCard: React.FC<{
 
   const fanAngle = (index - 2) * 7;
   const fanY = Math.abs(index - 2) * 14;
+=======
+}> = ({ card, revealed, loreMode, onFlip, onLore }) => {
+  const handleClick = () => {
+    if (loreMode) onLore(card);
+    else onFlip(card);
+  };
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 
   return (
     <motion.button
       type="button"
       className={`tarot-gallery-card tarot-no-glow ${revealed ? 'is-revealed' : ''} ${loreMode ? 'is-lore-mode' : ''}`}
       onClick={handleClick}
+<<<<<<< HEAD
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
@@ -224,6 +286,14 @@ const GalleryCard: React.FC<{
         '--fan-angle': `${fanAngle}deg`,
         '--fan-y': `${fanY}px`,
       } as React.CSSProperties}
+=======
+      initial={{ opacity: 0, y: 22, rotateZ: -2 }}
+      animate={{ opacity: 1, y: 0, rotateZ: 0 }}
+      whileHover={{ y: -7 }}
+      whileTap={{ scale: 0.985 }}
+      aria-label={loreMode ? `Открыть лор карты ${card.name}` : revealed ? `Перевернуть карту ${card.name} рубашкой` : `Перевернуть карту ${card.name}`}
+      style={{ '--card-accent': card.color } as React.CSSProperties}
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
     >
       <span className="tarot-card-rotator">
         <CardBackVisual card={card} />
@@ -231,7 +301,11 @@ const GalleryCard: React.FC<{
       </span>
       <span className="tarot-card-caption">
         <span>{revealed ? card.name : 'Рубашка'}</span>
+<<<<<<< HEAD
         <small>{loreMode ? 'клик — лор' : 'мышь/колесо/свайп'}</small>
+=======
+        <small>{loreMode ? 'лор' : revealed ? 'клик — скрыть' : 'клик — открыть'}</small>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
       </span>
     </motion.button>
   );
@@ -268,6 +342,7 @@ const LoreModal: React.FC<{ card: TarotCard | null; onClose: () => void }> = ({ 
         <h3>{card.name}</h3>
         <p className="tarot-modal-title">{card.title}</p>
         <div className="tarot-modal-lore-lines">
+<<<<<<< HEAD
           {card.backLore.map((line) => <p key={line}>{line}</p>)}
         </div>
         <div className="tarot-modal-oracle-note">
@@ -284,13 +359,34 @@ const LoreModal: React.FC<{ card: TarotCard | null; onClose: () => void }> = ({ 
             </button>
           ))}
         </div>
+=======
+          {card.backLore.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
+        <div className="tarot-modal-actions">
+          <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={() => goTo(card.lorePath)}>
+            Читать лор
+          </button>
+          {card.pages.map((page) => (
+            <button key={page.path} type="button" className="tarot-link-chip tarot-no-glow" onClick={() => goTo(page.path)}>
+              {page.label}
+            </button>
+          ))}
+        </div>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
       </motion.article>
     </motion.div>
   );
 };
 
 const DailyCardPanel: React.FC = () => {
+<<<<<<< HEAD
   const daily = useMemo(() => getDailyCard(), []);
+=======
+  const daily = useMemo(getDailyCard, []);
+  const interpretation = buildInterpretation(daily.card, 'upright', 'Карта дня');
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 
   return (
     <aside className="daily-card-panel" style={{ '--card-accent': daily.card.color } as React.CSSProperties}>
@@ -300,7 +396,11 @@ const DailyCardPanel: React.FC = () => {
       </div>
       <h3>{daily.card.name}</h3>
       <p className="daily-card-date">{daily.dateKey}</p>
+<<<<<<< HEAD
       <p>{buildDailyInterpretation(daily.card)}</p>
+=======
+      <p>{interpretation}</p>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
     </aside>
   );
 };
@@ -314,7 +414,11 @@ const SpreadCardView: React.FC<{ result: SpreadResult }> = ({ result }) => (
       <span className="spread-position">{result.position}</span>
       <h4>{result.card.name}</h4>
       <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
+<<<<<<< HEAD
       <p>{buildSpreadInterpretation(result.card, result.orientation, result.position)}</p>
+=======
+      <p>{buildInterpretation(result.card, result.orientation, `Позиция «${result.position}»`)}</p>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
     </div>
   </article>
 );
@@ -332,6 +436,7 @@ const VisitorReading: React.FC<{ result: VisitorResult | null }> = ({ result }) 
         <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
       </div>
       <div>
+<<<<<<< HEAD
         <span className="spread-position">Вопрос · {result.focus}</span>
         <h4>{result.card.name}</h4>
         <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
@@ -358,6 +463,12 @@ const SceneReading: React.FC<{ result: SceneResult | null }> = ({ result }) => {
         <h4>{result.card.name}</h4>
         <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
         <p>{buildSceneText(result)}</p>
+=======
+        <span className="spread-position">Вопрос посетителя</span>
+        <h4>{result.card.name}</h4>
+        <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
+        <p>{buildInterpretation(result.card, result.orientation, `На вопрос «${result.question}»`)}</p>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
       </div>
     </motion.article>
   );
@@ -367,7 +478,10 @@ const TarotRituals: React.FC = () => {
   const [spread, setSpread] = useState<SpreadResult[]>([]);
   const [question, setQuestion] = useState('');
   const [visitorResult, setVisitorResult] = useState<VisitorResult | null>(null);
+<<<<<<< HEAD
   const [sceneResult, setSceneResult] = useState<SceneResult | null>(null);
+=======
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
   const [questionError, setQuestionError] = useState('');
 
   const drawSpread = () => {
@@ -388,6 +502,7 @@ const TarotRituals: React.FC = () => {
     }
     setQuestionError('');
     const [card] = drawUniqueCards(1);
+<<<<<<< HEAD
     setVisitorResult({ card, orientation: randomOrientation(), question: preparedQuestion, focus: getQuestionFocus(preparedQuestion) });
   };
 
@@ -401,6 +516,9 @@ const TarotRituals: React.FC = () => {
       die,
       outcome: getSceneOutcome(die),
     });
+=======
+    setVisitorResult({ card, orientation: randomOrientation(), question: preparedQuestion });
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
   };
 
   return (
@@ -410,7 +528,11 @@ const TarotRituals: React.FC = () => {
           <Sparkles size={18} />
           <div>
             <h3>Самостоятельный расклад</h3>
+<<<<<<< HEAD
             <p>Прошлое · Настоящее · Будущее · 50% перевёрнутых</p>
+=======
+            <p>Прошлое · Настоящее · Будущее</p>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
           </div>
         </div>
         <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={drawSpread}>
@@ -429,14 +551,23 @@ const TarotRituals: React.FC = () => {
         <div className="tarot-ritual-heading">
           <BookOpen size={18} />
           <div>
+<<<<<<< HEAD
             <h3>Расклад по вопросу</h3>
             <p>Один вопрос · одна персональная карта</p>
+=======
+            <h3>Расклад для посетителей</h3>
+            <p>Один вопрос · одна карта</p>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
           </div>
         </div>
         <textarea
           value={question}
           onChange={(event) => { setQuestion(event.target.value); if (questionError) setQuestionError(''); }}
+<<<<<<< HEAD
           placeholder="Введите вопрос: о пути, союзе, враге, тайне или цене..."
+=======
+          placeholder="Введите вопрос..."
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
           className="tarot-question-input"
           rows={3}
         />
@@ -446,6 +577,7 @@ const TarotRituals: React.FC = () => {
         </button>
         <VisitorReading result={visitorResult} />
       </div>
+<<<<<<< HEAD
 
       <div className="tarot-ritual-card narrative-game-card">
         <div className="tarot-ritual-heading">
@@ -461,6 +593,8 @@ const TarotRituals: React.FC = () => {
         </button>
         <SceneReading result={sceneResult} />
       </div>
+=======
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
     </section>
   );
 };
@@ -471,11 +605,17 @@ interface CharacterCardDeckProps {
 
 const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange }) => {
   const navigate = useNavigate();
+<<<<<<< HEAD
   const galleryRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [loreMode, setLoreMode] = useState(false);
   const [selectedLore, setSelectedLore] = useState<TarotCard | null>(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+=======
+  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
+  const [loreMode, setLoreMode] = useState(false);
+  const [selectedLore, setSelectedLore] = useState<TarotCard | null>(null);
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
 
   useEffect(() => {
     onExpandedChange?.(selectedLore);
@@ -483,6 +623,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
 
   const toggleCard = (card: TarotCard) => {
     setRevealed((previous) => ({ ...previous, [card.id]: !previous[card.id] }));
+<<<<<<< HEAD
   };
 
   const updateActiveIndex = useCallback(() => {
@@ -503,6 +644,8 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
     const card = gallery?.querySelectorAll<HTMLElement>('.tarot-gallery-card')[index];
     card?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     setActiveCardIndex(index);
+=======
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
   };
 
   return (
@@ -511,7 +654,11 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
         <div className="tarot-gallery-toolbar">
           <div>
             <span className="tarot-toolbar-kicker">Галерея из пяти карт</span>
+<<<<<<< HEAD
             <p>На десктопе карты раскрываются веером: ведите мышью по карте и крутите колесо. На телефоне листайте и свайпайте карту.</p>
+=======
+            <p>Карты лежат рубашкой. Переворачивайте их или включите режим лора.</p>
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
           </div>
           <button
             type="button"
@@ -524,12 +671,20 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
           </button>
         </div>
 
+<<<<<<< HEAD
         <div ref={galleryRef} className="tarot-gallery" aria-label="Галерея карт Таро" onScroll={updateActiveIndex}>
           {tarotCards.map((card, index) => (
             <GalleryCard
               key={card.id}
               card={card}
               index={index}
+=======
+        <div className="tarot-gallery" aria-label="Галерея карт Таро">
+          {tarotCards.map((card) => (
+            <GalleryCard
+              key={card.id}
+              card={card}
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
               revealed={!!revealed[card.id]}
               loreMode={loreMode}
               onFlip={toggleCard}
@@ -538,6 +693,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
           ))}
         </div>
 
+<<<<<<< HEAD
         <div className="tarot-mobile-indicator" aria-label="Индикатор карт">
           {tarotCards.map((card, index) => (
             <button
@@ -550,6 +706,8 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
           ))}
         </div>
 
+=======
+>>>>>>> f82ae8320da56651977d80ab56a96a19099cd8da
         <TarotRituals />
 
         <div className="tarot-lore-link-row">
