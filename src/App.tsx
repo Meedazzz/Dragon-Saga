@@ -22,6 +22,7 @@ const HessenPage = lazy(() => import('@/pages/HessenPage'));
 const BerghheimPage = lazy(() => import('@/pages/BerghheimPage'));
 const ArantirPage = lazy(() => import('@/pages/ArantirPage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
+const ActivitiesPage = lazy(() => import('@/pages/ActivitiesPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
 const TalisSubclassPage = lazy(() => import('@/pages/TalisSubclassPage'));
 
@@ -82,7 +83,8 @@ function App() {
           {/* Карты */}
           <Route path="/map/:mapId" element={<MapPage />} />
 
-          {/* Летопись и мир игры */}
+          {/* Летопись, активности и мир игры */}
+          <Route path="/activities" element={<ActivitiesPage />} />
           <Route path="/letopis" element={<LetopisPage />} />
           <Route path="/lor" element={<LorPage />} />
         </Routes>

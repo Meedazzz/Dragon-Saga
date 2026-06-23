@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { lorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
+import { routeHref } from '@/lib/routeHref';
 import { Search } from 'lucide-react';
 
 const allItems = [
@@ -17,11 +18,12 @@ const allItems = [
   { title: 'Дом Хессен', desc: 'Великий Дом Астарии, чья кровь хранит тайны Чёрного льда.', path: '/hessen', category: 'lore' as const, icon: '' },
   { title: 'Бергхейм', desc: 'Суровый горный край на севере, где духи предков бродят по перевалам.', path: '/berghheim', category: 'lore' as const, icon: '' },
   { title: 'Клан Арантир', desc: 'Последние Драконоборцы, чьи песни пережили века.', path: '/arantir', category: 'lore' as const, icon: '' },
+  { title: 'Активности', desc: 'Оракул, связи персонажей, маршруты и печати для быстрых сцен партии.', path: '/activities', category: 'activities' as const, icon: '' },
   { title: 'Карта Севера', desc: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.', path: '/map/sever', category: 'maps' as const, icon: '' },
   { title: 'Карта Нортвинда', desc: 'Карта Нортвинда — оплота севера и его окрестностей.', path: '/map/northwind', category: 'maps' as const, icon: '' },
 ];
 
-const categoryLabels: Record<string, string> = { characters: 'Персонажи', lore: 'Лор', maps: 'Карты' };
+const categoryLabels: Record<string, string> = { characters: 'Персонажи', lore: 'Лор', activities: 'Активности', maps: 'Карты' };
 
 const LorPage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ const LorPage: React.FC = () => {
     return groups;
   }, [filteredItems]);
 
-  const categoryOrder = ['characters', 'lore', 'maps'];
+  const categoryOrder = ['characters', 'lore', 'activities', 'maps'];
 
   return (
     <Layout theme={lorTheme} particleCount={24}>
@@ -75,7 +77,7 @@ const LorPage: React.FC = () => {
                 {items.map((item, idx) => {
                   const char = cat === 'characters' ? characters.find(c => c.id === item.id) : null;
                   return (
-                    <motion.a key={item.path} href={item.path}
+                    <motion.a key={item.path} href={routeHref(item.path)}
                       onClick={(e) => { if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) { e.preventDefault(); navigate(item.path); } }}
                       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 + idx * 0.04 }}
                       className="rounded-[12px] p-4 md:p-5 relative overflow-hidden cursor-pointer transition-all duration-300 block text-left tarot-no-glow"

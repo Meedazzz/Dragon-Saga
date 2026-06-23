@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postbuild": "node scripts/spa-404.mjs",
+    "test:assets": "node scripts/asset-smoke-test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

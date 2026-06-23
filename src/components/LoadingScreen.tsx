@@ -384,121 +384,10 @@ const ConstellationCanvas: React.FC<{ characterId: string; isCrumbling: boolean 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-10" />;
 };
 
-/* ── Дракон-уроборос (SVG) ── */
-const OuroborosDragon: React.FC<{ color: string; glowColor: string }> = ({ color, glowColor }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 200 200"
-    width="100"
-    height="100"
-    fill="none"
-  >
-    <defs>
-      <filter id="ouroboros-glow">
-        <feGaussianBlur stdDeviation="3" result="blur" />
-        <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-
-    <g filter="url(#ouroboros-glow)">
-      {/* Основное кольцо-тело */}
-      <path
-        d="
-          M 100 30
-          C 140 30, 170 60, 170 100
-          C 170 140, 140 170, 100 170
-          C 60 170, 30 140, 30 100
-          C 30 60, 60 30, 100 30
-        "
-        stroke={color}
-        strokeWidth="6"
-        strokeLinecap="round"
-        fill="none"
-        opacity="0.85"
-      />
-
-      {/* Чешуйки по телу */}
-      <path d="M 130 38 C 135 42, 138 35, 133 33" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 155 60 C 160 65, 162 57, 157 55" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 168 90 C 173 95, 175 87, 170 85" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 165 120 C 170 125, 172 117, 167 115" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 150 148 C 155 152, 157 144, 152 142" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 125 165 C 130 168, 132 160, 127 159" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 75 168 C 70 171, 68 163, 73 162" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 50 152 C 45 155, 43 147, 48 146" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 35 125 C 30 128, 28 120, 33 119" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 32 95 C 27 98, 25 90, 30 89" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 40 65 C 35 68, 33 60, 38 59" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-      <path d="M 60 42 C 55 45, 53 37, 58 36" stroke={color} strokeWidth="1.5" fill={color} opacity="0.5" />
-
-      {/* Голова дракона (сверху, кусает хвост) */}
-      <path
-        d="
-          M 100 30
-          L 92 18
-          L 88 26
-          L 82 20
-          L 84 30
-          C 88 28, 96 28, 100 30
-        "
-        fill={color}
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-
-      {/* Рожки */}
-      <path d="M 90 22 L 85 10 L 92 18" fill={color} stroke={color} strokeWidth="1" opacity="0.9" />
-      <path d="M 96 20 L 98 8 L 100 18" fill={color} stroke={color} strokeWidth="1" opacity="0.9" />
-
-      {/* Глаз */}
-      <circle cx="92" cy="25" r="2" fill={glowColor} opacity="0.95" />
-
-      {/* Пасть, кусающая хвост */}
-      <path
-        d="M 100 30 C 104 28, 108 28, 110 30"
-        stroke={color}
-        strokeWidth="2"
-        fill="none"
-        opacity="0.7"
-      />
-      <path d="M 102 28 L 104 24 L 106 28" fill={color} stroke={color} strokeWidth="1" opacity="0.6" />
-
-      {/* Крылья (декоративные, по бокам) */}
-      <path
-        d="M 165 85 C 180 70, 190 80, 185 95 C 182 88, 175 82, 165 85Z"
-        fill={color}
-        opacity="0.35"
-        stroke={color}
-        strokeWidth="1"
-      />
-      <path
-        d="M 35 85 C 20 70, 10 80, 15 95 C 18 88, 25 82, 35 85Z"
-        fill={color}
-        opacity="0.35"
-        stroke={color}
-        strokeWidth="1"
-      />
-
-      {/* Шипы на хвосте (внутренняя часть кольца) */}
-      <path d="M 110 35 L 114 40 L 108 38" fill={color} opacity="0.4" />
-      <path d="M 145 55 L 150 58 L 144 59" fill={color} opacity="0.4" />
-      <path d="M 160 100 L 163 105 L 158 103" fill={color} opacity="0.4" />
-      <path d="M 145 145 L 148 150 L 142 148" fill={color} opacity="0.4" />
-      <path d="M 100 165 L 103 170 L 97 168" fill={color} opacity="0.4" />
-      <path d="M 55 148 L 52 153 L 50 147" fill={color} opacity="0.4" />
-      <path d="M 38 105 L 34 110 L 36 104" fill={color} opacity="0.4" />
-      <path d="M 50 58 L 46 62 L 48 55" fill={color} opacity="0.4" />
-    </g>
-  </svg>
-);
-
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
   const [progress, setProgress] = useState(0);
   const location = useLocation();
+  const BASE = import.meta.env.BASE_URL;
   const characterId = getCharacterIdByPath(location.pathname);
 
   // Smooth fadeout control for crumbling stars transition
@@ -553,21 +442,20 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
             <div className="relative w-full h-full flex flex-col items-center justify-center">
               <ConstellationCanvas characterId={characterId} isCrumbling={isCrumbling} />
               <motion.div
-                className="absolute top-7 left-1/2 z-20 opacity-80"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-                style={{ marginLeft: -50, filter: `drop-shadow(0 0 14px ${activeConstellation.color}66)` }}
-                aria-hidden="true"
-              >
-                <OuroborosDragon color={activeConstellation.color} glowColor={theme.parchment ?? '#fff'} />
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: isCrumbling ? 0 : 1, y: isCrumbling ? -10 : 0 }}
+                initial={{ opacity: 0, y: 15, scale: 0.92 }}
+                animate={{ opacity: isCrumbling ? 0 : 1, y: isCrumbling ? -10 : 0, scale: isCrumbling ? 0.96 : 1 }}
                 transition={{ duration: 0.4 }}
-                className="z-20 text-center px-6 relative mt-[55vh]"
+                className="z-20 text-center px-6 relative loading-center-stack"
               >
+                <motion.img
+                  src={`${BASE}ouroboros.png`}
+                  alt="Знак загрузки"
+                  className="loading-center-sigil"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                  style={{ filter: `drop-shadow(0 0 18px ${activeConstellation.color}80)` }}
+                  draggable={false}
+                />
                 <div
                   className="text-2xl md:text-3xl font-extrabold uppercase tracking-[6px] mb-2"
                   style={{
@@ -609,13 +497,15 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
               transition={{ duration: 0.4 }}
               className="flex flex-col items-center gap-8 z-20"
             >
-              <motion.div
+              <motion.img
+                src={`${BASE}ouroboros.png`}
+                alt="Знак загрузки"
+                className="loading-center-sigil"
                 animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                style={{ filter: `drop-shadow(0 0 12px ${theme.primaryGlow}80)` }}
-              >
-                <OuroborosDragon color={theme.primaryGlow} glowColor={theme.parchment ?? '#fff'} />
-              </motion.div>
+                transition={{ duration: 5.5, repeat: Infinity, ease: 'linear' }}
+                style={{ filter: `drop-shadow(0 0 18px ${theme.primaryGlow}80)` }}
+                draggable={false}
+              />
 
               <div
                 className="text-2xl tracking-[8px] uppercase font-bold"

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { BookOpen, CalendarDays, Dices, Eye, RotateCcw, ScrollText, Shuffle, Sparkles } from 'lucide-react';
 import { tarotBackImage, tarotCards, type TarotCard, type TarotPosition } from '@/data/tarot';
 import type { CharacterConfig } from '@/data/characters';
+import { applyImageFallback } from '@/lib/imageFallback';
 import { homeTheme } from '@/types/theme';
 
 type Orientation = 'upright' | 'reversed';
@@ -125,14 +126,14 @@ const buildSceneText = (scene: SceneResult) => {
 
 const CardFace: React.FC<{ card: TarotCard }> = ({ card }) => (
   <div className="tarot-card-side tarot-card-front" aria-hidden="true">
-    <img src={card.tarot} alt={card.name} loading="lazy" decoding="async" draggable={false} />
+    <img src={card.tarot} alt={card.name} loading="lazy" decoding="async" draggable={false} onError={applyImageFallback} />
     <span className="tarot-card-front-glaze" />
   </div>
 );
 
 const CardBackVisual: React.FC<{ card?: TarotCard; compact?: boolean }> = ({ card, compact = false }) => (
   <div className="tarot-card-side tarot-card-back" aria-hidden="true">
-    <img src={tarotBackImage} alt="Рубашка карты" loading={compact ? 'lazy' : 'eager'} decoding="async" draggable={false} />
+    <img src={tarotBackImage} alt="Рубашка карты" loading={compact ? 'lazy' : 'eager'} decoding="async" draggable={false} onError={applyImageFallback} />
     <span className="tarot-card-back-vignette" />
     {card && !compact && <span className="tarot-card-back-name">{card.name}</span>}
   </div>
@@ -296,7 +297,7 @@ const DailyCardPanel: React.FC = () => {
     <aside className="daily-card-panel" style={{ '--card-accent': daily.card.color } as React.CSSProperties}>
       <div className="daily-card-kicker"><CalendarDays size={15} /> Карта дня</div>
       <div className="daily-card-frame">
-        <img src={daily.card.tarot} alt={daily.card.name} loading="lazy" decoding="async" draggable={false} />
+        <img src={daily.card.tarot} alt={daily.card.name} loading="lazy" decoding="async" draggable={false} onError={applyImageFallback} />
       </div>
       <h3>{daily.card.name}</h3>
       <p className="daily-card-date">{daily.dateKey}</p>
@@ -308,7 +309,7 @@ const DailyCardPanel: React.FC = () => {
 const SpreadCardView: React.FC<{ result: SpreadResult }> = ({ result }) => (
   <article className={`spread-card ${result.orientation === 'reversed' ? 'is-reversed' : ''}`} style={{ '--card-accent': result.card.color } as React.CSSProperties}>
     <div className="spread-card-image">
-      <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
+      <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} onError={applyImageFallback} />
     </div>
     <div className="spread-card-body">
       <span className="spread-position">{result.position}</span>
@@ -329,7 +330,7 @@ const VisitorReading: React.FC<{ result: VisitorResult | null }> = ({ result }) 
       style={{ '--card-accent': result.card.color } as React.CSSProperties}
     >
       <div className="visitor-result-image">
-        <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
+        <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} onError={applyImageFallback} />
       </div>
       <div>
         <span className="spread-position">Вопрос · {result.focus}</span>
@@ -351,7 +352,7 @@ const SceneReading: React.FC<{ result: SceneResult | null }> = ({ result }) => {
       style={{ '--card-accent': result.card.color } as React.CSSProperties}
     >
       <div className="visitor-result-image">
-        <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
+        <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} onError={applyImageFallback} />
       </div>
       <div>
         <span className="spread-position">Мини-игра · {result.outcome}</span>
@@ -476,6 +477,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
   const [loreMode, setLoreMode] = useState(false);
   const [selectedLore, setSelectedLore] = useState<TarotCard | null>(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const allRevealed = tarotCards.every((card) => revealed[card.id]);
 
   useEffect(() => {
     onExpandedChange?.(selectedLore);
@@ -483,6 +485,14 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
 
   const toggleCard = (card: TarotCard) => {
     setRevealed((previous) => ({ ...previous, [card.id]: !previous[card.id] }));
+  };
+
+  const toggleAllCards = () => {
+    if (allRevealed) {
+      setRevealed({});
+      return;
+    }
+    setRevealed(Object.fromEntries(tarotCards.map((card) => [card.id, true])) as Record<string, boolean>);
   };
 
   const updateActiveIndex = useCallback(() => {
@@ -513,15 +523,26 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
             <span className="tarot-toolbar-kicker">Галерея из пяти карт</span>
             <p>На десктопе карты раскрываются веером: ведите мышью по карте и крутите колесо. На телефоне листайте и свайпайте карту.</p>
           </div>
-          <button
-            type="button"
-            className={`tarot-mode-toggle tarot-no-glow ${loreMode ? 'is-active' : ''}`}
-            onClick={() => setLoreMode((value) => !value)}
-            aria-pressed={loreMode}
-          >
-            {loreMode ? <BookOpen size={16} /> : <RotateCcw size={16} />}
-            {loreMode ? 'Режим лора' : 'Режим переворота'}
-          </button>
+          <div className="tarot-toolbar-actions">
+            <button
+              type="button"
+              className="tarot-mode-toggle tarot-no-glow"
+              onClick={toggleAllCards}
+              aria-pressed={allRevealed}
+            >
+              <Sparkles size={16} />
+              {allRevealed ? 'Закрыть все' : 'Раскрыть все'}
+            </button>
+            <button
+              type="button"
+              className={`tarot-mode-toggle tarot-no-glow ${loreMode ? 'is-active' : ''}`}
+              onClick={() => setLoreMode((value) => !value)}
+              aria-pressed={loreMode}
+            >
+              {loreMode ? <BookOpen size={16} /> : <RotateCcw size={16} />}
+              {loreMode ? 'Режим лора' : 'Режим переворота'}
+            </button>
+          </div>
         </div>
 
         <div ref={galleryRef} className="tarot-gallery" aria-label="Галерея карт Таро" onScroll={updateActiveIndex}>

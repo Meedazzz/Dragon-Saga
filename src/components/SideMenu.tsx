@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Youtube, Send, MessageCircle, Users, Search } from 'lucide-react';
+import { Menu, X, Home, User, Globe, ChevronDown, ChevronRight, Youtube, Send, MessageCircle, Users, Search, Dices } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ColorTheme } from '@/types/theme';
 import { characters } from '@/data/characters';
+import { routeHref } from '@/lib/routeHref';
 import { SmartTooltip } from './SmartTooltip';
 
 interface SideMenuProps {
@@ -188,7 +189,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
               <motion.a
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                href="/"
+                href={routeHref('/')}
                 onClick={(e) => handleLinkClick(e, '/')}
                 className="w-full flex items-center gap-3 px-4 py-3 mb-1 rounded-lg text-left transition-all duration-300 cursor-pointer block"
                 style={{
@@ -206,6 +207,29 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                   <Home size={16} />
                   <span className="text-sm tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
                     Главная
+                  </span>
+                </div>
+              </motion.a>
+
+              <motion.a
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.04 }}
+                href={routeHref('/activities')}
+                onClick={(e) => handleLinkClick(e, '/activities')}
+                className="w-full flex items-center gap-3 px-4 py-3 mb-1 rounded-lg text-left transition-all duration-300 cursor-pointer block"
+                style={{
+                  background: isPathActive('/activities') ? `${theme.menuAccent}20` : 'transparent',
+                  border: `1px solid ${isPathActive('/activities') ? theme.menuAccent : 'transparent'}`,
+                  color: isPathActive('/activities') ? theme.menuAccent : theme.menuText,
+                  textDecoration: 'none',
+                }}
+                whileHover={{ x: 4, background: `${theme.menuAccent}15` }}
+              >
+                <div className="flex items-center gap-3 w-full">
+                  <Dices size={16} />
+                  <span className="text-sm tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
+                    Активности
                   </span>
                 </div>
               </motion.a>
@@ -292,7 +316,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                     {charItem.children.map((subPage) => (
                                       <a
                                         key={subPage.path}
-                                        href={subPage.path}
+                                        href={routeHref(subPage.path)}
                                         onClick={(e) => handleLinkClick(e, subPage.path)}
                                         className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left transition-all duration-200 cursor-pointer block"
                                         style={{
@@ -334,7 +358,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                               const isActive = isPathActive(overviewPath);
                               return (
                               <a
-                                href={overviewPath}
+                                href={routeHref(overviewPath)}
                                 onClick={(e) => handleLinkClick(e, overviewPath)}
                                 className="w-full flex items-center gap-2 px-3 py-2 rounded text-left transition-all duration-200 cursor-pointer block"
                                 style={{
@@ -394,7 +418,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                                         {subGroup.items.map((item) => (
                                           <a
                                             key={item.path}
-                                            href={item.path}
+                                            href={routeHref(item.path)}
                                             onClick={(e) => handleLinkClick(e, item.path)}
                                             className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-left transition-all duration-200 cursor-pointer block"
                                             style={{
@@ -432,7 +456,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                           group.children.map((item) => (
                             <a
                               key={item.path}
-                              href={item.path}
+                              href={routeHref(item.path)}
                               onClick={(e) => handleLinkClick(e, item.path)}
                               className="w-full flex items-center gap-2 px-4 py-2 ml-2 rounded text-left transition-all duration-200 cursor-pointer block"
                               style={{

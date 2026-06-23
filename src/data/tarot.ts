@@ -21,7 +21,9 @@ export interface TarotCard extends CharacterConfig {
   narrative: TarotNarrative;
 }
 
-export const tarotBackImage = `${BASE}shirt.png`;
+// Единая рубашка для всей колоды. Используем оптимизированный файл,
+// чтобы карты быстрее раскрывались на телефоне и не мигали пустой стороной.
+export const tarotBackImage = `${BASE}optimized/shirt.webp`;
 
 // Текст рубашек сохранён из прежней галереи карт.
 export const tarotBackLore: Record<string, string[]> = {

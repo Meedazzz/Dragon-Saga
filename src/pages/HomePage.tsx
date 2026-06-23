@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Youtube, Send, MessageCircle, Users } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { BookOpen, Compass, Dices, Map, MessageCircle, Play, Send, Sparkles, Users, Youtube } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import CharacterCardDeck from '@/components/CharacterCardDeck';
+import { characters } from '@/data/characters';
+import { tarotCards } from '@/data/tarot';
+import { applyImageFallback } from '@/lib/imageFallback';
 import { homeTheme } from '@/types/theme';
 import type { CharacterConfig } from '@/data/characters';
 
@@ -14,105 +17,220 @@ const socialLinks = [
   { label: 'Discord', href: 'https://discord.gg/vyhKQTKhsw', icon: MessageCircle },
 ];
 
+const videos = [
+  { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
+  { part: 'Часть 2', title: 'Тени Бергхейма', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
+  { part: 'Часть 3', title: 'Ледяная крепость', url: 'https://www.youtube.com/embed/VIDEO_ID_3' },
+];
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const BASE = import.meta.env.BASE_URL;
   const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
   const [expandedCard, setExpandedCard] = useState<CharacterConfig | null>(null);
-  const videos = [
-    { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
-    { part: 'Часть 2', title: 'Тени Бергхейма', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
-    { part: 'Часть 3', title: 'Ледяная крепость', url: 'https://www.youtube.com/embed/VIDEO_ID_3' },
-  ];
 
-  const BASE = import.meta.env.BASE_URL;
+  const heroCards = useMemo(() => tarotCards.slice(0, 3), []);
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <Layout theme={homeTheme} particleCount={22} overlayMode={!!expandedCard}>
-      <div className="max-w-[1120px] mx-auto px-4 md:px-8 pb-14 pt-7 md:pt-10">
-        {/* Header */}
-        <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="hero-forge text-center pb-4 md:pb-6 mb-6 md:mb-8">
-          <div className="text-3xl md:text-5xl font-black tracking-[9px] md:tracking-[14px] uppercase mb-2" style={{ fontFamily: "'Cinzel Decorative', serif", color: homeTheme.silverBright, textShadow: `0 0 24px ${homeTheme.primaryGlow}28, 0 2px 10px rgba(0,0,0,0.9)` }}>
-            DND
+    <Layout theme={homeTheme} particleCount={26} overlayMode={!!expandedCard}>
+      <main className="dragon-home">
+        <motion.section
+          className="saga-hero"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+        >
+          <div className="saga-hero__copy">
+            <span className="saga-eyebrow">ᚠ Blood Ice · Dragon Saga · D&D Chronicles</span>
+            <h1>Драконья Сага</h1>
+            <p className="saga-lead">
+              Авторская НРИ на базе D&D: тёмное фэнтези о родовой крови, Чёрном льде, северных дорогах и героях, чьи судьбы уже легли на карты Таро. Это вики мира, оракул для партии и вход в полный лор кампании.
+            </p>
+            <div className="saga-actions">
+              <button type="button" className="saga-button saga-button--primary tarot-no-glow" onClick={() => scrollTo('tarot-section')}>
+                <Sparkles size={17} /> Вытянуть карту
+              </button>
+              <button type="button" className="saga-button tarot-no-glow" onClick={() => scrollTo('characters-section')}>
+                <Users size={17} /> Герои
+              </button>
+              <button type="button" className="saga-button tarot-no-glow" onClick={() => navigate('/activities')}>
+                <Dices size={17} /> Активности
+              </button>
+              <button type="button" className="saga-button tarot-no-glow" onClick={() => navigate('/lor')}>
+                <BookOpen size={17} /> Полный лор
+              </button>
+            </div>
+            <div className="saga-metrics" aria-label="Разделы сайта">
+              <span><b>{characters.length}</b> героев</span>
+              <span><b>{tarotCards.length}</b> арканов</span>
+              <span><b>∞</b> сцен</span>
+            </div>
           </div>
-          <div className="rune-divider my-3" style={{ '--divider-color': homeTheme.primaryGlow, '--divider-text': homeTheme.accentGlow } as React.CSSProperties}>
-            <span>BLOOD ICE</span>
-          </div>
-          <h1 className="text-[22px] md:text-[34px] font-bold tracking-[3px] leading-tight my-2" style={{ fontFamily: "'Cinzel Decorative', serif", color: homeTheme.parchment }}>
-            Драконья Сага
-          </h1>
-          <p className="text-[15px] md:text-[17px] max-w-[720px] mx-auto leading-relaxed mt-3 prose-readable" style={{ color: homeTheme.parchmentDim }}>
-            Авторская НРИ на базе D&D: тёмное фэнтези о родовой крови, Чёрном льде, северных дорогах и героях, чьи судьбы уже легли на карты Таро. Это вики мира и оракул для партии — открывайте карты, читайте летопись, ищите крючки для сцен.
-          </p>
-          <div className="hero-cta-row">
-            <button type="button" className="hero-cta-button primary tarot-no-glow" onClick={() => document.getElementById('tarot-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-              Вытянуть карту
-            </button>
-            <button type="button" className="hero-cta-button tarot-no-glow" onClick={() => navigate('/lor')}>
-              Исследовать мир
-            </button>
-            <button type="button" className="hero-cta-button tarot-no-glow" onClick={() => navigate('/letopis')}>
-              Открыть летопись
-            </button>
-          </div>
-        </motion.header>
 
-        {/* Tarot */}
-        <motion.section id="tarot-section" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mb-6 md:mb-8 scroll-mt-4">
-          <div className="section-header !mt-2 !mb-1">
-            <span className="section-icon"></span>
-            <h2 className="section-title">Карты Таро</h2>
-            <div className="section-line" />
+          <div className="saga-hero__visual" aria-hidden="true">
+            <div className="saga-orbit saga-orbit--one" />
+            <div className="saga-orbit saga-orbit--two" />
+            <div className="saga-card-stack">
+              {heroCards.map((card, index) => (
+                <img key={card.id} src={card.tarot} alt="" style={{ '--stack-index': index } as React.CSSProperties} draggable={false} onError={applyImageFallback} />
+              ))}
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.nav
+          className="home-quick-nav"
+          aria-label="Быстрые разделы"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+        >
+          <button type="button" onClick={() => scrollTo('characters-section')}><Users size={15} /> Персонажи</button>
+          <button type="button" onClick={() => scrollTo('tarot-section')}><Sparkles size={15} /> Таро</button>
+          <button type="button" onClick={() => navigate('/activities')}><Dices size={15} /> Активности</button>
+          <button type="button" onClick={() => navigate('/letopis')}><Compass size={15} /> Летопись</button>
+          <button type="button" onClick={() => navigate('/map/sever')}><Map size={15} /> Карта</button>
+        </motion.nav>
+
+        <motion.section
+          id="characters-section"
+          className="saga-section scroll-mt-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+        >
+          <div className="saga-section-head">
+            <div>
+              <span className="saga-eyebrow">ᛟ Персонажи</span>
+              <h2>Герои, их страницы и быстрый вход в лор</h2>
+            </div>
+            <p>На карточках собраны лор, личные умения, подклассы и связанные страницы. Верхняя навигация на страницах персонажей теперь всегда ведёт к полному лору.</p>
+          </div>
+          <div className="saga-character-grid">
+            {characters.map((character, index) => (
+              <motion.article
+                key={character.id}
+                className="saga-character-card"
+                style={{ '--char-color': character.color } as React.CSSProperties}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.24 + index * 0.04 }}
+              >
+                <button type="button" className="saga-character-lore tarot-no-glow" onClick={() => navigate(character.lorePath)}>
+                  ↗ Полный лор
+                </button>
+                <img src={character.tarot} alt={character.name} loading="lazy" decoding="async" draggable={false} onError={applyImageFallback} />
+                <div className="saga-character-card__body">
+                  <h3>{character.name}</h3>
+                  <p>{character.title}</p>
+                  <div className="saga-character-actions">
+                    {character.pages.slice(0, 2).map((page) => (
+                      <button key={page.path} type="button" onClick={() => navigate(page.path)} className="tarot-no-glow">
+                        {page.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
+          id="tarot-section"
+          className="saga-section scroll-mt-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.24 }}
+        >
+          <div className="saga-section-head">
+            <div>
+              <span className="saga-eyebrow">ᚱ Исправленная колода</span>
+              <h2>Карты Таро: рубашка, лицевая сторона и расклады</h2>
+            </div>
+            <p>Колода использует одну общую рубашку и отдельные лицевые изображения каждого героя. Есть раскрытие всех карт, режим лора, карта дня и мини-игры для НРИ.</p>
           </div>
           <CharacterCardDeck onExpandedChange={setExpandedCard} />
         </motion.section>
 
-        {/* About */}
-        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }} className="mb-8 md:mb-10">
-          <div className="section-header">
-            <span className="section-icon"></span>
-            <h2 className="section-title">О игре</h2>
-            <div className="section-line" />
+        <motion.section
+          id="activities-preview"
+          className="saga-section saga-activity-preview"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="saga-section-head">
+            <div>
+              <span className="saga-eyebrow">ᛞ Новая вкладка</span>
+              <h2>Активности для партии и ведущего</h2>
+            </div>
+            <p>Отдельный зал взаимодействий: оракул, связи персонажей, маршруты, печати и быстрые крючки для сцен.</p>
           </div>
-          <div className="p-5 md:p-6 rounded-[14px] grid gap-4 md:grid-cols-[1.25fr_1fr] prose-readable" style={{ background: 'rgba(20,12,18,0.48)', border: `1px solid ${homeTheme.primary}30`, boxShadow: `0 10px 40px rgba(0,0,0,0.32)` }}>
-            <p>
-              <strong style={{ color: homeTheme.primaryBright }}>Драконья Сага</strong> — приключение в авторском мире, где личные истории героев переплетаются с древними тайнами и силами за пределами понимания смертных.
-            </p>
-            <p>
-              Наша компания <strong style={{ color: homeTheme.accentGlow }}>[Драконья Сага]</strong> объединяет любителей настольных ролевых игр, вместе создающих общую легенду.
-            </p>
+          <div className="saga-activity-cards">
+            <article><Dices /><h3>Оракул сцены</h3><p>Карта + d20 дают завязку и тон эпизода.</p></article>
+            <article><Users /><h3>Нити героев</h3><p>Быстро показывает связанные страницы и лор.</p></article>
+            <article><Compass /><h3>Маршрут</h3><p>Черновик путешествия по северным точкам мира.</p></article>
+          </div>
+          <div className="saga-actions saga-actions--center">
+            <button type="button" className="saga-button saga-button--primary tarot-no-glow" onClick={() => navigate('/activities')}>
+              Открыть активности
+            </button>
           </div>
         </motion.section>
 
-        {/* Videos */}
-        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34 }} className="mb-12">
-          <div className="section-header">
-            <span className="section-icon"></span>
-            <h2 className="section-title">Видео</h2>
-            <div className="section-line" />
+        <motion.section
+          className="saga-section"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.36 }}
+        >
+          <div className="saga-section-head">
+            <div>
+              <span className="saga-eyebrow">ᚲ О игре</span>
+              <h2>Общий архив кампании</h2>
+            </div>
+            <p>Сайт остаётся вики мира, но теперь главная страница не выглядит как набор блоков: она ведёт игрока от героев к картам, лору, летописи и сценам.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="saga-about-grid prose-readable">
+            <p><strong>Драконья Сага</strong> — приключение в авторском мире, где личные истории героев переплетаются с древними тайнами и силами за пределами понимания смертных.</p>
+            <p>Наша компания <strong>[Драконья Сага]</strong> объединяет любителей настольных ролевых игр, вместе создающих общую легенду.</p>
+          </div>
+        </motion.section>
+
+        <motion.section
+          className="saga-section"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.42 }}
+        >
+          <div className="saga-section-head">
+            <div>
+              <span className="saga-eyebrow">ᛗ Видео</span>
+              <h2>Хроники партии</h2>
+            </div>
+            <p>Место для выпусков, записей сессий и внешних площадок.</p>
+          </div>
+          <div className="saga-video-grid">
             {videos.map((video, idx) => (
-              <motion.div
+              <motion.button
                 key={video.part}
+                type="button"
+                className="saga-video-card tarot-no-glow"
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.42 + idx * 0.06 }}
-                className="rounded-[14px] overflow-hidden cursor-pointer tarot-no-glow"
-                style={{ background: 'rgba(18,12,18,0.62)', border: `1px solid ${homeTheme.primary}2a` }}
-                whileHover={{ y: -3, borderColor: `${homeTheme.primaryGlow}66` }}
+                transition={{ delay: 0.48 + idx * 0.05 }}
                 onClick={() => setSelectedVideo(video)}
               >
-                <div className="w-full h-40 flex items-center justify-center relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(28,14,22,0.6), rgba(10,8,14,0.5))' }}>
-                  <img src={`${BASE}videos/thumbnail.jpg`} alt={video.title} className="absolute inset-0 w-full h-full object-cover opacity-62" loading="lazy" decoding="async" />
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg z-10" style={{ background: 'rgba(0,0,0,0.55)', border: `2px solid ${homeTheme.primaryGlow}`, color: homeTheme.primaryGlow }}>
-                    
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="text-[11px] tracking-[2px] mb-1" style={{ fontFamily: "'Cinzel', serif", color: homeTheme.primaryGlow }}>{video.part}</div>
-                  <div className="text-[14px] leading-relaxed prose-readable" style={{ color: homeTheme.silver }}>{video.title}</div>
-                </div>
-              </motion.div>
+                <img src={`${BASE}videos/thumbnail.jpg`} alt={video.title} loading="lazy" decoding="async" />
+                <span><Play size={18} /></span>
+                <b>{video.part}</b>
+                <strong>{video.title}</strong>
+              </motion.button>
             ))}
           </div>
         </motion.section>
@@ -120,7 +238,7 @@ const HomePage: React.FC = () => {
         <AnimatePresence>
           {selectedVideo && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/82 backdrop-blur-sm z-[800] flex items-center justify-center p-4" onClick={() => setSelectedVideo(null)}>
-              <motion.div initial={{ scale: 0.92, y: 18 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92, y: 18 }} className="relative w-full max-w-4xl aspect-video bg-black rounded-[14px] overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <motion.div initial={{ scale: 0.92, y: 18 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92, y: 18 }} className="relative w-full max-w-4xl aspect-video bg-black rounded-[18px] overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 <iframe src={selectedVideo.url} title={selectedVideo.title} className="w-full h-full" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
                 <button className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 text-white text-xl flex items-center justify-center hover:bg-black/80 transition-colors tarot-no-glow" onClick={() => setSelectedVideo(null)}>×</button>
               </motion.div>
@@ -128,24 +246,17 @@ const HomePage: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Social Links */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }} className="flex justify-center gap-2.5 mt-10 pt-8 flex-wrap" style={{ borderTop: `1px solid ${homeTheme.primary}22` }}>
-          {socialLinks.map(({ label, href, icon: Icon }) => (
-            <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-              className="px-4 py-2.5 rounded-[10px] text-[11px] tracking-[1.8px] transition-all duration-200 inline-flex items-center gap-2 tarot-no-glow"
-              style={{ fontFamily: "'Cinzel', serif", background: 'rgba(22,14,20,0.6)', border: `1px solid ${homeTheme.primary}30`, color: homeTheme.parchmentDim, textDecoration: 'none' }}
-            >
-              <Icon size={15} /> {label}
-            </a>
-          ))}
-        </motion.div>
-
-        <div className="text-center mt-12 pt-6" style={{ borderTop: `1px solid ${homeTheme.primary}1c` }}>
-          <div className="text-[16px] tracking-[10px] opacity-70" style={{ fontFamily: "'Cinzel Decorative', serif", color: homeTheme.primaryGlow }}>
-            BLOOD ICE
+        <footer className="saga-footer">
+          <div className="saga-socials">
+            {socialLinks.map(({ label, href, icon: Icon }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="tarot-no-glow">
+                <Icon size={15} /> {label}
+              </a>
+            ))}
           </div>
-        </div>
-      </div>
+          <div className="saga-footer-mark">BLOOD ICE</div>
+        </footer>
+      </main>
     </Layout>
   );
 };
