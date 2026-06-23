@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Youtube, Send, MessageCircle, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import CharacterCardDeck from '@/components/CharacterCardDeck';
 import { homeTheme } from '@/types/theme';
@@ -15,7 +14,6 @@ const socialLinks = [
 ];
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
   const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
   const [expandedCard, setExpandedCard] = useState<CharacterConfig | null>(null);
   const videos = [
@@ -30,7 +28,7 @@ const HomePage: React.FC = () => {
     <Layout theme={homeTheme} particleCount={22} overlayMode={!!expandedCard}>
       <div className="max-w-[1120px] mx-auto px-4 md:px-8 pb-14 pt-7 md:pt-10">
         {/* Header */}
-        <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="hero-forge text-center pb-4 md:pb-6 mb-6 md:mb-8">
+        <motion.header initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="text-center pb-4 md:pb-6 mb-3 md:mb-5">
           <div className="text-3xl md:text-5xl font-black tracking-[9px] md:tracking-[14px] uppercase mb-2" style={{ fontFamily: "'Cinzel Decorative', serif", color: homeTheme.silverBright, textShadow: `0 0 24px ${homeTheme.primaryGlow}28, 0 2px 10px rgba(0,0,0,0.9)` }}>
             DND
           </div>
@@ -40,24 +38,13 @@ const HomePage: React.FC = () => {
           <h1 className="text-[22px] md:text-[34px] font-bold tracking-[3px] leading-tight my-2" style={{ fontFamily: "'Cinzel Decorative', serif", color: homeTheme.parchment }}>
             Драконья Сага
           </h1>
-          <p className="text-[15px] md:text-[17px] max-w-[720px] mx-auto leading-relaxed mt-3 prose-readable" style={{ color: homeTheme.parchmentDim }}>
-            Авторская НРИ на базе D&D: тёмное фэнтези о родовой крови, Чёрном льде, северных дорогах и героях, чьи судьбы уже легли на карты Таро. Это вики мира и оракул для партии — открывайте карты, читайте летопись, ищите крючки для сцен.
+          <p className="text-[15px] md:text-[17px] max-w-[660px] mx-auto leading-relaxed mt-3 prose-readable" style={{ color: homeTheme.parchmentDim }}>
+            Авторская НРИ на базе D&D: древние тайны, дворцовые интриги и герои, чьи судьбы уже легли на карты Таро.
           </p>
-          <div className="hero-cta-row">
-            <button type="button" className="hero-cta-button primary tarot-no-glow" onClick={() => document.getElementById('tarot-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-              Вытянуть карту
-            </button>
-            <button type="button" className="hero-cta-button tarot-no-glow" onClick={() => navigate('/lor')}>
-              Исследовать мир
-            </button>
-            <button type="button" className="hero-cta-button tarot-no-glow" onClick={() => navigate('/letopis')}>
-              Открыть летопись
-            </button>
-          </div>
         </motion.header>
 
         {/* Tarot */}
-        <motion.section id="tarot-section" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mb-6 md:mb-8 scroll-mt-4">
+        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mb-6 md:mb-8">
           <div className="section-header !mt-2 !mb-1">
             <span className="section-icon"></span>
             <h2 className="section-title">Карты Таро</h2>

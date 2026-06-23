@@ -553,13 +553,13 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
             <div className="relative w-full h-full flex flex-col items-center justify-center">
               <ConstellationCanvas characterId={characterId} isCrumbling={isCrumbling} />
               <motion.div
-                className="absolute top-7 left-1/2 z-20 opacity-80"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-                style={{ marginLeft: -50, filter: `drop-shadow(0 0 14px ${activeConstellation.color}66)` }}
-                aria-hidden="true"
+                className="absolute top-[18vh] z-20"
+                initial={{ scale: 0.82, opacity: 0 }}
+                animate={{ scale: isCrumbling ? 1.12 : 1, opacity: isCrumbling ? 0 : 1, rotate: 360 }}
+                transition={{ rotate: { duration: 4, repeat: Infinity, ease: 'linear' }, opacity: { duration: 0.35 }, scale: { duration: 0.35 } }}
+                style={{ filter: `drop-shadow(0 0 14px ${theme.primaryGlow}80)` }}
               >
-                <OuroborosDragon color={activeConstellation.color} glowColor={theme.parchment ?? '#fff'} />
+                <OuroborosDragon color={theme.primaryGlow} glowColor={theme.parchment ?? '#fff'} />
               </motion.div>
               
               <motion.div

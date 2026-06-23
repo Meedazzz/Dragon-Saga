@@ -1,16 +1,23 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, CalendarDays, Dices, Eye, RotateCcw, ScrollText, Shuffle, Sparkles } from 'lucide-react';
-import { tarotBackImage, tarotCards, type TarotCard, type TarotPosition } from '@/data/tarot';
+import { BookOpen, CalendarDays, Eye, RotateCcw, Shuffle, Sparkles } from 'lucide-react';
+import { tarotBackImage, tarotCards, type TarotCard } from '@/data/tarot';
 import type { CharacterConfig } from '@/data/characters';
 import { homeTheme } from '@/types/theme';
 
 type Orientation = 'upright' | 'reversed';
+type SpreadPosition = 'Прошлое' | 'Настоящее' | 'Будущее';
+
+type Rotation = {
+  x: number;
+  y: number;
+  z: number;
+};
 
 interface SpreadResult {
   id: string;
-  position: TarotPosition;
+  position: SpreadPosition;
   card: TarotCard;
   orientation: Orientation;
 }
@@ -19,25 +26,25 @@ interface VisitorResult {
   card: TarotCard;
   orientation: Orientation;
   question: string;
-  focus: string;
 }
 
-interface SceneResult {
-  id: string;
-  card: TarotCard;
-  orientation: Orientation;
-  die: number;
-  outcome: 'Дар' | 'Цена' | 'Осложнение';
-}
-
-const spreadPositions: TarotPosition[] = ['Прошлое', 'Настоящее', 'Будущее'];
+const spreadPositions: SpreadPosition[] = ['Прошлое', 'Настоящее', 'Будущее'];
 
 const orientationLabel: Record<Orientation, string> = {
   upright: 'Прямое положение',
   reversed: 'Перевёрнутое положение',
 };
 
+const fanLayout = [
+  { x: '-300px', y: '46px', r: '-20deg', z: 1 },
+  { x: '-150px', y: '12px', r: '-9deg', z: 2 },
+  { x: '0px', y: '0px', r: '0deg', z: 5 },
+  { x: '150px', y: '12px', r: '9deg', z: 2 },
+  { x: '300px', y: '46px', r: '20deg', z: 1 },
+];
+
 const safeQuestion = (value: string) => value.trim().replace(/\s+/g, ' ').slice(0, 220);
+
 const randomOrientation = (): Orientation => (Math.random() < 0.5 ? 'upright' : 'reversed');
 
 const drawUniqueCards = (count: number) => {
@@ -63,64 +70,38 @@ const getTodayKey = () => {
 
 const getDailyCard = () => {
   const key = getTodayKey();
-  const index = hashDate(key) % tarotCards.length;
-  return { card: tarotCards[index], dateKey: key };
+  const hash = hashDate(key);
+  const index = hash % tarotCards.length;
+  const orientation: Orientation = hash % 2 === 0 ? 'upright' : 'reversed';
+  return { card: tarotCards[index], dateKey: key, orientation };
 };
 
-const getQuestionFocus = (question: string) => {
-  const prepared = question.toLowerCase();
-  if (/(бой|битв|враг|уби|сраж|дуэл|опасн|угроз)/i.test(prepared)) return 'конфликт';
-  if (/(люб|отнош|довер|друг|семь|союз|преда)/i.test(prepared)) return 'связь';
-  if (/(путь|куда|дорог|иск|найт|выбор|решит)/i.test(prepared)) return 'путь';
-  if (/(тайн|знан|маг|лед|исслед|правд|лож)/i.test(prepared)) return 'тайна';
-  if (/(леч|бол|спас|жив|смерт|исцел)/i.test(prepared)) return 'рана';
-  return 'знак';
-};
+const loreLines = (card: TarotCard) => (card.backLore.length > 0 ? card.backLore : [card.desc]);
 
-const focusAdvice: Record<string, string> = {
-  конфликт: 'Сцена просит назвать ставку конфликта: кого защищают герои и что случится, если они победят слишком дорогой ценой.',
-  связь: 'Сцена строится вокруг доверия: кто говорит правду, кто молчит и чьё имя нельзя произносить без последствий.',
-  путь: 'Сцена требует выбора маршрута: короткая дорога ведёт через цену, длинная — через откровение.',
-  тайна: 'Сцена открывает скрытый слой мира: ответ есть, но его хранит тот, кому выгодна метель.',
-  рана: 'Сцена начинается с раны — телесной, родовой или духовной. Лечение потребует равноценного обмена.',
-  знак: 'Сцена отвечает символом, а не инструкцией: ведущий показывает знак, игрок решает, как его прочитать.',
-};
+const buildInterpretation = (card: TarotCard, orientation: Orientation, context: string) => {
+  const lines = loreLines(card);
+  const core = [card.title, card.desc].filter(Boolean).join(' — ');
+  const firstLore = lines[0];
+  const secondLore = lines[1] ?? lines[0];
+  const finalLore = lines[2] ?? lines[0];
 
-const buildSpreadInterpretation = (card: TarotCard, orientation: Orientation, position: TarotPosition) => {
-  const base = card.narrative.positions[position];
-  const current = orientation === 'upright'
-    ? `Дар карты: ${card.narrative.boon}.`
-    : `Тень карты: ${card.narrative.reversed}.`;
+  if (orientation === 'upright') {
+    return `${context}. В сцене НРИ карта ставит в центр мотив: ${core}. Опора толкования — «${firstLore}». Сильный ход для героя или отряда: действовать в согласии с этой темой, не забывая строку рубашки: ${finalLore}`;
+  }
 
-  return `${base}. ${current} Крючок для сцены: ${card.narrative.questHook}.`;
+  return `${context}. Перевёрнутая карта читает тот же мотив как осложнение, цену или внутренний спор: ${core}. Ведущий может опереться на строку рубашки: «${secondLore}». Ответ не отменяет путь, но требует осторожности, паузы и проверки намерений.`;
 };
 
 const buildQuestionInterpretation = (result: VisitorResult) => {
-  const { card, orientation, question, focus } = result;
-  const omen = orientation === 'upright' ? card.narrative.omen : card.narrative.reversed;
-  const action = orientation === 'upright' ? card.narrative.boon : card.narrative.challenge;
+  const { card, orientation, question } = result;
+  const lines = loreLines(card);
+  const anchor = orientation === 'upright' ? lines[0] : lines[1] ?? lines[0];
 
-  return `На вопрос «${question}» отвечает ${card.narrative.archetype}: ${omen}. ${card.narrative.questionLens}. ${focusAdvice[focus]} Практический ход: ${action}.`;
-};
+  if (orientation === 'upright') {
+    return `На вопрос «${question}» выпадает ${card.name}. Это не готовое пророчество, а завязка сцены: ${card.desc}. Смысл ответа держится на лоре рубашки — «${anchor}». В НРИ это знак действовать через качество карты: ${card.title}.`;
+  }
 
-const buildDailyInterpretation = (card: TarotCard) => `Карта дня — ${card.narrative.archetype}: ${card.narrative.daily}. Если день станет сценой НРИ, используй крючок: ${card.narrative.questHook}.`;
-
-const getSceneOutcome = (die: number): SceneResult['outcome'] => {
-  if (die >= 15) return 'Дар';
-  if (die >= 8) return 'Цена';
-  return 'Осложнение';
-};
-
-const buildSceneText = (scene: SceneResult) => {
-  const { card, orientation, die, outcome } = scene;
-  const tone = orientation === 'upright' ? card.narrative.boon : card.narrative.reversed;
-  const resultLine = outcome === 'Дар'
-    ? 'герои получают преимущество, но должны описать, почему судьба на миг признала их достойными'
-    : outcome === 'Цена'
-      ? 'успех возможен только через жертву: ресурс, обещание, тайну или репутацию'
-      : 'ведущий вводит осложнение: появляется свидетель, враг, дурной знак или долг из прошлого';
-
-  return `d20 = ${die}. ${card.narrative.archetype} задаёт сцену: ${card.narrative.questHook}. Тон сцены: ${tone}. Итог «${outcome}»: ${resultLine}. Игрок отвечает одним действием персонажа, ведущий завершает сцену последствием.`;
+  return `На вопрос «${question}» выпадает перевёрнутая карта ${card.name}. Та же тема — ${card.desc} — становится испытанием или скрытой ценой. Лор рубашки подсказывает напряжение сцены: «${anchor}». В НРИ такой ответ просит не спешить и выяснить, что именно мешает герою.`;
 };
 
 const CardFace: React.FC<{ card: TarotCard }> = ({ card }) => (
@@ -145,100 +126,65 @@ const GalleryCard: React.FC<{
   loreMode: boolean;
   onFlip: (card: TarotCard) => void;
   onLore: (card: TarotCard) => void;
-}> = ({ card, index, revealed, loreMode, onFlip, onLore }) => {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-  const swipedRef = useRef(false);
-  const wheelLockRef = useRef(0);
+  onInspect: (card: TarotCard) => void;
+}> = ({ card, index, revealed, loreMode, onFlip, onLore, onInspect }) => {
+  const fan = fanLayout[index] ?? fanLayout[2];
 
-  const handlePointerMove = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (event.pointerType === 'touch') return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const px = (event.clientX - rect.left) / rect.width - 0.5;
-    const py = (event.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: Number((-py * 13).toFixed(2)), y: Number((px * 16).toFixed(2)) });
-  };
-
-  const handlePointerLeave = () => setTilt({ x: 0, y: 0 });
-
-  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (event.pointerType === 'touch') {
-      touchStartRef.current = { x: event.clientX, y: event.clientY };
-      swipedRef.current = false;
-    }
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
-    const start = touchStartRef.current;
-    if (!start || event.pointerType !== 'touch') return;
-    const dx = event.clientX - start.x;
-    const dy = event.clientY - start.y;
-    if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.3) {
-      swipedRef.current = true;
-      if (loreMode) onLore(card);
-      else onFlip(card);
-    }
-    touchStartRef.current = null;
-  };
-
-  const handleWheel = (event: React.WheelEvent<HTMLButtonElement>) => {
-    if (Math.abs(event.deltaY) < 4) return;
-    event.preventDefault();
-    const now = window.performance.now();
-    if (now - wheelLockRef.current < 280) return;
-    wheelLockRef.current = now;
+  const handleSurfaceClick = () => {
     if (loreMode) onLore(card);
     else onFlip(card);
   };
-
-  const handleClick = () => {
-    if (swipedRef.current) {
-      swipedRef.current = false;
-      return;
-    }
-    if (loreMode) onLore(card);
-    else onFlip(card);
-  };
-
-  const fanAngle = (index - 2) * 7;
-  const fanY = Math.abs(index - 2) * 14;
 
   return (
-    <motion.button
-      type="button"
-      className={`tarot-gallery-card tarot-no-glow ${revealed ? 'is-revealed' : ''} ${loreMode ? 'is-lore-mode' : ''}`}
-      onClick={handleClick}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onWheel={handleWheel}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.05 * index }}
-      aria-label={loreMode ? `Открыть лор карты ${card.name}` : revealed ? `Перевернуть карту ${card.name} рубашкой` : `Перевернуть карту ${card.name}`}
+    <article
+      className={`tarot-gallery-card ${revealed ? 'is-revealed' : ''} ${loreMode ? 'is-lore-mode' : ''}`}
       style={{
         '--card-accent': card.color,
-        '--tilt-x': `${tilt.x}deg`,
-        '--tilt-y': `${tilt.y}deg`,
-        '--fan-angle': `${fanAngle}deg`,
-        '--fan-y': `${fanY}px`,
+        '--fan-x': fan.x,
+        '--fan-y': fan.y,
+        '--fan-r': fan.r,
+        '--fan-z': fan.z,
       } as React.CSSProperties}
     >
-      <span className="tarot-card-rotator">
-        <CardBackVisual card={card} />
-        <CardFace card={card} />
-      </span>
-      <span className="tarot-card-caption">
+      <button
+        type="button"
+        className="tarot-gallery-surface tarot-no-glow"
+        onClick={handleSurfaceClick}
+        aria-label={loreMode ? `Открыть лор карты ${card.name}` : revealed ? `Перевернуть карту ${card.name} рубашкой` : `Перевернуть карту ${card.name}`}
+      >
+        <span className="tarot-card-rotator">
+          <CardBackVisual card={card} />
+          <CardFace card={card} />
+        </span>
+      </button>
+      <div className="tarot-card-caption">
         <span>{revealed ? card.name : 'Рубашка'}</span>
-        <small>{loreMode ? 'клик — лор' : 'мышь/колесо/свайп'}</small>
-      </span>
-    </motion.button>
+        <small>{loreMode ? 'клик — лор' : revealed ? 'клик — скрыть' : 'клик — открыть'}</small>
+      </div>
+      <div className="tarot-card-actions">
+        <button type="button" className="tarot-mini-action tarot-no-glow" onClick={() => onInspect(card)}>
+          <Eye size={13} /> 3D
+        </button>
+        <button type="button" className="tarot-mini-action tarot-no-glow" onClick={() => onLore(card)}>
+          <BookOpen size={13} /> Лор
+        </button>
+      </div>
+    </article>
   );
 };
 
 const LoreModal: React.FC<{ card: TarotCard | null; onClose: () => void }> = ({ card, onClose }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!card) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [card]);
+
   if (!card) return null;
 
   const goTo = (path: string) => {
@@ -268,11 +214,9 @@ const LoreModal: React.FC<{ card: TarotCard | null; onClose: () => void }> = ({ 
         <h3>{card.name}</h3>
         <p className="tarot-modal-title">{card.title}</p>
         <div className="tarot-modal-lore-lines">
-          {card.backLore.map((line) => <p key={line}>{line}</p>)}
-        </div>
-        <div className="tarot-modal-oracle-note">
-          <strong>{card.narrative.archetype}</strong> — {card.narrative.omen}.<br />
-          Крючок НРИ: {card.narrative.questHook}.
+          {loreLines(card).map((line) => (
+            <p key={line}>{line}</p>
+          ))}
         </div>
         <div className="tarot-modal-actions">
           <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={() => goTo(card.lorePath)}>
@@ -289,18 +233,136 @@ const LoreModal: React.FC<{ card: TarotCard | null; onClose: () => void }> = ({ 
   );
 };
 
-const DailyCardPanel: React.FC = () => {
-  const daily = useMemo(() => getDailyCard(), []);
+const InspectModal: React.FC<{
+  card: TarotCard | null;
+  onClose: () => void;
+  onOpenLore: (card: TarotCard) => void;
+}> = ({ card, onClose, onOpenLore }) => {
+  const [rotation, setRotation] = useState<Rotation>({ x: 0, y: 180, z: 0 });
+  const dragRef = useRef<{ startX: number; startY: number; origin: Rotation; pointerId: number } | null>(null);
+
+  useEffect(() => {
+    if (!card) return undefined;
+    setRotation({ x: 0, y: 180, z: 0 });
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [card]);
+
+  if (!card) return null;
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    dragRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      origin: rotation,
+      pointerId: event.pointerId,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    setRotation({
+      x: drag.origin.x - dy * 0.38,
+      y: drag.origin.y + dx * 0.46,
+      z: drag.origin.z,
+    });
+  };
+
+  const stopDragging = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (dragRef.current?.pointerId === event.pointerId) {
+      dragRef.current = null;
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+    }
+  };
+
+  const isBackFacing = Math.cos((rotation.y * Math.PI) / 180) > 0;
 
   return (
-    <aside className="daily-card-panel" style={{ '--card-accent': daily.card.color } as React.CSSProperties}>
+    <motion.div
+      className="tarot-modal-backdrop tarot-inspect-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <motion.article
+        className="tarot-inspect-modal"
+        initial={{ opacity: 0, y: 26, scale: 0.94 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 18, scale: 0.96 }}
+        transition={{ type: 'spring', damping: 24, stiffness: 210 }}
+      >
+        <button type="button" className="tarot-modal-close tarot-no-glow" onClick={onClose} aria-label="Закрыть">×</button>
+        <div className="tarot-inspect-stage">
+          <div
+            className="tarot-inspect-card"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={stopDragging}
+            onPointerCancel={stopDragging}
+            onWheel={(event) => {
+              event.preventDefault();
+              setRotation((previous) => ({ ...previous, z: previous.z + event.deltaY * 0.18 }));
+            }}
+            style={{ transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) rotateZ(${rotation.z}deg)` }}
+            role="img"
+            aria-label={`3D-осмотр карты ${card.name}`}
+          >
+            <CardBackVisual card={card} />
+            <CardFace card={card} />
+          </div>
+        </div>
+        <div className="tarot-inspect-info">
+          <div className="tarot-modal-rune">ᚠ ᚱ ᚢ</div>
+          <h3>{card.name}</h3>
+          <p className="tarot-modal-title">{isBackFacing ? 'Рубашка и лор' : card.title}</p>
+          <div className="tarot-inspect-lore">
+            {loreLines(card).map((line) => <p key={line}>{line}</p>)}
+          </div>
+          <div className="tarot-inspect-help">
+            Десктоп: ЛКМ + движение — вращение, колёсико — поворот. Мобильная версия: свайп по карте.
+          </div>
+          <div className="tarot-modal-actions">
+            <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={() => setRotation((previous) => ({ ...previous, y: previous.y + 180 }))}>
+              <RotateCcw size={14} /> Перевернуть
+            </button>
+            <button type="button" className="tarot-link-chip tarot-no-glow" onClick={() => setRotation({ x: 0, y: 180, z: 0 })}>
+              Сброс
+            </button>
+            <button type="button" className="tarot-link-chip tarot-no-glow" onClick={() => onOpenLore(card)}>
+              Лор
+            </button>
+          </div>
+        </div>
+      </motion.article>
+    </motion.div>
+  );
+};
+
+const DailyCardPanel: React.FC = () => {
+  const daily = useMemo(getDailyCard, []);
+  const interpretation = buildInterpretation(daily.card, daily.orientation, 'Карта дня');
+
+  return (
+    <aside className={`daily-card-panel ${daily.orientation === 'reversed' ? 'is-reversed' : ''}`} style={{ '--card-accent': daily.card.color } as React.CSSProperties}>
       <div className="daily-card-kicker"><CalendarDays size={15} /> Карта дня</div>
       <div className="daily-card-frame">
         <img src={daily.card.tarot} alt={daily.card.name} loading="lazy" decoding="async" draggable={false} />
       </div>
       <h3>{daily.card.name}</h3>
-      <p className="daily-card-date">{daily.dateKey}</p>
-      <p>{buildDailyInterpretation(daily.card)}</p>
+      <p className="daily-card-date">{daily.dateKey} · {orientationLabel[daily.orientation]}</p>
+      <p>{interpretation}</p>
     </aside>
   );
 };
@@ -314,7 +376,7 @@ const SpreadCardView: React.FC<{ result: SpreadResult }> = ({ result }) => (
       <span className="spread-position">{result.position}</span>
       <h4>{result.card.name}</h4>
       <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
-      <p>{buildSpreadInterpretation(result.card, result.orientation, result.position)}</p>
+      <p>{buildInterpretation(result.card, result.orientation, `Позиция «${result.position}»`)}</p>
     </div>
   </article>
 );
@@ -332,32 +394,10 @@ const VisitorReading: React.FC<{ result: VisitorResult | null }> = ({ result }) 
         <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
       </div>
       <div>
-        <span className="spread-position">Вопрос · {result.focus}</span>
+        <span className="spread-position">Вопрос посетителя</span>
         <h4>{result.card.name}</h4>
         <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
         <p>{buildQuestionInterpretation(result)}</p>
-      </div>
-    </motion.article>
-  );
-};
-
-const SceneReading: React.FC<{ result: SceneResult | null }> = ({ result }) => {
-  if (!result) return null;
-  return (
-    <motion.article
-      className={`visitor-result oracle-scene-result ${result.orientation === 'reversed' ? 'is-reversed' : ''}`}
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      style={{ '--card-accent': result.card.color } as React.CSSProperties}
-    >
-      <div className="visitor-result-image">
-        <img src={result.card.tarot} alt={result.card.name} loading="lazy" decoding="async" draggable={false} />
-      </div>
-      <div>
-        <span className="spread-position">Мини-игра · {result.outcome}</span>
-        <h4>{result.card.name}</h4>
-        <span className="spread-orientation">{orientationLabel[result.orientation]}</span>
-        <p>{buildSceneText(result)}</p>
       </div>
     </motion.article>
   );
@@ -367,7 +407,6 @@ const TarotRituals: React.FC = () => {
   const [spread, setSpread] = useState<SpreadResult[]>([]);
   const [question, setQuestion] = useState('');
   const [visitorResult, setVisitorResult] = useState<VisitorResult | null>(null);
-  const [sceneResult, setSceneResult] = useState<SceneResult | null>(null);
   const [questionError, setQuestionError] = useState('');
 
   const drawSpread = () => {
@@ -388,19 +427,7 @@ const TarotRituals: React.FC = () => {
     }
     setQuestionError('');
     const [card] = drawUniqueCards(1);
-    setVisitorResult({ card, orientation: randomOrientation(), question: preparedQuestion, focus: getQuestionFocus(preparedQuestion) });
-  };
-
-  const drawScene = () => {
-    const [card] = drawUniqueCards(1);
-    const die = Math.floor(Math.random() * 20) + 1;
-    setSceneResult({
-      id: `${card.id}-${Date.now()}-${die}`,
-      card,
-      orientation: randomOrientation(),
-      die,
-      outcome: getSceneOutcome(die),
-    });
+    setVisitorResult({ card, orientation: randomOrientation(), question: preparedQuestion });
   };
 
   return (
@@ -409,8 +436,8 @@ const TarotRituals: React.FC = () => {
         <div className="tarot-ritual-heading">
           <Sparkles size={18} />
           <div>
-            <h3>Самостоятельный расклад</h3>
-            <p>Прошлое · Настоящее · Будущее · 50% перевёрнутых</p>
+            <h3>Мини-игра: самостоятельный расклад</h3>
+            <p>Прошлое · Настоящее · Будущее · 50% перевёрнутых карт</p>
           </div>
         </div>
         <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={drawSpread}>
@@ -429,14 +456,14 @@ const TarotRituals: React.FC = () => {
         <div className="tarot-ritual-heading">
           <BookOpen size={18} />
           <div>
-            <h3>Расклад по вопросу</h3>
-            <p>Один вопрос · одна персональная карта</p>
+            <h3>Расклад для посетителей</h3>
+            <p>Один вопрос · одна карта · нарративное толкование в стиле НРИ</p>
           </div>
         </div>
         <textarea
           value={question}
           onChange={(event) => { setQuestion(event.target.value); if (questionError) setQuestionError(''); }}
-          placeholder="Введите вопрос: о пути, союзе, враге, тайне или цене..."
+          placeholder="Введите вопрос для мастера судьбы..."
           className="tarot-question-input"
           rows={3}
         />
@@ -445,21 +472,6 @@ const TarotRituals: React.FC = () => {
           <Eye size={15} /> Вытянуть карту
         </button>
         <VisitorReading result={visitorResult} />
-      </div>
-
-      <div className="tarot-ritual-card narrative-game-card">
-        <div className="tarot-ritual-heading">
-          <Dices size={18} />
-          <div>
-            <h3>Мини-игра: сцена оракула</h3>
-            <p>Карта + d20 дают завязку для НРИ-сцены</p>
-          </div>
-        </div>
-        <p className="tarot-mini-rules">Вытяни карту, брось d20 и сыграй короткую сцену: игрок описывает действие, ведущий отвечает последствием.</p>
-        <button type="button" className="tarot-ritual-button tarot-no-glow" onClick={drawScene}>
-          <ScrollText size={15} /> Сыграть сцену
-        </button>
-        <SceneReading result={sceneResult} />
       </div>
     </section>
   );
@@ -471,38 +483,50 @@ interface CharacterCardDeckProps {
 
 const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange }) => {
   const navigate = useNavigate();
-  const galleryRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement | null>(null);
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [loreMode, setLoreMode] = useState(false);
   const [selectedLore, setSelectedLore] = useState<TarotCard | null>(null);
-  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [selectedInspect, setSelectedInspect] = useState<TarotCard | null>(null);
+  const [mobileIndex, setMobileIndex] = useState(0);
 
   useEffect(() => {
-    onExpandedChange?.(selectedLore);
-  }, [selectedLore, onExpandedChange]);
+    onExpandedChange?.(selectedInspect ?? selectedLore);
+  }, [selectedInspect, selectedLore, onExpandedChange]);
+
+  const updateMobileIndex = () => {
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+    const cards = Array.from(gallery.querySelectorAll<HTMLElement>('.tarot-gallery-card'));
+    if (cards.length === 0) return;
+    const center = gallery.scrollLeft + gallery.clientWidth / 2;
+    let nextIndex = 0;
+    let nextDistance = Number.POSITIVE_INFINITY;
+    cards.forEach((node, index) => {
+      const nodeCenter = node.offsetLeft + node.offsetWidth / 2;
+      const distance = Math.abs(center - nodeCenter);
+      if (distance < nextDistance) {
+        nextDistance = distance;
+        nextIndex = index;
+      }
+    });
+    setMobileIndex(nextIndex);
+  };
+
+  useEffect(() => {
+    updateMobileIndex();
+    window.addEventListener('resize', updateMobileIndex);
+    return () => window.removeEventListener('resize', updateMobileIndex);
+  }, []);
 
   const toggleCard = (card: TarotCard) => {
     setRevealed((previous) => ({ ...previous, [card.id]: !previous[card.id] }));
   };
 
-  const updateActiveIndex = useCallback(() => {
-    const gallery = galleryRef.current;
-    if (!gallery) return;
-    const cards = Array.from(gallery.querySelectorAll<HTMLElement>('.tarot-gallery-card'));
-    const center = gallery.scrollLeft + gallery.clientWidth / 2;
-    const closest = cards.reduce((best, node, index) => {
-      const nodeCenter = node.offsetLeft + node.offsetWidth / 2;
-      const distance = Math.abs(nodeCenter - center);
-      return distance < best.distance ? { index, distance } : best;
-    }, { index: 0, distance: Number.POSITIVE_INFINITY });
-    setActiveCardIndex(closest.index);
-  }, []);
-
-  const scrollToCard = (index: number) => {
+  const scrollToMobileCard = (index: number) => {
     const gallery = galleryRef.current;
     const card = gallery?.querySelectorAll<HTMLElement>('.tarot-gallery-card')[index];
     card?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    setActiveCardIndex(index);
   };
 
   return (
@@ -510,8 +534,8 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
       <div className="tarot-oracle-main">
         <div className="tarot-gallery-toolbar">
           <div>
-            <span className="tarot-toolbar-kicker">Галерея из пяти карт</span>
-            <p>На десктопе карты раскрываются веером: ведите мышью по карте и крутите колесо. На телефоне листайте и свайпайте карту.</p>
+            <span className="tarot-toolbar-kicker">Вики мира + Таро для НРИ</span>
+            <p>Пять карт лежат рубашкой в веере. Клик переворачивает карту; режим лора открывает текст рубашки без переворота.</p>
           </div>
           <button
             type="button"
@@ -524,7 +548,7 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
           </button>
         </div>
 
-        <div ref={galleryRef} className="tarot-gallery" aria-label="Галерея карт Таро" onScroll={updateActiveIndex}>
+        <div ref={galleryRef} className="tarot-gallery" onScroll={updateMobileIndex} aria-label="Галерея карт Таро">
           {tarotCards.map((card, index) => (
             <GalleryCard
               key={card.id}
@@ -534,18 +558,19 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
               loreMode={loreMode}
               onFlip={toggleCard}
               onLore={setSelectedLore}
+              onInspect={setSelectedInspect}
             />
           ))}
         </div>
 
-        <div className="tarot-mobile-indicator" aria-label="Индикатор карт">
+        <div className="tarot-mobile-indicators" aria-label="Индикатор мобильной галереи">
           {tarotCards.map((card, index) => (
             <button
-              key={card.id}
               type="button"
-              className={index === activeCardIndex ? 'is-active' : ''}
+              key={card.id}
+              className={`tarot-mobile-dot tarot-no-glow ${mobileIndex === index ? 'is-active' : ''}`}
+              onClick={() => scrollToMobileCard(index)}
               aria-label={`Показать карту ${card.name}`}
-              onClick={() => scrollToCard(index)}
             />
           ))}
         </div>
@@ -565,6 +590,19 @@ const CharacterCardDeck: React.FC<CharacterCardDeckProps> = ({ onExpandedChange 
       </div>
 
       <DailyCardPanel />
+
+      <AnimatePresence>
+        {selectedInspect && (
+          <InspectModal
+            card={selectedInspect}
+            onClose={() => setSelectedInspect(null)}
+            onOpenLore={(card) => {
+              setSelectedInspect(null);
+              setSelectedLore(card);
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {selectedLore && <LoreModal card={selectedLore} onClose={() => setSelectedLore(null)} />}

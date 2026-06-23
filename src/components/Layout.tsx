@@ -68,7 +68,7 @@ const Layout: React.FC<LayoutProps> = ({
         />
       )}
 
-      <Particles theme={theme} count={isMobile ? Math.min(12, particleCount) : particleCount} variant={particleVariant} />
+      <Particles theme={theme} count={isMobile ? Math.min(22, particleCount) : particleCount} variant={particleVariant === 'default' ? 'mixed' : particleVariant} />
       <SideMenu theme={theme} />
       <MusicButton theme={theme} />
       {showBack && !overlayMode && <BackButton theme={theme} />}
