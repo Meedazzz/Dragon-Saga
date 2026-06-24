@@ -5,14 +5,12 @@
 ## Где менять чаще всего
 
 - **Динамика, дизайн, адаптив:** `src/index.css`
-- **Атмосферный слой рун/пепла:** `src/components/MythicVeil.tsx`
-- **Главная:** `src/pages/HomePage.tsx`
-- **Активности:** `src/pages/ActivitiesPage.tsx`
+- **Главная и видео-вкладки:** `src/pages/HomePage.tsx`
+- **Новый лорбук/бестиарий/НПС/военные машины:** `src/data/lorebook.ts`, `src/pages/LorebookIndexPage.tsx`, `src/pages/LorebookEntryPage.tsx`
+- **Лор Валерия:** `src/pages/LorePage.tsx`
 - **Таро:** `src/components/TarotFan.tsx`, `src/data/tarot.ts`
 - **Цвета героев:** `src/types/theme.ts`, `src/data/characters.ts`
-- **URL/маршруты:** `src/App.tsx`
 - **UI-прогон:** `playwright.config.ts`, `tests/ui-smoke.spec.ts`
-- **GitHub Pages:** `vite.config.ts`, `scripts/spa-404.mjs`, `src/lib/routeHref.ts`
 
 ## Все файлы
 
@@ -32,7 +30,7 @@
 - `assets/thumbnail.jpg` — Медиа-ассет/исходник.
 - `components.json` — Конфиг shadcn/ui компонентов.
 - `docs/FILE_GUIDE_RU.md` — Этот путеводитель по файлам.
-- `docs/QA_REPORT_RU.md` — QA-отчёт: что проверено, какие тесты прошли, какие баги исправлены.
+- `docs/QA_REPORT_RU.md` — QA-отчёт: build/lint/assets/UI-прогон 32 passed и найденные исправления.
 - `eslint.config.js` — Правила lint-проверки кода. Настроено так, чтобы lint не шумел от shadcn/ui.
 - `index.html` — HTML-шаблон Vite, куда монтируется React.
 - `info.md` — Документация/заметки проекта.
@@ -73,13 +71,13 @@
 - `public/tarot_tallis.png` — Публичное изображение. Используется через BASE_URL.
 - `public/tarot_valery.png` — Публичное изображение. Используется через BASE_URL.
 - `public/videos/thumbnail.jpg` — Публичное изображение. Используется через BASE_URL.
-- `qa-screenshots/activities-mobile.png` — Референс-скриншот после UI-прогона. Использовать для ручного сравнения дизайна.
-- `qa-screenshots/home-desktop.png` — Референс-скриншот после UI-прогона. Использовать для ручного сравнения дизайна.
-- `qa-screenshots/home-mobile.png` — Референс-скриншот после UI-прогона. Использовать для ручного сравнения дизайна.
+- `qa-screenshots/activities-mobile.png` — Референс-скриншот после UI-прогона.
+- `qa-screenshots/home-desktop.png` — Референс-скриншот после UI-прогона.
+- `qa-screenshots/home-mobile.png` — Референс-скриншот после UI-прогона.
 - `scripts/asset-smoke-test.mjs` — Проверяет, что важные ассеты существуют и не пустые.
 - `scripts/spa-404.mjs` — Создаёт `dist/404.html` после билда для GitHub Pages SPA.
 - `src/App.css` — Старый CSS от Vite. Почти не нужен.
-- `src/App.tsx` — Центральная таблица маршрутов. Добавлять новые URL/страницы сюда.
+- `src/App.tsx` — Центральная таблица маршрутов. Здесь добавлены `/lorebook`, `/bestiary` и страницы лорбука.
 - `src/components/BackButton.tsx` — Кнопка «Назад» на десктопе.
 - `src/components/CharacterCardDeck.tsx` — Альтернативная/старая колода с раскладами и текстовыми толкованиями.
 - `src/components/HeroNav.tsx` — Навигация на страницах персонажей, включая «Полный лор».
@@ -88,7 +86,7 @@
 - `src/components/MusicButton.tsx` — Кнопка фоновой музыки и промо-сообщения соцсетей.
 - `src/components/MythicVeil.tsx` — Динамический атмосферный слой: руны, пепел, северное сияние.
 - `src/components/Particles.tsx` — Лёгкие фоновые частицы.
-- `src/components/SideMenu.tsx` — Боковое меню по героям, миру, картам и активностям.
+- `src/components/SideMenu.tsx` — Боковое меню по героям, миру, картам, активностям и новому лорбуку.
 - `src/components/SmartTooltip.tsx` — Подсказки, которые стараются не выходить за экран.
 - `src/components/TarotFan.tsx` — Интерактивная веерная колода Таро. Не добавлять BASE к card.tarot второй раз.
 - `src/components/ui/accordion.tsx` — Базовый UI-компонент (accordion.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
@@ -146,9 +144,10 @@
 - `src/components/ui/tooltip.tsx` — Базовый UI-компонент (tooltip.tsx) из библиотеки интерфейса. Обычно не менять, если не правишь всю UI-систему.
 - `src/contexts/MusicContext.tsx` — React-контекст фоновой музыки.
 - `src/data/characters.ts` — База персонажей: имена, цвета, описания, карты, аватары, ссылки.
+- `src/data/lorebook.ts` — Новый лорбук: 51 страница бестиария, НПС, фракций, локаций, магии, языков и военных машин Иллирии, расширенной нежити, вампиров, големов, элементалей, сельванов, совомедведей, порождений Моргота, тифлингов, исчадий и анаптаниума.
 - `src/data/tarot.ts` — Данные Таро: рубашка, лор, толкования, нарративные крючки.
 - `src/hooks/use-mobile.ts` — Хук определения мобильного экрана.
-- `src/index.css` — Главный стиль: тема, codex-дизайн, динамика, адаптив, Таро, активности, MythicVeil.
+- `src/index.css` — Главный стиль: тема, codex-дизайн, динамика, адаптив, Таро, активности, лорбук, MythicVeil.
 - `src/lib/imageFallback.ts` — Fallback WebP→PNG для старых браузеров/битых текстур.
 - `src/lib/routeHref.ts` — Создаёт правильные href с учётом `/Dragon-Saga/`.
 - `src/lib/utils.ts` — Утилита `cn` для объединения className.
@@ -163,9 +162,11 @@
 - `src/pages/HessenPage.tsx` — Страница `HessenPage`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/pages/Home.tsx` — Страница `Home`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/pages/HomePage.tsx` — Главная страница-кодекс: hero, герои, Таро, атлас, активности, видео.
-- `src/pages/LetopisPage.tsx` — Большая летопись/хронология мира.
-- `src/pages/LorPage.tsx` — Общий каталог мира: персонажи, лор, активности, карты.
-- `src/pages/LorePage.tsx` — Персональный лор героя по `/lore/:characterId`.
+- `src/pages/LetopisPage.tsx` — Большая летопись/хронология мира. По просьбе пользователя не менялась.
+- `src/pages/LorPage.tsx` — Общий каталог мира: персонажи, лор, активности, карты и вход в новый лорбук.
+- `src/pages/LorePage.tsx` — Персональный лор героя по `/lore/:characterId`; лор Валерия заменён и дополнен наследием Габриэля/Даркбейнов.
+- `src/pages/LorebookEntryPage.tsx` — Универсальная страница отдельной записи лорбука по slug.
+- `src/pages/LorebookIndexPage.tsx` — Каталог нового лорбука с поиском и фильтрами по категориям.
 - `src/pages/MapPage.tsx` — Просмотр карт мира с масштабированием.
 - `src/pages/SakrisPage.tsx` — Страница `SakrisPage`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/pages/SakrisSubclassPage.tsx` — Страница `SakrisSubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
@@ -177,7 +178,7 @@
 - `src/pages/ValerySubclassPage.tsx` — Страница `ValerySubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/types/theme.ts` — Цветовые темы страниц. Здесь индивидуальные темы Валерия/Брина/Сакриса/Таллиса/Стива.
 - `tailwind.config.js` — Настройка Tailwind CSS.
-- `tests/ui-smoke.spec.ts` — Автоматический UI smoke-тест: desktop/tablet/mobile, Таро, активности, цвета героев.
+- `tests/ui-smoke.spec.ts` — UI smoke-тест: desktop/tablet/mobile, Таро, активности, видео, автолента, Shorts, лорбук, военные машины, цвета героев.
 - `tsconfig.app.json` — Служебный файл проекта.
 - `tsconfig.json` — Служебный файл проекта.
 - `tsconfig.node.json` — Служебный файл проекта.

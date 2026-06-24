@@ -69,6 +69,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
             { label: 'Феноменология Чёрного льда', path: '/black-ice-research' },
             { label: 'Бергхейм', path: '/berghheim' },
             { label: 'Клан Арантир', path: '/arantir' },
+            { label: 'Новый лорбук', path: '/lorebook' },
+            { label: 'Бестиарий', path: '/bestiary' },
+            { label: 'Военные машины Иллирии', path: '/lorebook/illyria-war-machines-doctrine' },
+            { label: 'НПС и фракции', path: '/lorebook/npcs-northwind' },
           ],
         },
         {

@@ -18,12 +18,15 @@ const allItems = [
   { title: 'Дом Хессен', desc: 'Великий Дом Астарии, чья кровь хранит тайны Чёрного льда.', path: '/hessen', category: 'lore' as const, icon: '' },
   { title: 'Бергхейм', desc: 'Суровый горный край на севере, где духи предков бродят по перевалам.', path: '/berghheim', category: 'lore' as const, icon: '' },
   { title: 'Клан Арантир', desc: 'Последние Драконоборцы, чьи песни пережили века.', path: '/arantir', category: 'lore' as const, icon: '' },
+  { title: 'Новый лорбук', desc: 'Бестиарий, неигровые НПС, фракции, локации, магия и языки мира.', path: '/lorebook', category: 'lorebook' as const, icon: '' },
+  { title: 'Бестиарий', desc: 'Оборотни, Валькирии, драконы, орки, дракониды, Анкалагон и Обелиск.', path: '/bestiary', category: 'lorebook' as const, icon: '' },
+  { title: 'Военные машины Иллирии', desc: 'Доктрина империи, скорпионы, баллисты, требушеты, башни, тараны и редкие магические машины.', path: '/lorebook/illyria-war-machines-doctrine', category: 'lorebook' as const, icon: '' },
   { title: 'Активности', desc: 'Оракул, связи персонажей, маршруты и печати для быстрых сцен партии.', path: '/activities', category: 'activities' as const, icon: '' },
   { title: 'Карта Севера', desc: 'Карта северных земель — от ледяных пустошей до горных хребтов Бергхейма.', path: '/map/sever', category: 'maps' as const, icon: '' },
   { title: 'Карта Нортвинда', desc: 'Карта Нортвинда — оплота севера и его окрестностей.', path: '/map/northwind', category: 'maps' as const, icon: '' },
 ];
 
-const categoryLabels: Record<string, string> = { characters: 'Персонажи', lore: 'Лор', activities: 'Активности', maps: 'Карты' };
+const categoryLabels: Record<string, string> = { characters: 'Персонажи', lore: 'Лор', lorebook: 'Лорбук', activities: 'Активности', maps: 'Карты' };
 
 const LorPage: React.FC = () => {
   const navigate = useNavigate();
@@ -41,7 +44,7 @@ const LorPage: React.FC = () => {
     return groups;
   }, [filteredItems]);
 
-  const categoryOrder = ['characters', 'lore', 'activities', 'maps'];
+  const categoryOrder = ['characters', 'lore', 'lorebook', 'activities', 'maps'];
 
   return (
     <Layout theme={lorTheme} particleCount={24}>
