@@ -1,6 +1,22 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BookOpen, Compass, Dices, Map, MessageCircle, Play, Send, Sparkles, Users, Youtube, ChevronDown, Sword, Shield, Scroll } from 'lucide-react';
+import {
+  BookOpen,
+  Castle,
+  Compass,
+  Dices,
+  Flame,
+  Map,
+  MessageCircle,
+  Play,
+  ScrollText,
+  Send,
+  Shield,
+  Sparkles,
+  Swords,
+  Users,
+  Youtube,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import TarotFan from '@/components/TarotFan';
@@ -17,396 +33,311 @@ const socialLinks = [
   { label: 'Discord', href: 'https://discord.gg/vyhKQTKhsw', icon: MessageCircle },
 ];
 
-const videos = [
-  { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
-  { part: 'Часть 2', title: 'Тени Бергхейма', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
-  { part: 'Часть 3', title: 'Ледяная крепость', url: 'https://www.youtube.com/embed/VIDEO_ID_3' },
+type VideoTab = 'episodes' | 'latest' | 'shorts';
+
+interface SagaVideo {
+  part: string;
+  title: string;
+  description: string;
+  embedUrl: string;
+  watchUrl: string;
+}
+
+const youtubeChannelUrl = 'https://www.youtube.com/@Sigmarillion';
+const youtubeShortsUrl = 'https://www.youtube.com/@Sigmarillion/shorts';
+const youtubeUploadsPlaylist = 'https://www.youtube.com/embed/videoseries?list=UU7IRkV7Cg7MznCecmQXCN1A';
+
+const videos: SagaVideo[] = [
+  {
+    part: 'Часть 1',
+    title: 'Dragon Saga. Часть 1. Знакомство',
+    description: 'Начало новой D&D-кампании: герои встречаются в северной рыбацкой деревушке и ищут ночлег, работу и первые зацепки.',
+    embedUrl: 'https://www.youtube.com/embed/HgRX_wIi3mY?start=5473&autoplay=1&rel=0',
+    watchUrl: 'https://www.youtube.com/watch?v=HgRX_wIi3mY&t=5473s',
+  },
+  {
+    part: 'Часть 2',
+    title: 'Dragon Saga. Часть 2. Деревенские проблемы',
+    description: 'Продолжение северной истории: угроза над деревней, первые решения партии и рост личных конфликтов.',
+    embedUrl: 'https://www.youtube.com/embed/2_l8_ahjHx8?start=6621&autoplay=1&rel=0',
+    watchUrl: 'https://www.youtube.com/watch?v=2_l8_ahjHx8&t=6621s',
+  },
 ];
 
-const quickStats = [
-  { icon: Users, value: characters.length, label: 'Героев', color: '#e6e6fa' },
-  { icon: Sparkles, value: tarotCards.length, label: 'Карт Таро', color: '#f59e0b' },
-  { icon: Sword, value: '∞', label: 'Приключений', color: '#ef4444' },
-  { icon: Shield, value: '5', label: 'Сезонов', color: '#34d399' },
+const worldLinks = [
+  { title: 'Полный лор', desc: 'Единый архив героев, домов и древних клятв.', path: '/lor', icon: BookOpen },
+  { title: 'Летопись', desc: 'Хронология мира и событий кампании.', path: '/letopis', icon: ScrollText },
+  { title: 'Карта Севера', desc: 'Маршруты, границы и ключевые точки путешествия.', path: '/map/sever', icon: Map },
 ];
 
+/**
+ * HomePage — главная страница-кодекс.
+ *
+ * Структура:
+ * 1. codex-hero — первое впечатление, крупный заголовок и стопка карт.
+ * 2. codex-quick-nav — липкая навигация по блокам главной.
+ * 3. characters-section — карточки героев и быстрые переходы.
+ * 4. tarot-section — интерактивная колода TarotFan.
+ * 5. world-section — вход в лор, летопись и карты.
+ * 6. activity-band/video/footer — инструменты партии, хроники и соцсети.
+ */
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const BASE = import.meta.env.BASE_URL;
-  const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<SagaVideo | null>(null);
+  const [videoTab, setVideoTab] = useState<VideoTab>('episodes');
   const [expandedCard, setExpandedCard] = useState<CharacterConfig | null>(null);
 
-  const scrollTo = useCallback((id: string) => {
+  const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, []);
+  };
 
   return (
-    <Layout theme={homeTheme} particleCount={26} overlayMode={!!expandedCard}>
-      <main className="dragon-home">
-        {/* HERO SECTION - Clean & Impactful */}
-        <motion.section
-          className="saga-hero-v2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="saga-hero-v2__bg">
-            <div className="saga-hero-v2__orb saga-hero-v2__orb--one" />
-            <div className="saga-hero-v2__orb saga-hero-v2__orb--two" />
-            <div className="saga-hero-v2__grid" />
+    <Layout theme={homeTheme} particleCount={28} overlayMode={!!expandedCard}>
+      <main className="codex-home">
+        <section className="codex-hero" aria-labelledby="home-title">
+          <div className="codex-hero__ambient" aria-hidden="true">
+            <span className="codex-hero__ring codex-hero__ring--one" />
+            <span className="codex-hero__ring codex-hero__ring--two" />
+            <span className="codex-hero__runes">ᚠ ᚱ ᚢ ᚨ ᛟ ᛞ ᛗ ᛉ</span>
           </div>
 
-          <div className="saga-hero-v2__content">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <span className="saga-eyebrow-v2">🩸 Blood Ice × Dragon Saga × D&D Chronicles</span>
-              <h1 className="saga-title-v2">
-                <span className="saga-title-v2__main">Драконья</span>
-                <span className="saga-title-v2__accent">Сага</span>
-              </h1>
-              <p className="saga-lead-v2">
-                Эпическая D&D кампания в мире Бергхейма. Пять судеб, сплетённых нитями войны, 
-                магии и древних пророчеств. Откройте историю, которую ещё никто не рассказывал.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              className="saga-hero-v2__actions"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <button type="button" className="saga-btn saga-btn--primary tarot-no-glow" onClick={() => scrollTo('tarot-section')}>
-                <Sparkles size={17} /> Раскрыть судьбу
-              </button>
-              <button type="button" className="saga-btn saga-btn--ghost tarot-no-glow" onClick={() => scrollTo('characters-section')}>
-                <Users size={17} /> Герои
-              </button>
-              <button type="button" className="saga-btn saga-btn--ghost tarot-no-glow" onClick={() => navigate('/activities')}>
-                <Dices size={17} /> Активности
-              </button>
-              <button type="button" className="saga-btn saga-btn--ghost tarot-no-glow" onClick={() => navigate('/lor')}>
-                <BookOpen size={17} /> Полный лор
-              </button>
-            </motion.div>
-
-            <motion.div 
-              className="saga-hero-v2__stats"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              {quickStats.map((stat, i) => (
-                <motion.div 
-                  key={stat.label}
-                  className="saga-stat-item"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + i * 0.1 }}
-                >
-                  <stat.icon size={18} style={{ color: stat.color }} />
-                  <span className="saga-stat-item__value">{stat.value}</span>
-                  <span className="saga-stat-item__label">{stat.label}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-
-          <motion.div 
-            className="saga-hero-v2__scroll"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            onClick={() => scrollTo('characters-section')}
+          <motion.div
+            className="codex-hero__copy"
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65 }}
           >
-            <ChevronDown size={24} className="animate-bounce" />
-          </motion.div>
-        </motion.section>
+            <span className="codex-kicker"><Flame size={16} /> Blood Ice · Dragon Saga · D&D Chronicles</span>
+            <h1 id="home-title">Драконья Сага</h1>
+            <p>
+              Темная фэнтези-вики кампании: герои, карты Таро, летопись, маршруты и инструменты мастера собраны как единый живой кодекс мира.
+            </p>
+            <div className="codex-actions">
+              <button type="button" className="codex-btn codex-btn--primary tarot-no-glow" onClick={() => scrollTo('tarot-section')}>
+                <Sparkles size={18} /> Раскрыть судьбу
+              </button>
+              <button type="button" className="codex-btn tarot-no-glow" onClick={() => scrollTo('characters-section')}>
+                <Users size={18} /> Герои
+              </button>
+              <button type="button" className="codex-btn tarot-no-glow" onClick={() => navigate('/activities')}>
+                <Dices size={18} /> Активности
+              </button>
+              <button type="button" className="codex-btn tarot-no-glow" onClick={() => navigate('/lor')}>
+                <BookOpen size={18} /> Полный лор
+              </button>
+            </div>
 
-        {/* QUICK NAV - Sticky on scroll */}
-        <motion.nav
-          className="home-quick-nav-v2"
-          aria-label="Быстрая навигация"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
+            <div className="codex-stats" aria-label="Состав архива">
+              <span><b>{characters.length}</b><small>героев</small></span>
+              <span><b>{tarotCards.length}</b><small>арканов</small></span>
+              <span><b>2</b><small>карты мира</small></span>
+              <span><b>∞</b><small>сцен</small></span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="codex-hero__cards"
+            initial={{ opacity: 0, x: 32 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.75, delay: 0.15 }}
+            aria-label="Герои Драконьей Саги"
+          >
+            <div className="codex-card-altar">
+              {tarotCards.slice(0, 5).map((card, index) => (
+                <img
+                  key={card.id}
+                  src={card.tarot}
+                  alt={card.name}
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
+                  onError={applyImageFallback}
+                  style={{ '--i': index } as React.CSSProperties}
+                />
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        <nav className="codex-quick-nav" aria-label="Быстрая навигация">
           <button type="button" onClick={() => scrollTo('characters-section')}><Users size={15} /> Герои</button>
           <button type="button" onClick={() => scrollTo('tarot-section')}><Sparkles size={15} /> Таро</button>
+          <button type="button" onClick={() => scrollTo('world-section')}><Compass size={15} /> Мир</button>
           <button type="button" onClick={() => navigate('/activities')}><Dices size={15} /> Активности</button>
-          <button type="button" onClick={() => navigate('/letopis')}><Compass size={15} /> Летопись</button>
-          <button type="button" onClick={() => navigate('/map/sever')}><Map size={15} /> Карта</button>
-        </motion.nav>
+          <button type="button" onClick={() => navigate('/letopis')}><ScrollText size={15} /> Летопись</button>
+        </nav>
 
-        {/* CHARACTERS SECTION */}
-        <motion.section
-          id="characters-section"
-          className="saga-section scroll-mt-6"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="saga-section-head">
-            <div>
-              <span className="saga-eyebrow">⚔️ Герои</span>
-              <h2>Пять душ, связанных нитью судьбы</h2>
-            </div>
-            <p>Каждый из них несёт бремя прошлого и надежду на будущее. Их пути переплелись в огне битв и холоде предательства.</p>
+        <section id="characters-section" className="codex-section scroll-mt-16">
+          <div className="codex-section-head">
+            <span className="codex-kicker"><Swords size={16} /> Персонажи</span>
+            <h2>Пять героев, пять личных легенд</h2>
+            <p>Карточки работают как страницы персонажей на сайтах больших вселенных: портрет, роль, быстрый лор и связанные материалы без лишнего шума.</p>
           </div>
 
-          <div className="saga-character-grid-v2">
+          <div className="codex-character-grid">
             {characters.map((character, index) => (
               <motion.article
                 key={character.id}
-                className="saga-character-card-v2"
-                style={{ '--char-color': character.color } as React.CSSProperties}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08, duration: 0.5 }}
+                className="codex-character-card"
+                style={{ '--character-color': character.color } as React.CSSProperties}
+                initial={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04 }}
               >
-                <div className="saga-character-card-v2__glow" />
-                <button 
-                  type="button" 
-                  className="saga-character-lore tarot-no-glow" 
-                  onClick={() => navigate(character.lorePath)}
-                >
-                  ✦ Полный лор
+                <button type="button" className="codex-card-lore tarot-no-glow" onClick={() => navigate(character.lorePath)}>
+                  ↗ Полный лор
                 </button>
-                <div className="saga-character-card-v2__image">
-                  <img 
-                    src={character.tarot} 
-                    alt={character.name} 
-                    loading="lazy" 
-                    decoding="async" 
-                    draggable={false} 
-                    onError={applyImageFallback} 
-                  />
+                <div className="codex-character-card__image">
+                  <img src={character.tarot} alt={character.name} loading="eager" decoding="async" draggable={false} onError={applyImageFallback} />
                 </div>
-                <div className="saga-character-card-v2__body">
+                <div className="codex-character-card__body">
+                  <span>{character.title}</span>
                   <h3>{character.name}</h3>
-                  <p>{character.title}</p>
-                  <div className="saga-character-actions">
-                    {character.pages.slice(0, 2).map((page) => (
-                      <button key={page.path} type="button" onClick={() => navigate(page.path)} className="tarot-no-glow">
-                        {page.label}
-                      </button>
+                  <p>{character.desc}</p>
+                  <div className="codex-chip-row">
+                    {character.pages.slice(0, 3).map((page) => (
+                      <button key={page.path} type="button" className="tarot-no-glow" onClick={() => navigate(page.path)}>{page.label}</button>
                     ))}
                   </div>
                 </div>
               </motion.article>
             ))}
           </div>
-        </motion.section>
+        </section>
 
-        {/* TAROT SECTION - With new 3D Fan */}
-        <motion.section
-          id="tarot-section"
-          className="saga-section scroll-mt-6"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="saga-section-head">
-            <div>
-              <span className="saga-eyebrow">🔮 Карты Таро</span>
-              <h2>Карты судьбы: перекрёстки, кровь и древние клятвы</h2>
-            </div>
-            <p>Каждая карта — отражение души героя. Переверните, чтобы увидеть истинное лицо. Перетащите, чтобы исследовать веер.</p>
+        <section id="tarot-section" className="codex-section codex-section--wide scroll-mt-16">
+          <div className="codex-section-head">
+            <span className="codex-kicker"><Sparkles size={16} /> Оракул</span>
+            <h2>Таро героев без битых лицевых сторон</h2>
+            <p>Колода использует корректные пути, одну рубашку и fallback на PNG. Раскройте все карты или выберите одну, чтобы рассмотреть аркан.</p>
           </div>
-
           <TarotFan onExpandedChange={setExpandedCard} />
-        </motion.section>
+        </section>
 
-        {/* ACTIVITIES PREVIEW */}
-        <motion.section
-          id="activities-preview"
-          className="saga-section saga-activity-preview-v2"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="saga-section-head">
-            <div>
-              <span className="saga-eyebrow">🎲 Активности партии</span>
-              <h2>Инструменты для вашей партии</h2>
-            </div>
-            <p>Всё необходимое для погружения в мир: оракул, нити героев, маршруты и многое другое.</p>
+        <section id="world-section" className="codex-section scroll-mt-16">
+          <div className="codex-section-head">
+            <span className="codex-kicker"><Castle size={16} /> Атлас мира</span>
+            <h2>Лор, летопись и карты соединены в один маршрут</h2>
+            <p>Раздел мира теперь ощущается как навигационный центр: куда идти игроку, где искать историю и что открыть ведущему.</p>
           </div>
-
-          <div className="saga-activity-cards-v2">
-            <motion.article
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              onClick={() => navigate('/activities')}
-            >
-              <div className="saga-activity-icon"><Dices /></div>
-              <h3>Оракул</h3>
-              <p>Бросок + d20 для решения судьбоносных вопросов.</p>
-              <span className="saga-activity-link">Открыть →</span>
-            </motion.article>
-
-            <motion.article
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              onClick={() => navigate('/activities')}
-            >
-              <div className="saga-activity-icon"><Users /></div>
-              <h3>Нити героев</h3>
-              <p>Связи между персонажами и их общая история.</p>
-              <span className="saga-activity-link">Открыть →</span>
-            </motion.article>
-
-            <motion.article
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              onClick={() => navigate('/activities')}
-            >
-              <div className="saga-activity-icon"><Compass /></div>
-              <h3>Маршрут</h3>
-              <p>Путеводитель по миру и ключевым локациям.</p>
-              <span className="saga-activity-link">Открыть →</span>
-            </motion.article>
-
-            <motion.article
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              onClick={() => navigate('/activities')}
-            >
-              <div className="saga-activity-icon"><Scroll /></div>
-              <h3>Архив</h3>
-              <p>Все записи, документы и найденные артефакты.</p>
-              <span className="saga-activity-link">Открыть →</span>
-            </motion.article>
-          </div>
-
-          <div className="saga-actions saga-actions--center">
-            <button type="button" className="saga-btn saga-btn--primary tarot-no-glow" onClick={() => navigate('/activities')}>
-              Перейти к активностям
-            </button>
-          </div>
-        </motion.section>
-
-        {/* ABOUT SECTION */}
-        <motion.section
-          className="saga-section"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="saga-section-head">
-            <div>
-              <span className="saga-eyebrow">📜 О проекте</span>
-              <h2>Мир, рождённый во тьме</h2>
-            </div>
-            <p>Драконья Сага — это не просто D&D кампания. Это живой мир с собственной историей, культурой и тайнами, которые ждут своих героев.</p>
-          </div>
-
-          <div className="saga-about-grid prose-readable">
-            <p><strong>Драконья Сага</strong> — захватывающая D&D кампания, разворачивающаяся в мире Бергхейма. Здесь переплетаются судьбы героев, древние пророчества и битвы, от которых дрожит земля.</p>
-            <p>Кампания <strong>[Драконья Сага]</strong> ведётся уже несколько лет, и за это время мир оброс невероятным количеством лора, персонажей и историй, которые мы собрали на этом сайте.</p>
-          </div>
-        </motion.section>
-
-        {/* VIDEOS SECTION */}
-        <motion.section
-          className="saga-section"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="saga-section-head">
-            <div>
-              <span className="saga-eyebrow">🎬 Хроники</span>
-              <h2>Записи приключений</h2>
-            </div>
-            <p>Погрузитесь в атмосферу игры через записи наших сессий.</p>
-          </div>
-
-          <div className="saga-video-grid">
-            {videos.map((video, idx) => (
-              <motion.button
-                key={video.part}
-                type="button"
-                className="saga-video-card tarot-no-glow"
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 + idx * 0.05 }}
-                onClick={() => setSelectedVideo(video)}
-              >
-                <img src={`${BASE}videos/thumbnail.jpg`} alt={video.title} loading="lazy" decoding="async" />
-                <span><Play size={18} /></span>
-                <b>{video.part}</b>
-                <strong>{video.title}</strong>
-              </motion.button>
+          <div className="codex-world-grid">
+            {worldLinks.map(({ title, desc, path, icon: Icon }) => (
+              <button key={path} type="button" className="codex-world-card tarot-no-glow" onClick={() => navigate(path)}>
+                <Icon size={24} />
+                <strong>{title}</strong>
+                <span>{desc}</span>
+              </button>
             ))}
           </div>
-        </motion.section>
+        </section>
 
-        {/* VIDEO MODAL */}
+        <section className="codex-section codex-activity-band">
+          <div className="codex-section-head">
+            <span className="codex-kicker"><Dices size={16} /> Инструменты партии</span>
+            <h2>Активности стали отдельным залом управления сценами</h2>
+            <p>Оракул, нити героев, маршрут и архив собраны как быстрые инструменты мастера.</p>
+          </div>
+          <div className="codex-actions codex-actions--center">
+            <button type="button" className="codex-btn codex-btn--primary tarot-no-glow" onClick={() => navigate('/activities')}>
+              Открыть активности
+            </button>
+          </div>
+        </section>
+
+        <section className="codex-section" id="videos-section">
+          <div className="codex-section-head">
+            <span className="codex-kicker"><Play size={16} /> Хроники</span>
+            <h2>Записи приключений</h2>
+            <p>Сессии проигрываются прямо на сайте. Автолента канала показывает новые загрузки YouTube без ручного обновления списка.</p>
+          </div>
+
+          <div className="codex-video-tabs" role="tablist" aria-label="Категории видео">
+            <button type="button" className={videoTab === 'episodes' ? 'is-active tarot-no-glow' : 'tarot-no-glow'} onClick={() => setVideoTab('episodes')}>Записи</button>
+            <button type="button" className={videoTab === 'latest' ? 'is-active tarot-no-glow' : 'tarot-no-glow'} onClick={() => setVideoTab('latest')}>Автолента</button>
+            <button type="button" className={videoTab === 'shorts' ? 'is-active tarot-no-glow' : 'tarot-no-glow'} onClick={() => setVideoTab('shorts')}>Shorts</button>
+          </div>
+
+          {videoTab === 'episodes' && (
+            <div className="codex-video-grid">
+              {videos.map((video) => (
+                <button key={video.part} type="button" className="codex-video-card tarot-no-glow" onClick={() => setSelectedVideo(video)}>
+                  <img src={`${BASE}videos/thumbnail.jpg`} alt={video.title} loading="eager" decoding="async" />
+                  <span><Play size={18} /></span>
+                  <b>{video.part}</b>
+                  <strong>{video.title}</strong>
+                  <em>{video.description}</em>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {videoTab === 'latest' && (
+            <div className="codex-video-live-panel">
+              <div>
+                <span className="codex-kicker"><Youtube size={16} /> Автоматическая лента</span>
+                <h3>Последние загрузки Sigmarillion</h3>
+                <p>Этот блок использует uploads-плейлист YouTube. Когда на канале появляется новая запись, YouTube сам поднимает её в этой ленте.</p>
+                <a className="codex-btn codex-btn--primary tarot-no-glow" href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer">Открыть канал</a>
+              </div>
+              <iframe
+                src={youtubeUploadsPlaylist}
+                title="Последние видео Sigmarillion"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          )}
+
+          {videoTab === 'shorts' && (
+            <div className="codex-shorts-panel">
+              <div className="codex-shorts-card">
+                <Youtube size={28} />
+                <h3>Shorts Dragon Saga</h3>
+                <p>Shorts вынесены отдельно, чтобы короткие нарезки не смешивались с полными сессиями. YouTube не даёт стабильную отдельную embed-ленту Shorts без API, поэтому кнопка ведёт прямо в раздел Shorts канала.</p>
+                <a className="codex-btn codex-btn--primary tarot-no-glow" href={youtubeShortsUrl} target="_blank" rel="noopener noreferrer">Открыть Shorts</a>
+              </div>
+              <div className="codex-shorts-note">
+                <strong>Автообновление:</strong> новые shorts также попадают в общую автоленту канала, если YouTube добавляет их в uploads-плейлист.
+              </div>
+            </div>
+          )}
+        </section>
+
         <AnimatePresence>
           {selectedVideo && (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
-              className="fixed inset-0 bg-black/82 backdrop-blur-sm z-[800] flex items-center justify-center p-4"
+            <motion.div
+              className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[800] flex items-center justify-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setSelectedVideo(null)}
             >
-              <motion.div 
-                initial={{ scale: 0.92, y: 18 }} 
-                animate={{ scale: 1, y: 0 }} 
-                exit={{ scale: 0.92, y: 18 }} 
+              <motion.div
                 className="relative w-full max-w-4xl aspect-video bg-black rounded-[18px] overflow-hidden shadow-2xl"
+                initial={{ scale: 0.92, y: 18 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.92, y: 18 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <iframe 
-                  src={selectedVideo.url} 
-                  title={selectedVideo.title} 
-                  className="w-full h-full" 
-                  loading="lazy" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen 
-                />
-                <button 
-                  className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 text-white text-xl flex items-center justify-center hover:bg-black/80 transition-colors tarot-no-glow"
-                  onClick={() => setSelectedVideo(null)}
-                  type="button"
-                >
-                  ✕
-                </button>
+                <iframe src={selectedVideo.embedUrl} title={selectedVideo.title} className="w-full h-full" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
+                <a className="video-modal-youtube-link tarot-no-glow" href={selectedVideo.watchUrl} target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+                <button className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 text-white text-xl flex items-center justify-center tarot-no-glow" onClick={() => setSelectedVideo(null)} type="button">×</button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* FOOTER */}
-        <footer className="saga-footer">
-          <div className="saga-socials">
+        <footer className="codex-footer">
+          <div className="codex-socials">
             {socialLinks.map(({ label, href, icon: Icon }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="tarot-no-glow">
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="tarot-no-glow">
                 <Icon size={15} /> {label}
               </a>
             ))}
           </div>
-          <div className="saga-footer-mark">BLOOD ICE</div>
+          <div className="codex-footer__mark"><Shield size={16} /> BLOOD ICE</div>
         </footer>
       </main>
     </Layout>

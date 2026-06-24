@@ -23,6 +23,8 @@ const BerghheimPage = lazy(() => import('@/pages/BerghheimPage'));
 const ArantirPage = lazy(() => import('@/pages/ArantirPage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
 const ActivitiesPage = lazy(() => import('@/pages/ActivitiesPage'));
+const LorebookIndexPage = lazy(() => import('@/pages/LorebookIndexPage'));
+const LorebookEntryPage = lazy(() => import('@/pages/LorebookEntryPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
 const TallisSubclassPage = lazy(() => import('@/pages/TalisSubclassPage'));
 
@@ -65,12 +67,14 @@ function App() {
 
           {/* Стив и Таллис */}
           <Route path="/stive" element={<StivePlaceholder />} />
+          <Route path="/talis" element={<TallisSubclassPage />} />
           <Route path="/tallis" element={<TallisSubclassPage />} />
 
           {/* Подклассы */}
           <Route path="/subclass/valery" element={<ValerySubclassPage />} />
           <Route path="/subclass/brin" element={<BrinSubclassPage />} />
           <Route path="/subclass/sakris" element={<SakrisSubclassPage />} />
+          <Route path="/subclass/talis" element={<TallisSubclassPage />} />
           <Route path="/subclass/tallis" element={<TallisSubclassPage />} />
           <Route path="/subclass/:characterId" element={<SubclassPage />} />
 
@@ -83,8 +87,12 @@ function App() {
           {/* Карта */}
           <Route path="/map/:mapId" element={<MapPage />} />
 
-          {/* Активности, летопись, общий лор */}
+          {/* Активности, лорбук, летопись, общий лор */}
           <Route path="/activities" element={<ActivitiesPage />} />
+          <Route path="/lorebook" element={<LorebookIndexPage />} />
+          <Route path="/bestiary" element={<LorebookIndexPage />} />
+          <Route path="/lorebook/:slug" element={<LorebookEntryPage />} />
+          <Route path="/bestiary/:slug" element={<LorebookEntryPage />} />
           <Route path="/letopis" element={<LetopisPage />} />
           <Route path="/lor" element={<LorPage />} />
         </Routes>
