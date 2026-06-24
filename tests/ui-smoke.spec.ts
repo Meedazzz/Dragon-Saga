@@ -6,7 +6,7 @@ const viewports = [
   { name: 'mobile', width: 390, height: 844 },
 ];
 
-const routes = ['/', '/activities', '/lorebook', '/lorebook/bestiary-werewolves', '/lorebook/bestiary-vampires', '/lorebook/bestiary-undead-overview', '/lorebook/bestiary-owlbears', '/lorebook/bestiary-morgoth-spawn', '/lorebook/bestiary-tieflings', '/lorebook/bestiary-fiends', '/lorebook/faction-legion', '/lorebook/illyria-war-machines-doctrine', '/lore/valery', '/lor', '/map/sever'];
+const routes = ['/', '/activities', '/lorebook', '/lorebook/bestiary-werewolves', '/lorebook/bestiary-vampires', '/lorebook/bestiary-undead-overview', '/lorebook/bestiary-owlbears', '/lorebook/bestiary-morgoth-spawn', '/lorebook/bestiary-tieflings', '/lorebook/bestiary-fiends', '/lorebook/magic-anaptanium', '/lorebook/faction-legion', '/lorebook/illyria-war-machines-doctrine', '/lore/valery', '/lor', '/map/sever'];
 
 const waitForPageReady = async (page: Page) => {
   await page.waitForLoadState('domcontentloaded');
@@ -74,7 +74,7 @@ for (const viewport of viewports) {
         }
 
         if (route === '/lorebook') {
-          await expect(page.locator('.lorebook-card')).toHaveCount(50);
+          await expect(page.locator('.lorebook-card')).toHaveCount(51);
         }
 
         if (route.startsWith('/lorebook/')) {
@@ -163,13 +163,41 @@ test('lorebook catalogue and entry pages work', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/Dragon-Saga/lorebook');
   await waitForPageReady(page);
-  await expect(page.locator('.lorebook-card')).toHaveCount(50);
+  await expect(page.locator('.lorebook-card')).toHaveCount(51);
   await page.locator('.lorebook-search input').fill('Оборотни');
   await expect(page.locator('.lorebook-card')).toHaveCount(1);
   await page.locator('.lorebook-card').click();
   await expect(page.locator('.lorebook-entry-hero h1')).toContainText('Оборотни');
   await expect(page.locator('.lorebook-section-card')).toHaveCount(2);
   await expectNoBrokenLocalImages(page);
+});
+
+
+test('video records, autoplay modal, latest feed and shorts category work', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/Dragon-Saga/');
+  await waitForPageReady(page);
+
+  await page.getByRole('button', { name: /Записи/i }).click();
+  await expect(page.locator('.codex-video-card')).toHaveCount(2);
+  await expect(page.locator('.codex-video-card').first()).toContainText('Dragon Saga. Часть 1. Знакомство');
+  await expect(page.locator('.codex-video-card').nth(1)).toContainText('Dragon Saga. Часть 2. Деревенские проблемы');
+
+  await page.locator('.codex-video-card').first().click();
+  const videoFrame = page.locator('iframe[title="Dragon Saga. Часть 1. Знакомство"]');
+  await expect(videoFrame).toBeVisible();
+  await expect(videoFrame).toHaveAttribute('src', /HgRX_wIi3mY/);
+  await expect(videoFrame).toHaveAttribute('src', /start=5473/);
+  await page.locator('button').filter({ hasText: '×' }).click();
+
+  await page.getByRole('button', { name: /Автолента/i }).click();
+  const latestFrame = page.locator('iframe[title="Последние видео Sigmarillion"]');
+  await expect(latestFrame).toBeVisible();
+  await expect(latestFrame).toHaveAttribute('src', /videoseries\?list=UU7IRkV7Cg7MznCecmQXCN1A/);
+
+  await page.getByRole('button', { name: /Shorts/i }).click();
+  await expect(page.locator('.codex-shorts-card')).toContainText('Shorts Dragon Saga');
+  await expect(page.locator('.codex-shorts-card a')).toHaveAttribute('href', 'https://www.youtube.com/@Sigmarillion/shorts');
 });
 
 test('captures reference screenshots for manual visual comparison', async ({ page }) => {

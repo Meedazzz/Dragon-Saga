@@ -4,7 +4,7 @@
 
 ## Главное
 
-Сделан реальный прогон интерфейса в виртуальном Chromium через Playwright. Проверка открывает страницы как пользователь: на desktop, tablet и mobile, проверяет изображения, горизонтальные переполнения, Таро, активности, новый лорбук, расширенный бестиарий, военные машины Иллирии и индивидуальные темы героев.
+Сделан реальный прогон интерфейса в виртуальном Chromium через Playwright. Проверка открывает страницы как пользователь: на desktop, tablet и mobile, проверяет изображения, горизонтальные переполнения, Таро, активности, видео, новый лорбук, расширенный бестиарий, военные машины Иллирии, Палантир, Анаптаниум и индивидуальные темы героев.
 
 ## Автоматические проверки
 
@@ -51,6 +51,7 @@ node scripts/asset-smoke-test.mjs
   - `/Dragon-Saga//Dragon-Saga`
   - `url('/ouroboros.png')`
   - двойной BASE у карт Таро
+  - старое написание `Пантир` в лорбуке
 
 ## Реальный UI-прогон через Playwright
 
@@ -71,7 +72,7 @@ npm run test:ui
 Результат последнего прогона:
 
 ```txt
-41 passed
+54 passed
 ```
 
 ### Что проверяет UI-прогон
@@ -91,9 +92,14 @@ npm run test:ui
 - `/Dragon-Saga/lorebook/bestiary-vampires`
 - `/Dragon-Saga/lorebook/bestiary-undead-overview`
 - `/Dragon-Saga/lorebook/bestiary-owlbears`
+- `/Dragon-Saga/lorebook/bestiary-morgoth-spawn`
+- `/Dragon-Saga/lorebook/bestiary-tieflings`
+- `/Dragon-Saga/lorebook/bestiary-fiends`
+- `/Dragon-Saga/lorebook/magic-anaptanium`
 - `/Dragon-Saga/lorebook/faction-legion`
 - `/Dragon-Saga/lorebook/illyria-war-machines-doctrine`
 - `/Dragon-Saga/lore/valery`
+- видео-блок главной: записи, автолента, Shorts
 - `/Dragon-Saga/lor`
 - `/Dragon-Saga/map/sever`
 
@@ -105,16 +111,19 @@ npm run test:ui
 - на главной есть 5 карточек героев;
 - на главной есть 5 карт Таро;
 - на активностях есть 7 карточек;
-- лорбук показывает 50 новых страниц;
+- лорбук показывает 51 страницу;
 - отдельные страницы лорбука открываются;
 - отдельная страница военных машин Иллирии открывается;
-- страницы вампиров, нежити и совомедведей открываются;
+- страницы вампиров, нежити, совомедведей, созданий Моргота, тифлингов, исчадий и анаптаниума открываются;
 - поиск по лорбуку работает;
 - работает открытие модалки Таро;
 - работает кнопка «Показать все» у Таро;
 - работает боковое меню;
 - работает оракул активностей;
 - работает поиск активности;
+- работают две записи YouTube с корректными ID и стартовым временем;
+- работает автолента канала через uploads-плейлист;
+- Shorts вынесены в отдельную категорию;
 - у 5 героев разные theme-цвета;
 - веер Таро реально раскрыт по X.
 
@@ -174,9 +183,19 @@ npm run test:ui
 - поиск;
 - связанные страницы.
 
-### 7. Бестиарий расширен
+### 7. Видео-блок проверен
 
-Добавлены и проверены новые страницы:
+Добавлено и проверено:
+
+- две реальные записи YouTube;
+- модальное воспроизведение на сайте через embed;
+- внешняя ссылка на YouTube;
+- автолента канала через uploads-плейлист;
+- отдельная вкладка Shorts.
+
+### 8. Бестиарий расширен и откорректирован
+
+Добавлены и проверены страницы:
 
 - вампиры;
 - големы;
@@ -185,7 +204,18 @@ npm run test:ui
 - общая нежить;
 - драугры;
 - личи;
-- совомедведи.
+- совомедведи;
+- создания Моргота;
+- порождения Тёмного;
+- тифлинги;
+- исчадия.
+
+Исправлены/уточнены:
+
+- Валькирии теперь описаны как древние майяр и айнур, осквернённые Тёмным и лишённые воли.
+- Чёрный лёд описан как недавно появившаяся северная сила боли и страдания, опасная для младших рас и не поражающая эльфов и дворфов.
+- `Пантир` исправлен на `Палантир`, с логикой видящего камня в духе палантиров.
+- Добавлен Анаптаниум — антимагический минерал.
 
 ## Проверенные маршруты через локальный preview
 
@@ -195,23 +225,21 @@ npm run test:ui
 - `/Dragon-Saga/activities`
 - `/Dragon-Saga/lorebook`
 - `/Dragon-Saga/bestiary`
-- `/Dragon-Saga/lorebook/bestiary-werewolves`
 - `/Dragon-Saga/lorebook/bestiary-vampires`
+- `/Dragon-Saga/lorebook/bestiary-golems`
+- `/Dragon-Saga/lorebook/bestiary-elementals`
+- `/Dragon-Saga/lorebook/bestiary-selvans`
 - `/Dragon-Saga/lorebook/bestiary-undead-overview`
+- `/Dragon-Saga/lorebook/bestiary-draugr`
+- `/Dragon-Saga/lorebook/bestiary-liches`
 - `/Dragon-Saga/lorebook/bestiary-owlbears`
-- `/Dragon-Saga/lorebook/faction-legion`
+- `/Dragon-Saga/lorebook/bestiary-morgoth-spawn`
+- `/Dragon-Saga/lorebook/bestiary-dark-spawn`
+- `/Dragon-Saga/lorebook/bestiary-tieflings`
+- `/Dragon-Saga/lorebook/bestiary-fiends`
+- `/Dragon-Saga/lorebook/magic-anaptanium`
 - `/Dragon-Saga/lorebook/illyria-war-machines-doctrine`
-- `/Dragon-Saga/lorebook/war-scorpions-ballistae`
-- `/Dragon-Saga/lorebook/lore-valery-replaced`
-- `/Dragon-Saga/lor`
-- `/Dragon-Saga/letopis`
 - `/Dragon-Saga/lore/valery`
-- `/Dragon-Saga/lore/brin`
-- `/Dragon-Saga/lore/sakris`
-- `/Dragon-Saga/lore/talis`
-- `/Dragon-Saga/lore/stive`
-- `/Dragon-Saga/map/sever`
-- `/Dragon-Saga/map/northwind`
 - `/Dragon-Saga/404.html`
 
 ## Что всё равно желательно проверить руками после деплоя
@@ -226,11 +254,16 @@ Playwright в Chromium проверил основные интерфейсны�
 Минимальный ручной чек:
 
 - главная открывается без пустых карт;
+- видео «Часть 1» и «Часть 2» открываются в модальном плеере;
+- автолента YouTube отображается во вкладке «Автолента»;
+- вкладка Shorts ведёт в Shorts канала;
 - Таро раскрывается и модалка закрывается;
 - `/activities` открывается и оракул бросает карту;
 - `/lorebook` открывается и поиск работает;
 - `/lorebook/bestiary-vampires` открывается;
-- `/lorebook/bestiary-undead-overview` открывается;
+- `/lorebook/bestiary-tieflings` открывается;
+- `/lorebook/bestiary-fiends` открывается;
+- `/lorebook/magic-anaptanium` открывается;
 - `/lorebook/illyria-war-machines-doctrine` открывается;
 - меню не вылезает за экран;
 - `/lore/valery` открывается с обновлённым лором после обновления страницы.

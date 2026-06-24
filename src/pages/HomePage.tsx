@@ -33,10 +33,35 @@ const socialLinks = [
   { label: 'Discord', href: 'https://discord.gg/vyhKQTKhsw', icon: MessageCircle },
 ];
 
-const videos = [
-  { part: 'Часть 1', title: 'Начало путешествия', url: 'https://www.youtube.com/embed/VIDEO_ID_1' },
-  { part: 'Часть 2', title: 'Тени Бергхейма', url: 'https://www.youtube.com/embed/VIDEO_ID_2' },
-  { part: 'Часть 3', title: 'Ледяная крепость', url: 'https://www.youtube.com/embed/VIDEO_ID_3' },
+type VideoTab = 'episodes' | 'latest' | 'shorts';
+
+interface SagaVideo {
+  part: string;
+  title: string;
+  description: string;
+  embedUrl: string;
+  watchUrl: string;
+}
+
+const youtubeChannelUrl = 'https://www.youtube.com/@Sigmarillion';
+const youtubeShortsUrl = 'https://www.youtube.com/@Sigmarillion/shorts';
+const youtubeUploadsPlaylist = 'https://www.youtube.com/embed/videoseries?list=UU7IRkV7Cg7MznCecmQXCN1A';
+
+const videos: SagaVideo[] = [
+  {
+    part: 'Часть 1',
+    title: 'Dragon Saga. Часть 1. Знакомство',
+    description: 'Начало новой D&D-кампании: герои встречаются в северной рыбацкой деревушке и ищут ночлег, работу и первые зацепки.',
+    embedUrl: 'https://www.youtube.com/embed/HgRX_wIi3mY?start=5473&autoplay=1&rel=0',
+    watchUrl: 'https://www.youtube.com/watch?v=HgRX_wIi3mY&t=5473s',
+  },
+  {
+    part: 'Часть 2',
+    title: 'Dragon Saga. Часть 2. Деревенские проблемы',
+    description: 'Продолжение северной истории: угроза над деревней, первые решения партии и рост личных конфликтов.',
+    embedUrl: 'https://www.youtube.com/embed/2_l8_ahjHx8?start=6621&autoplay=1&rel=0',
+    watchUrl: 'https://www.youtube.com/watch?v=2_l8_ahjHx8&t=6621s',
+  },
 ];
 
 const worldLinks = [
@@ -59,7 +84,8 @@ const worldLinks = [
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const BASE = import.meta.env.BASE_URL;
-  const [selectedVideo, setSelectedVideo] = useState<{ part: string; title: string; url: string } | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<SagaVideo | null>(null);
+  const [videoTab, setVideoTab] = useState<VideoTab>('episodes');
   const [expandedCard, setExpandedCard] = useState<CharacterConfig | null>(null);
 
   const scrollTo = (id: string) => {
@@ -219,22 +245,64 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        <section className="codex-section">
+        <section className="codex-section" id="videos-section">
           <div className="codex-section-head">
             <span className="codex-kicker"><Play size={16} /> Хроники</span>
             <h2>Записи приключений</h2>
-            <p>Место для сессий, трейлеров и материалов кампании.</p>
+            <p>Сессии проигрываются прямо на сайте. Автолента канала показывает новые загрузки YouTube без ручного обновления списка.</p>
           </div>
-          <div className="codex-video-grid">
-            {videos.map((video) => (
-              <button key={video.part} type="button" className="codex-video-card tarot-no-glow" onClick={() => setSelectedVideo(video)}>
-                <img src={`${BASE}videos/thumbnail.jpg`} alt={video.title} loading="eager" decoding="async" />
-                <span><Play size={18} /></span>
-                <b>{video.part}</b>
-                <strong>{video.title}</strong>
-              </button>
-            ))}
+
+          <div className="codex-video-tabs" role="tablist" aria-label="Категории видео">
+            <button type="button" className={videoTab === 'episodes' ? 'is-active tarot-no-glow' : 'tarot-no-glow'} onClick={() => setVideoTab('episodes')}>Записи</button>
+            <button type="button" className={videoTab === 'latest' ? 'is-active tarot-no-glow' : 'tarot-no-glow'} onClick={() => setVideoTab('latest')}>Автолента</button>
+            <button type="button" className={videoTab === 'shorts' ? 'is-active tarot-no-glow' : 'tarot-no-glow'} onClick={() => setVideoTab('shorts')}>Shorts</button>
           </div>
+
+          {videoTab === 'episodes' && (
+            <div className="codex-video-grid">
+              {videos.map((video) => (
+                <button key={video.part} type="button" className="codex-video-card tarot-no-glow" onClick={() => setSelectedVideo(video)}>
+                  <img src={`${BASE}videos/thumbnail.jpg`} alt={video.title} loading="eager" decoding="async" />
+                  <span><Play size={18} /></span>
+                  <b>{video.part}</b>
+                  <strong>{video.title}</strong>
+                  <em>{video.description}</em>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {videoTab === 'latest' && (
+            <div className="codex-video-live-panel">
+              <div>
+                <span className="codex-kicker"><Youtube size={16} /> Автоматическая лента</span>
+                <h3>Последние загрузки Sigmarillion</h3>
+                <p>Этот блок использует uploads-плейлист YouTube. Когда на канале появляется новая запись, YouTube сам поднимает её в этой ленте.</p>
+                <a className="codex-btn codex-btn--primary tarot-no-glow" href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer">Открыть канал</a>
+              </div>
+              <iframe
+                src={youtubeUploadsPlaylist}
+                title="Последние видео Sigmarillion"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          )}
+
+          {videoTab === 'shorts' && (
+            <div className="codex-shorts-panel">
+              <div className="codex-shorts-card">
+                <Youtube size={28} />
+                <h3>Shorts Dragon Saga</h3>
+                <p>Shorts вынесены отдельно, чтобы короткие нарезки не смешивались с полными сессиями. YouTube не даёт стабильную отдельную embed-ленту Shorts без API, поэтому кнопка ведёт прямо в раздел Shorts канала.</p>
+                <a className="codex-btn codex-btn--primary tarot-no-glow" href={youtubeShortsUrl} target="_blank" rel="noopener noreferrer">Открыть Shorts</a>
+              </div>
+              <div className="codex-shorts-note">
+                <strong>Автообновление:</strong> новые shorts также попадают в общую автоленту канала, если YouTube добавляет их в uploads-плейлист.
+              </div>
+            </div>
+          )}
         </section>
 
         <AnimatePresence>
@@ -253,7 +321,8 @@ const HomePage: React.FC = () => {
                 exit={{ scale: 0.92, y: 18 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <iframe src={selectedVideo.url} title={selectedVideo.title} className="w-full h-full" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                <iframe src={selectedVideo.embedUrl} title={selectedVideo.title} className="w-full h-full" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
+                <a className="video-modal-youtube-link tarot-no-glow" href={selectedVideo.watchUrl} target="_blank" rel="noopener noreferrer">YouTube ↗</a>
                 <button className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 text-white text-xl flex items-center justify-center tarot-no-glow" onClick={() => setSelectedVideo(null)} type="button">×</button>
               </motion.div>
             </motion.div>
