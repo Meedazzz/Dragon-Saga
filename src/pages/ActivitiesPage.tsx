@@ -1,24 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import {
-  BookOpen,
-  ChevronRight,
-  Clock,
-  Compass,
-  Dices,
-  Heart,
-  Search,
-  Shield,
-  Sparkles,
-  Swords,
-  Users,
-  X,
+import { 
+  Dices, Users, Compass, Scroll, Sparkles, BookOpen, 
+  Clock, Shield, Sword, Heart, X, ChevronRight
 } from 'lucide-react';
 import Layout from '@/components/Layout';
-import { characters } from '@/data/characters';
-import { tarotCards, type TarotCard } from '@/data/tarot';
-import { applyImageFallback } from '@/lib/imageFallback';
 import { homeTheme } from '@/types/theme';
 
 interface Activity {
@@ -33,240 +20,336 @@ interface Activity {
 
 const activities: Activity[] = [
   {
-    id: 'oracle', icon: Dices, title: 'Оракул сцены', category: 'Гадание', color: '#f5c451',
-    description: 'Карта Таро + d20 дают тон сцены, цену и крючок для партии.',
-    details: ['Вытягивает реальный аркан героя', 'Бросает d20', 'Даёт быстрый крючок сцены', 'Ведёт к полному лору карты'],
+    id: 'oracle',
+    icon: Dices,
+    title: 'Оракул',
+    description: 'Бросок + d20 для решения судьбоносных вопросов. Древний ритуал гадания, позволяющий заглянуть в пелену будущего.',
+    category: 'Гадание',
+    color: '#f59e0b',
+    details: [
+      'Бросьте кость судьбы и получите ответ на свой вопрос',
+      'Каждый бросок влияет на нити судьбы персонажа',
+      'Результаты записываются в летопись',
+      'Модификаторы зависят от текущей ауры героя'
+    ]
   },
   {
-    id: 'threads', icon: Users, title: 'Нити героев', category: 'Связи', color: '#a78bfa',
-    description: 'Быстрые переходы к героям, их лору и связанным страницам.',
-    details: ['Пять героев в одном модуле', 'Переход к полному лору', 'Личные умения и подклассы', 'Удобно для игроков за столом'],
+    id: 'threads',
+    icon: Users,
+    title: 'Нити героев',
+    description: 'Связи между персонажами и их общая история. Карта отношений, показывающая, кто кому друг, а кто враг.',
+    category: 'Связи',
+    color: '#a78bfa',
+    details: [
+      'Визуальная карта всех отношений в партии',
+      'История каждой связи и её развитие',
+      'Влияние событий на динамику группы',
+      'Скрытые нити, которые ещё предстоит обнаружить'
+    ]
   },
   {
-    id: 'route', icon: Compass, title: 'Маршрут', category: 'Навигация', color: '#34d399',
-    description: 'Переходы к картам, летописи и маршрутам северных земель.',
-    details: ['Карта Севера', 'Карта Нортвинда', 'Летопись событий', 'Быстрый старт для сессии'],
+    id: 'route',
+    icon: Compass,
+    title: 'Маршрут',
+    description: 'Путеводитель по миру и ключевым локациям. Интерактивная карта с отметками пройденных путей.',
+    category: 'Навигация',
+    color: '#34d399',
+    details: [
+      'Интерактивная карта мира Бергхейма',
+      'Отметки пройденных и предстоящих маршрутов',
+      'Описание ключевых локаций и их история',
+      'Секретные зоны, открываемые по ходу кампании'
+    ]
   },
   {
-    id: 'archive', icon: BookOpen, title: 'Архив мира', category: 'Знания', color: '#60a5fa',
-    description: 'Главный вход в лор, дома, кланы, исследования и хроники.',
-    details: ['Общий лор', 'Дом Хессен', 'Род Даркбейнов', 'Феноменология Чёрного льда'],
+    id: 'archive',
+    icon: Scroll,
+    title: 'Архив',
+    description: 'Все записи, документы и найденные артефакты. Полное собрание знаний, добытых в ходе приключений.',
+    category: 'Знания',
+    color: '#60a5fa',
+    details: [
+      'Каталог всех найденных артефактов',
+      'Древние тексты и их переводы',
+      'Записи о существах и монстрах',
+      'Исторические хроники мира'
+    ]
   },
   {
-    id: 'timeline', icon: Clock, title: 'Хронология', category: 'История', color: '#e6e6fa',
-    description: 'Каркас событий и последствий для подготовки следующей главы.',
-    details: ['Завязка', 'Разлом', 'Выбор', 'Последствие'],
+    id: 'quests',
+    icon: BookOpen,
+    title: 'Квесты',
+    description: 'Активные и завершённые задания партии. Отслеживайте прогресс и открывайте новые цели.',
+    category: 'Задания',
+    color: '#f97316',
+    details: [
+      'Список активных заданий с приоритетами',
+      'История завершённых квестов',
+      'Скрытые цели и альтернативные пути',
+      'Награды и последствия выбора'
+    ]
   },
   {
-    id: 'battle', icon: Swords, title: 'Тактика', category: 'Бой', color: '#ef4444',
-    description: 'Быстрый блок для боевых ролей, угроз и ставки сцены.',
-    details: ['Кто защищает', 'Кто платит цену', 'Что меняется после победы', 'Какая тень возвращается'],
+    id: 'timeline',
+    icon: Clock,
+    title: 'Хронология',
+    description: 'Временная шкала всех событий кампании. От первой встречи до последней битвы.',
+    category: 'История',
+    color: '#e6e6fa',
+    details: [
+      'Полная временная шкала кампании',
+      'Ключевые события и поворотные моменты',
+      'Связь между эпизодами и их последствия',
+      'Пророчества и их исполнение'
+    ]
   },
   {
-    id: 'sanctuary', icon: Heart, title: 'Убежище', category: 'База', color: '#ec4899',
-    description: 'Идеи для базы партии, союзников и безопасных сцен между приключениями.',
-    details: ['Союзники', 'Запасы', 'Слухи', 'Новая угроза'],
+    id: 'battle',
+    icon: Sword,
+    title: 'Тактика',
+    description: 'Боевые formation и стратегии партии. Планируйте сражения и анализируйте прошлые битвы.',
+    category: 'Бой',
+    color: '#ef4444',
+    details: [
+      'Боевые formation и роли каждого героя',
+      'Анализ прошедших сражений',
+      'Слабые и сильные стороны врагов',
+      'Рекомендации по тактике'
+    ]
   },
-];
-
-const categories = ['Все', ...Array.from(new Set(activities.map((activity) => activity.category)))];
-
-const randomInt = (max: number) => {
-  if (max <= 0) return 0;
-  const cryptoApi = globalThis.crypto;
-  if (cryptoApi?.getRandomValues) {
-    const array = new Uint32Array(1);
-    cryptoApi.getRandomValues(array);
-    return array[0] % max;
+  {
+    id: 'sanctuary',
+    icon: Heart,
+    title: 'Убежище',
+    description: 'База партии и её улучшения. Ваш дом в мире Бергхейма — от шалаша до крепости.',
+    category: 'База',
+    color: '#ec4899',
+    details: [
+      'Текущее состояние базы партии',
+      'Доступные улучшения и их стоимость',
+      'NPC и союзники в убежище',
+      'Защитные механизмы и ловушки'
+    ]
   }
-  return Math.floor(Date.now() % max);
-};
-const routeLinks = [
-  { label: 'Карта Севера', path: '/map/sever' },
-  { label: 'Карта Нортвинда', path: '/map/northwind' },
-  { label: 'Летопись', path: '/letopis' },
-];
-const archiveLinks = [
-  { label: 'Полный лор', path: '/lor' },
-  { label: 'Род Даркбейнов', path: '/darkbain' },
-  { label: 'Дом Хессен', path: '/hessen' },
-  { label: 'Чёрный лёд', path: '/black-ice-research' },
-  { label: 'Бергхейм', path: '/berghheim' },
-  { label: 'Клан Арантир', path: '/arantir' },
 ];
 
-/**
- * ActivitiesPage — зал инструментов мастера и партии.
- *
- * Здесь лежат не длинные статьи, а быстрые действия:
- * оракул с d20, переходы к героям, маршруты по миру и архив лора.
- * Добавляй новые активности в массив `activities`, а их особую логику — в модальное окно ниже.
- */
+const categories = ['Все', ...Array.from(new Set(activities.map(a => a.category)))];
+
 const ActivitiesPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [activeCategory, setActiveCategory] = useState('Все');
   const [searchQuery, setSearchQuery] = useState('');
-  const [oracleResult, setOracleResult] = useState<{ card: TarotCard; die: number; tone: string } | null>(null);
 
-  const filteredActivities = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    return activities.filter((activity) => {
-      const matchesCategory = activeCategory === 'Все' || activity.category === activeCategory;
-      const haystack = `${activity.title} ${activity.description} ${activity.category}`.toLowerCase();
-      return matchesCategory && (!query || haystack.includes(query));
-    });
-  }, [activeCategory, searchQuery]);
-
-  const drawOracle = () => {
-    const card = tarotCards[randomInt(tarotCards.length)];
-    const die = randomInt(20) + 1;
-    const tone = die >= 15 ? 'Дар' : die >= 8 ? 'Цена' : 'Осложнение';
-    setOracleResult({ card, die, tone });
-  };
-
-  const openActivity = (activity: Activity) => {
-    setSelectedActivity(activity);
-    if (activity.id === 'oracle' && !oracleResult) drawOracle();
-  };
+  const filteredActivities = activities.filter(a => {
+    const matchesCategory = activeCategory === 'Все' || a.category === activeCategory;
+    const matchesSearch = a.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          a.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <Layout theme={homeTheme} particleCount={20}>
-      <main className="activities-page codex-activities">
-        <motion.section className="activities-hero" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <div className="activities-hero__bg"><div className="activities-hero__orb" /></div>
+      <main className="activities-page">
+        {/* Hero Header */}
+        <motion.section 
+          className="activities-hero"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="activities-hero__bg">
+            <div className="activities-hero__orb" />
+          </div>
+
           <div className="activities-hero__content">
-            <span className="activities-eyebrow">🎲 Инструменты мастера</span>
-            <h1>Активности партии</h1>
-            <p>Оракул, связи героев, маршруты, архив и быстрые каркасы сцен. Все инструменты завязаны на существующий лор и карты сайта.</p>
-            <div className="codex-actions codex-actions--center">
-              <button type="button" className="codex-btn codex-btn--primary tarot-no-glow" onClick={() => navigate('/')}>На главную</button>
-              <button type="button" className="codex-btn tarot-no-glow" onClick={() => navigate('/lor')}>Полный лор</button>
-            </div>
+            <motion.span 
+              className="activities-eyebrow"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              🎲 Инструменты мастера
+            </motion.span>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              Активности партии
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              Всё необходимое для погружения в мир Драконьей Саги. 
+              Оракулы, карты, хроники и многое другое.
+            </motion.p>
           </div>
         </motion.section>
 
-        <motion.section className="activities-controls" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-          <label className="activities-search">
-            <Search size={16} className="activities-search__icon" />
-            <input type="text" placeholder="Найти активность..." value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />
-          </label>
+        {/* Search & Filter */}
+        <motion.section 
+          className="activities-controls"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="activities-search">
+            <Sparkles size={16} className="activities-search__icon" />
+            <input 
+              type="text" 
+              placeholder="Найти активность..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
           <div className="activities-categories">
-            {categories.map((category) => (
-              <button key={category} type="button" className={`activities-category tarot-no-glow ${activeCategory === category ? 'active' : ''}`} onClick={() => setActiveCategory(category)}>
-                {category}
+            {categories.map(cat => (
+              <button
+                key={cat}
+                type="button"
+                className={`activities-category ${activeCategory === cat ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat}
               </button>
             ))}
           </div>
         </motion.section>
 
+        {/* Activities Grid */}
         <section className="activities-grid">
           <AnimatePresence mode="popLayout">
             {filteredActivities.map((activity, index) => (
               <motion.article
                 key={activity.id}
                 layout
-                initial={{ opacity: 0, scale: 0.94 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.94 }}
-                transition={{ delay: index * 0.035, duration: 0.25 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ delay: index * 0.05, duration: 0.3 }}
                 className="activity-card"
                 style={{ '--activity-color': activity.color } as React.CSSProperties}
-                onClick={() => openActivity(activity)}
+                onClick={() => setSelectedActivity(activity)}
               >
                 <div className="activity-card__glow" />
-                <div className="activity-card__icon"><activity.icon size={27} /></div>
+                <div className="activity-card__icon">
+                  <activity.icon size={28} />
+                </div>
                 <div className="activity-card__content">
                   <span className="activity-card__category">{activity.category}</span>
                   <h3>{activity.title}</h3>
                   <p>{activity.description}</p>
                 </div>
-                <div className="activity-card__arrow"><ChevronRight size={20} /></div>
+                <div className="activity-card__arrow">
+                  <ChevronRight size={20} />
+                </div>
               </motion.article>
             ))}
           </AnimatePresence>
         </section>
 
+        {/* Empty State */}
         {filteredActivities.length === 0 && (
-          <motion.div className="activities-empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <motion.div 
+            className="activities-empty"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
             <Sparkles size={48} />
             <p>Ничего не найдено. Попробуйте другой запрос.</p>
           </motion.div>
         )}
 
+        {/* Activity Detail Modal */}
         <AnimatePresence>
           {selectedActivity && (
-            <motion.div className="activity-modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedActivity(null)}>
+            <motion.div
+              className="activity-modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedActivity(null)}
+            >
               <motion.div
                 className="activity-modal"
-                initial={{ scale: 0.92, y: 30, opacity: 0 }}
+                initial={{ scale: 0.9, y: 30, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
-                exit={{ scale: 0.92, y: 30, opacity: 0 }}
+                exit={{ scale: 0.9, y: 30, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                onClick={(event) => event.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
                 style={{ '--activity-color': selectedActivity.color } as React.CSSProperties}
               >
-                <button className="activity-modal__close tarot-no-glow" onClick={() => setSelectedActivity(null)} type="button" aria-label="Закрыть"><X size={22} /></button>
+                <button 
+                  className="activity-modal__close"
+                  onClick={() => setSelectedActivity(null)}
+                  type="button"
+                >
+                  <X size={24} />
+                </button>
 
                 <div className="activity-modal__header">
-                  <div className="activity-modal__icon"><selectedActivity.icon size={32} /></div>
-                  <div><span className="activity-modal__category">{selectedActivity.category}</span><h2>{selectedActivity.title}</h2></div>
+                  <div className="activity-modal__icon">
+                    <selectedActivity.icon size={32} />
+                  </div>
+                  <div>
+                    <span className="activity-modal__category">{selectedActivity.category}</span>
+                    <h2>{selectedActivity.title}</h2>
+                  </div>
                 </div>
 
                 <p className="activity-modal__description">{selectedActivity.description}</p>
 
-                {selectedActivity.id === 'oracle' && (
-                  <div className="activity-tool-panel">
-                    <button type="button" className="codex-btn codex-btn--primary tarot-no-glow" onClick={drawOracle}><Dices size={16} /> Бросить снова</button>
-                    {oracleResult && (
-                      <article className="activity-oracle-result">
-                        <img src={oracleResult.card.tarot} alt={oracleResult.card.name} onError={applyImageFallback} />
-                        <div>
-                          <span>d20 = {oracleResult.die} · {oracleResult.tone}</span>
-                          <h3>{oracleResult.card.name}</h3>
-                          <p>{oracleResult.card.narrative.questHook}</p>
-                          <button type="button" className="codex-btn tarot-no-glow" onClick={() => navigate(oracleResult.card.lorePath)}>Открыть лор</button>
-                        </div>
-                      </article>
-                    )}
-                  </div>
-                )}
-
-                {selectedActivity.id === 'threads' && (
-                  <div className="activity-link-grid">
-                    {characters.map((character) => (
-                      <button key={character.id} type="button" className="tarot-no-glow" onClick={() => navigate(character.lorePath)}>
-                        <img src={character.avatar} alt="" onError={applyImageFallback} />
-                        <span>{character.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {selectedActivity.id === 'route' && (
-                  <div className="activity-link-grid activity-link-grid--text">
-                    {routeLinks.map((link) => <button key={link.path} type="button" onClick={() => navigate(link.path)}>{link.label}</button>)}
-                  </div>
-                )}
-
-                {selectedActivity.id === 'archive' && (
-                  <div className="activity-link-grid activity-link-grid--text">
-                    {archiveLinks.map((link) => <button key={link.path} type="button" onClick={() => navigate(link.path)}>{link.label}</button>)}
-                  </div>
-                )}
-
                 <div className="activity-modal__details">
                   <h4>Возможности</h4>
                   <ul>
-                    {selectedActivity.details.map((detail) => (
-                      <li key={detail}><Shield size={14} /> {detail}</li>
+                    {selectedActivity.details.map((detail, i) => (
+                      <motion.li 
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                      >
+                        <Shield size={14} />
+                        {detail}
+                      </motion.li>
                     ))}
                   </ul>
+                </div>
+
+                <div className="activity-modal__actions">
+                  <button 
+                    className="activity-modal__btn activity-modal__btn--primary"
+                    type="button"
+                  >
+                    Открыть инструмент
+                  </button>
+                  <button 
+                    className="activity-modal__btn activity-modal__btn--secondary"
+                    onClick={() => setSelectedActivity(null)}
+                    type="button"
+                  >
+                    Закрыть
+                  </button>
                 </div>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Back Button */}
+        <div className="activities-back">
+          <button 
+            type="button" 
+            className="saga-btn saga-btn--ghost tarot-no-glow"
+            onClick={() => navigate('/')}
+          >
+            ← Вернуться на главную
+          </button>
+        </div>
       </main>
     </Layout>
   );
