@@ -6,7 +6,7 @@ const viewports = [
   { name: 'mobile', width: 390, height: 844 },
 ];
 
-const routes = ['/', '/activities', '/lore/valery', '/lor', '/map/sever'];
+const routes = ['/', '/activities', '/lorebook', '/lorebook/bestiary-werewolves', '/lorebook/bestiary-vampires', '/lorebook/bestiary-undead-overview', '/lorebook/bestiary-owlbears', '/lorebook/bestiary-morgoth-spawn', '/lorebook/bestiary-tieflings', '/lorebook/bestiary-fiends', '/lorebook/faction-legion', '/lorebook/illyria-war-machines-doctrine', '/lore/valery', '/lor', '/map/sever'];
 
 const waitForPageReady = async (page: Page) => {
   await page.waitForLoadState('domcontentloaded');
@@ -71,6 +71,14 @@ for (const viewport of viewports) {
 
         if (route === '/activities') {
           await expect(page.locator('.activity-card')).toHaveCount(7);
+        }
+
+        if (route === '/lorebook') {
+          await expect(page.locator('.lorebook-card')).toHaveCount(50);
+        }
+
+        if (route.startsWith('/lorebook/')) {
+          await expect(page.locator('.lorebook-section-card').first()).toBeVisible();
         }
       });
     }
@@ -148,6 +156,20 @@ test('each hero route has individual theme color', async ({ page }) => {
   }
 
   expect(new Set(colors).size, colors.join(', ')).toBe(5);
+});
+
+
+test('lorebook catalogue and entry pages work', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/Dragon-Saga/lorebook');
+  await waitForPageReady(page);
+  await expect(page.locator('.lorebook-card')).toHaveCount(50);
+  await page.locator('.lorebook-search input').fill('Оборотни');
+  await expect(page.locator('.lorebook-card')).toHaveCount(1);
+  await page.locator('.lorebook-card').click();
+  await expect(page.locator('.lorebook-entry-hero h1')).toContainText('Оборотни');
+  await expect(page.locator('.lorebook-section-card')).toHaveCount(2);
+  await expectNoBrokenLocalImages(page);
 });
 
 test('captures reference screenshots for manual visual comparison', async ({ page }) => {

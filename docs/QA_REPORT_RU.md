@@ -4,7 +4,7 @@
 
 ## Главное
 
-Удалось сделать реальный прогон интерфейса в виртуальном Chromium через Playwright. Это уже не только проверка кода/маршрутов, а автоматическое открытие страниц в браузере с desktop/tablet/mobile viewport.
+Сделан реальный прогон интерфейса в виртуальном Chromium через Playwright. Проверка открывает страницы как пользователь: на desktop, tablet и mobile, проверяет изображения, горизонтальные переполнения, Таро, активности, новый лорбук, расширенный бестиарий, военные машины Иллирии и индивидуальные темы героев.
 
 ## Автоматические проверки
 
@@ -43,7 +43,7 @@ node scripts/asset-smoke-test.mjs
 битых файлов: 0
 ```
 
-### Проверка CSS
+### Проверка CSS и путей
 
 - Количество `{` и `}` совпадает.
 - Убрана ошибочная директива `@tailwind tailwind utilities`.
@@ -54,7 +54,7 @@ node scripts/asset-smoke-test.mjs
 
 ## Реальный UI-прогон через Playwright
 
-Добавлены файлы:
+Файлы:
 
 - `playwright.config.ts` — конфиг браузерных тестов.
 - `tests/ui-smoke.spec.ts` — smoke-тесты интерфейса.
@@ -68,10 +68,10 @@ node scripts/asset-smoke-test.mjs
 npm run test:ui
 ```
 
-Результат:
+Результат последнего прогона:
 
 ```txt
-19 passed
+41 passed
 ```
 
 ### Что проверяет UI-прогон
@@ -86,6 +86,13 @@ npm run test:ui
 
 - `/Dragon-Saga/`
 - `/Dragon-Saga/activities`
+- `/Dragon-Saga/lorebook`
+- `/Dragon-Saga/lorebook/bestiary-werewolves`
+- `/Dragon-Saga/lorebook/bestiary-vampires`
+- `/Dragon-Saga/lorebook/bestiary-undead-overview`
+- `/Dragon-Saga/lorebook/bestiary-owlbears`
+- `/Dragon-Saga/lorebook/faction-legion`
+- `/Dragon-Saga/lorebook/illyria-war-machines-doctrine`
 - `/Dragon-Saga/lore/valery`
 - `/Dragon-Saga/lor`
 - `/Dragon-Saga/map/sever`
@@ -98,13 +105,18 @@ npm run test:ui
 - на главной есть 5 карточек героев;
 - на главной есть 5 карт Таро;
 - на активностях есть 7 карточек;
+- лорбук показывает 50 новых страниц;
+- отдельные страницы лорбука открываются;
+- отдельная страница военных машин Иллирии открывается;
+- страницы вампиров, нежити и совомедведей открываются;
+- поиск по лорбуку работает;
 - работает открытие модалки Таро;
 - работает кнопка «Показать все» у Таро;
 - работает боковое меню;
 - работает оракул активностей;
 - работает поиск активности;
 - у 5 героев разные theme-цвета;
-- веер Таро реально раскрыт по X, а не лежит стопкой.
+- веер Таро реально раскрыт по X.
 
 ## Найденные и исправленные баги во время UI-прогона
 
@@ -114,16 +126,16 @@ npm run test:ui
 
 Исправление:
 
-- главные карты и видео-превью на главной переведены на `loading="eager"`;
+- важные изображения главной переведены на `loading="eager"`;
 - тест дополнительно прокручивает страницу перед проверкой изображений.
 
-### 2. `/activities` открывался не там из-за base URL в тесте
+### 2. `/activities` и другие маршруты требовали правильный base URL
 
-Причина: Vite preview требует `/Dragon-Saga/activities`.
+Причина: Vite preview требует `/Dragon-Saga/...`.
 
 Исправление:
 
-- тесты теперь ходят по полным путям `/Dragon-Saga/...`.
+- тесты ходят по полным путям `/Dragon-Saga/...`.
 
 ### 3. Карта Таро перехватывала клик внутренними слоями
 
@@ -132,15 +144,15 @@ npm run test:ui
 Исправление:
 
 - добавлены `pointer-events: none` для внутренних декоративных слоёв карты;
-- клик теперь стабильно попадает в `.tarot-fan-card`.
+- клик стабильно доходит до `.tarot-fan-card`.
 
 ### 4. Веер Таро визуально был слишком сжат
 
-Причина: первоначальная формула через sin давала слабое раскрытие.
+Причина: первоначальная формула давала слабое раскрытие.
 
 Исправление:
 
-- `TarotFan.tsx` теперь считает X-позиции через адаптивный spread;
+- `TarotFan.tsx` считает X-позиции через адаптивный spread;
 - Playwright проверяет, что центры карт реально разнесены по X.
 
 ### 5. Цвета героев были не полностью индивидуальны
@@ -150,12 +162,47 @@ npm run test:ui
 - добавлены отдельные темы `talisTheme` и `stiveTheme`;
 - `/lore/valery`, `/lore/brin`, `/lore/sakris`, `/lore/talis`, `/lore/stive` дают 5 разных theme-цветов.
 
+### 6. Лорбук и военные машины добавлены как новый независимый слой
+
+Проверено:
+
+- каталог `/lorebook`;
+- алиас `/bestiary`;
+- отдельные буклеты;
+- отдельная графа `Военные машины`;
+- страница `Военная доктрина Иллирии`;
+- поиск;
+- связанные страницы.
+
+### 7. Бестиарий расширен
+
+Добавлены и проверены новые страницы:
+
+- вампиры;
+- големы;
+- элементали;
+- сельваны;
+- общая нежить;
+- драугры;
+- личи;
+- совомедведи.
+
 ## Проверенные маршруты через локальный preview
 
 Все вернули `200 OK`:
 
 - `/Dragon-Saga/`
 - `/Dragon-Saga/activities`
+- `/Dragon-Saga/lorebook`
+- `/Dragon-Saga/bestiary`
+- `/Dragon-Saga/lorebook/bestiary-werewolves`
+- `/Dragon-Saga/lorebook/bestiary-vampires`
+- `/Dragon-Saga/lorebook/bestiary-undead-overview`
+- `/Dragon-Saga/lorebook/bestiary-owlbears`
+- `/Dragon-Saga/lorebook/faction-legion`
+- `/Dragon-Saga/lorebook/illyria-war-machines-doctrine`
+- `/Dragon-Saga/lorebook/war-scorpions-ballistae`
+- `/Dragon-Saga/lorebook/lore-valery-replaced`
 - `/Dragon-Saga/lor`
 - `/Dragon-Saga/letopis`
 - `/Dragon-Saga/lore/valery`
@@ -163,30 +210,8 @@ npm run test:ui
 - `/Dragon-Saga/lore/sakris`
 - `/Dragon-Saga/lore/talis`
 - `/Dragon-Saga/lore/stive`
-- `/Dragon-Saga/valery`
-- `/Dragon-Saga/brin`
-- `/Dragon-Saga/sakris`
-- `/Dragon-Saga/stive`
-- `/Dragon-Saga/talis`
-- `/Dragon-Saga/tallis`
-- `/Dragon-Saga/subclass/talis`
-- `/Dragon-Saga/subclass/tallis`
-- `/Dragon-Saga/darkbain`
-- `/Dragon-Saga/hessen`
-- `/Dragon-Saga/black-ice-research`
-- `/Dragon-Saga/berghheim`
-- `/Dragon-Saga/arantir`
 - `/Dragon-Saga/map/sever`
 - `/Dragon-Saga/map/northwind`
-- `/Dragon-Saga/optimized/shirt.webp`
-- `/Dragon-Saga/optimized/tarot_valery.webp`
-- `/Dragon-Saga/optimized/tarot_brin.webp`
-- `/Dragon-Saga/optimized/tarot_sakris.webp`
-- `/Dragon-Saga/optimized/tarot_tallis.webp`
-- `/Dragon-Saga/optimized/tarot_stive.webp`
-- `/Dragon-Saga/shirt.png`
-- `/Dragon-Saga/tarot_sakris.png`
-- `/Dragon-Saga/ouroboros.png`
 - `/Dragon-Saga/404.html`
 
 ## Что всё равно желательно проверить руками после деплоя
@@ -203,5 +228,9 @@ Playwright в Chromium проверил основные интерфейсны�
 - главная открывается без пустых карт;
 - Таро раскрывается и модалка закрывается;
 - `/activities` открывается и оракул бросает карту;
+- `/lorebook` открывается и поиск работает;
+- `/lorebook/bestiary-vampires` открывается;
+- `/lorebook/bestiary-undead-overview` открывается;
+- `/lorebook/illyria-war-machines-doctrine` открывается;
 - меню не вылезает за экран;
-- `/lore/valery` и `/lore/brin` открываются после обновления страницы.
+- `/lore/valery` открывается с обновлённым лором после обновления страницы.
