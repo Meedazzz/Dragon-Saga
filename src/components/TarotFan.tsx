@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { tarotBackImage, tarotCards } from '@/data/tarot';
 import { applyImageFallback } from '@/lib/imageFallback';
 import { X, RotateCcw, Eye, EyeOff } from 'lucide-react';
@@ -17,6 +18,7 @@ interface TarotFanProps {
  * - при ошибке WebP срабатывает `applyImageFallback` и подставляет PNG.
  */
 const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
+  const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -246,6 +248,26 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
                 <h2>{tarotCards[selectedIndex].name}</h2>
                 <p className="tarot-detail-title">{tarotCards[selectedIndex].title}</p>
                 <p className="tarot-detail-desc">{tarotCards[selectedIndex].desc}</p>
+
+                <div className="tarot-detail-actions">
+                  <button
+                    type="button"
+                    className="tarot-link-action"
+                    onClick={() => navigate(tarotCards[selectedIndex].lorePath)}
+                  >
+                    Полный лор
+                  </button>
+                  {tarotCards[selectedIndex].pages.slice(0, 2).map((page) => (
+                    <button
+                      key={page.path}
+                      type="button"
+                      className="tarot-link-action tarot-link-action--muted"
+                      onClick={() => navigate(page.path)}
+                    >
+                      {page.label}
+                    </button>
+                  ))}
+                </div>
 
                 <button 
                   className="tarot-flip-btn"

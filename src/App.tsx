@@ -14,6 +14,7 @@ const SakrisSubclassPage = lazy(() => import('@/pages/SakrisSubclassPage'));
 const BrinPage = lazy(() => import('@/pages/BrinPage'));
 const BrinSubclassPage = lazy(() => import('@/pages/BrinSubclassPage'));
 const BlackIceResearchPage = lazy(() => import('@/pages/BlackIceResearchPage'));
+const BrinDocumentPage = lazy(() => import('@/pages/BrinDocumentPage'));
 const DarkbainPage = lazy(() => import('@/pages/DarkbainPage'));
 const LetopisPage = lazy(() => import('@/pages/LetopisPage'));
 const LorPage = lazy(() => import('@/pages/LorPage'));
@@ -23,6 +24,7 @@ const BerghheimPage = lazy(() => import('@/pages/BerghheimPage'));
 const ArantirPage = lazy(() => import('@/pages/ArantirPage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
 const ActivitiesPage = lazy(() => import('@/pages/ActivitiesPage'));
+const AdminPage = lazy(() => import('@/pages/AdminPage'));
 const LorebookIndexPage = lazy(() => import('@/pages/LorebookIndexPage'));
 const LorebookEntryPage = lazy(() => import('@/pages/LorebookEntryPage'));
 const StivePlaceholder = lazy(() => import('@/pages/StivePlaceholder'));
@@ -63,6 +65,7 @@ function App() {
           <Route path="/valery" element={<ValeryPage />} />
           <Route path="/sakris" element={<SakrisPage />} />
           <Route path="/brin" element={<BrinPage />} />
+          <Route path="/brin/:documentId" element={<BrinDocumentPage />} />
           <Route path="/darkbain" element={<DarkbainPage />} />
 
           {/* Стив и Таллис */}
@@ -89,6 +92,7 @@ function App() {
 
           {/* Активности, лорбук, летопись, общий лор */}
           <Route path="/activities" element={<ActivitiesPage />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="/lorebook" element={<LorebookIndexPage />} />
           <Route path="/bestiary" element={<LorebookIndexPage />} />
           <Route path="/lorebook/:slug" element={<LorebookEntryPage />} />

@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "postbuild": "node scripts/spa-404.mjs",
     "test:assets": "node scripts/asset-smoke-test.mjs",
-    "test:ui": "npm run build && playwright test"
+    "test:ui": "npm run build && playwright test",
+    "test:ui:all": "npm run build && playwright test --config=playwright.all.config.ts",
+    "test:ui:critical": "npm run build && node scripts/cross-browser-smoke.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

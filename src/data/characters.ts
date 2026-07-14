@@ -51,6 +51,8 @@ export const characters: CharacterConfig[] = [
       { label: 'Личное умение', path: '/brin' },
       { label: 'Подкласс', path: '/subclass/brin' },
       { label: 'Научная работа', path: '/black-ice-research' },
+      { label: 'Астария', path: '/brin/astaria' },
+      { label: 'Мирный план с орками', path: '/brin/pursuing-peace' },
       { label: 'Дом Хессен', path: '/hessen' },
     ],
   },
@@ -106,7 +108,7 @@ export function getCharacterById(id: string): CharacterConfig | undefined {
 /** Определить id персонажа по текущему пути */
 export function getCharacterIdByPath(pathname: string): string | undefined {
   if (pathname.includes('valery') || pathname.includes('darkbain')) return 'valery';
-  if (pathname.includes('brin') || pathname.includes('hessen') || pathname.includes('black-ice-research')) return 'brin';
+  if (pathname.includes('brin') || pathname.includes('hessen') || pathname.includes('astaria') || pathname.includes('pursuing-peace') || pathname.includes('black-ice-research')) return 'brin';
   if (pathname.includes('sakris') || pathname.includes('berghheim')) return 'sakris';
   if (pathname.includes('talis') || pathname.includes('arantir')) return 'talis';
   if (pathname.includes('stive')) return 'stive';

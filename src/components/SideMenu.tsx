@@ -67,6 +67,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
             { label: 'Род Даркбейнов', path: '/darkbain' },
             { label: 'Дом Хессен', path: '/hessen' },
             { label: 'Феноменология Чёрного льда', path: '/black-ice-research' },
+            { label: 'Астария', path: '/brin/astaria' },
+            { label: 'Мирный план с орками', path: '/brin/pursuing-peace' },
             { label: 'Бергхейм', path: '/berghheim' },
             { label: 'Клан Арантир', path: '/arantir' },
             { label: 'Новый лорбук', path: '/lorebook' },
@@ -79,8 +81,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
           id: 'maps',
           label: 'Карты',
           items: [
-            { label: 'Карта Севера', path: '/map/sever' },
+            { label: 'Атлас всего Севера', path: '/map/full-north' },
+            { label: 'Людской Север', path: '/map/north-humans' },
+            { label: 'Север эльфов', path: '/map/north-elves' },
+            { label: 'Север дворфов', path: '/map/north-dwarves' },
             { label: 'Карта Нортвинда', path: '/map/northwind' },
+            { label: 'Старая карта Севера', path: '/map/sever' }, 
           ],
         },
       ],
@@ -215,28 +221,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                 </div>
               </motion.a>
 
-              <motion.a
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.04 }}
-                href={routeHref('/activities')}
-                onClick={(e) => handleLinkClick(e, '/activities')}
-                className="w-full flex items-center gap-3 px-4 py-3 mb-1 rounded-lg text-left transition-all duration-300 cursor-pointer block"
-                style={{
-                  background: isPathActive('/activities') ? `${theme.menuAccent}20` : 'transparent',
-                  border: `1px solid ${isPathActive('/activities') ? theme.menuAccent : 'transparent'}`,
-                  color: isPathActive('/activities') ? theme.menuAccent : theme.menuText,
-                  textDecoration: 'none',
-                }}
-                whileHover={{ x: 4, background: `${theme.menuAccent}15` }}
-              >
-                <div className="flex items-center gap-3 w-full">
-                  <Dices size={16} />
-                  <span className="text-sm tracking-[1px]" style={{ fontFamily: theme.fontFamily }}>
-                    Активности
-                  </span>
-                </div>
-              </motion.a>
 
               {/* Menu Groups */}
               {menuGroups.map((group, gIdx) => (
@@ -530,6 +514,27 @@ const SideMenu: React.FC<SideMenuProps> = ({ theme }) => {
                   </a>
                 ))}
               </div>
+              <div
+                className="h-px w-full my-4"
+                style={{ background: `linear-gradient(90deg, transparent, ${theme.menuAccent}25, transparent)` }}
+              />
+              <a
+                href={routeHref('/activities')}
+                onClick={(e) => handleLinkClick(e, '/activities')}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-left transition-all duration-300 cursor-pointer block"
+                style={{
+                  background: isPathActive('/activities') ? `${theme.menuAccent}16` : 'rgba(255,255,255,0.025)',
+                  border: `1px solid ${isPathActive('/activities') ? theme.menuAccent : `${theme.buttonBorder}55`}`,
+                  color: isPathActive('/activities') ? theme.menuAccent : theme.parchmentDim,
+                  textDecoration: 'none',
+                  fontFamily: theme.fontFamily,
+                  fontSize: '11px',
+                  letterSpacing: '1.4px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                <Dices size={13} /> Инструменты ведущего
+              </a>
             </div>
           </motion.div>
         )}

@@ -2,30 +2,25 @@ import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BookOpen,
-  Castle,
-  Compass,
-  Dices,
   Flame,
-  Map,
   MessageCircle,
   Play,
-  ScrollText,
   Send,
   Shield,
   Sparkles,
-  Swords,
   Users,
   Youtube,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import TarotFan from '@/components/TarotFan';
-import { characters } from '@/data/characters';
-import { tarotCards } from '@/data/tarot';
-import { applyImageFallback } from '@/lib/imageFallback';
+import { tarotBackImage } from '@/data/tarot';
 import { homeTheme } from '@/types/theme';
-import type { CharacterConfig } from '@/data/characters';
 
+/**
+ * Социальные ссылки кампании.
+ * Менять URL здесь, если переезжает YouTube/VK/Telegram/Discord.
+ */
 const socialLinks = [
   { label: 'YouTube', href: 'https://www.youtube.com/@Sigmarillion', icon: Youtube },
   { label: 'VK', href: 'https://vk.com/sigmarillion', icon: Users },
@@ -43,59 +38,58 @@ interface SagaVideo {
   watchUrl: string;
 }
 
+/**
+ * YouTube-настройки.
+ * uploads playlist начинается с UU + channel id без первых двух символов UC.
+ * Если канал сменится, поменяй `youtubeUploadsPlaylist` и ссылки ниже.
+ */
 const youtubeChannelUrl = 'https://www.youtube.com/@Sigmarillion';
 const youtubeShortsUrl = 'https://www.youtube.com/@Sigmarillion/shorts';
 const youtubeUploadsPlaylist = 'https://www.youtube.com/embed/videoseries?list=UU7IRkV7Cg7MznCecmQXCN1A';
 
+/**
+ * Ручной список ключевых записей кампании.
+ * Автолента ниже показывает новые загрузки автоматически, но эти две записи оставлены как понятный вход для новых посетителей.
+ */
 const videos: SagaVideo[] = [
   {
     part: 'Часть 1',
     title: 'Dragon Saga. Часть 1. Знакомство',
-    description: 'Начало новой D&D-кампании: герои встречаются в северной рыбацкой деревушке и ищут ночлег, работу и первые зацепки.',
+    description: 'Старт кампании: герои встречаются в северной рыбацкой деревушке и находят первые зацепки.',
     embedUrl: 'https://www.youtube.com/embed/HgRX_wIi3mY?start=5473&autoplay=1&rel=0',
     watchUrl: 'https://www.youtube.com/watch?v=HgRX_wIi3mY&t=5473s',
   },
   {
     part: 'Часть 2',
     title: 'Dragon Saga. Часть 2. Деревенские проблемы',
-    description: 'Продолжение северной истории: угроза над деревней, первые решения партии и рост личных конфликтов.',
+    description: 'Угроза над деревней, первые решения партии и рост личных конфликтов.',
     embedUrl: 'https://www.youtube.com/embed/2_l8_ahjHx8?start=6621&autoplay=1&rel=0',
     watchUrl: 'https://www.youtube.com/watch?v=2_l8_ahjHx8&t=6621s',
   },
 ];
 
-const worldLinks = [
-  { title: 'Полный лор', desc: 'Единый архив героев, домов и древних клятв.', path: '/lor', icon: BookOpen },
-  { title: 'Летопись', desc: 'Хронология мира и событий кампании.', path: '/letopis', icon: ScrollText },
-  { title: 'Карта Севера', desc: 'Маршруты, границы и ключевые точки путешествия.', path: '/map/sever', icon: Map },
-];
-
 /**
- * HomePage — главная страница-кодекс.
+ * HomePage — облегчённая главная страница.
  *
- * Структура:
- * 1. codex-hero — первое впечатление, крупный заголовок и стопка карт.
- * 2. codex-quick-nav — липкая навигация по блокам главной.
- * 3. characters-section — карточки героев и быстрые переходы.
- * 4. tarot-section — интерактивная колода TarotFan.
- * 5. world-section — вход в лор, летопись и карты.
- * 6. activity-band/video/footer — инструменты партии, хроники и соцсети.
+ * На главной оставлены только понятные входы: герои/Таро, лорбук и YouTube.
+ * Активности мастера не удалены, но убраны с главной, чтобы посетитель не путался.
  */
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const BASE = import.meta.env.BASE_URL;
   const [selectedVideo, setSelectedVideo] = useState<SagaVideo | null>(null);
   const [videoTab, setVideoTab] = useState<VideoTab>('episodes');
-  const [expandedCard, setExpandedCard] = useState<CharacterConfig | null>(null);
+  const [expandedCard, setExpandedCard] = useState<unknown>(null);
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <Layout theme={homeTheme} particleCount={28} overlayMode={!!expandedCard}>
-      <main className="codex-home">
-        <section className="codex-hero" aria-labelledby="home-title">
+    <Layout theme={homeTheme} particleCount={22} overlayMode={!!expandedCard}>
+      <main className="codex-home codex-home--simple">
+        {/* Первый экран: суть кампании и декоративные рубашки карт. */}
+        <section className="codex-hero codex-hero--simple" aria-labelledby="home-title">
           <div className="codex-hero__ambient" aria-hidden="true">
             <span className="codex-hero__ring codex-hero__ring--one" />
             <span className="codex-hero__ring codex-hero__ring--two" />
@@ -108,31 +102,21 @@ const HomePage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65 }}
           >
-            <span className="codex-kicker"><Flame size={16} /> Blood Ice · Dragon Saga · D&D Chronicles</span>
+            <span className="codex-kicker"><Flame size={16} /> НРИ · D&D 5e · северное тёмное фэнтези</span>
             <h1 id="home-title">Драконья Сага</h1>
             <p>
-              Темная фэнтези-вики кампании: герои, карты Таро, летопись, маршруты и инструменты мастера собраны как единый живой кодекс мира.
+              Авторская кампания на базе D&D: пять героев, северные земли, древний лор, карты Таро и записи игровых сессий.
             </p>
             <div className="codex-actions">
               <button type="button" className="codex-btn codex-btn--primary tarot-no-glow" onClick={() => scrollTo('tarot-section')}>
-                <Sparkles size={18} /> Раскрыть судьбу
+                <Sparkles size={18} /> Герои и Таро
               </button>
-              <button type="button" className="codex-btn tarot-no-glow" onClick={() => scrollTo('characters-section')}>
-                <Users size={18} /> Герои
+              <button type="button" className="codex-btn tarot-no-glow" onClick={() => navigate('/lorebook')}>
+                <BookOpen size={18} /> Лорбук
               </button>
-              <button type="button" className="codex-btn tarot-no-glow" onClick={() => navigate('/activities')}>
-                <Dices size={18} /> Активности
+              <button type="button" className="codex-btn tarot-no-glow" onClick={() => scrollTo('videos-section')}>
+                <Youtube size={18} /> Записи
               </button>
-              <button type="button" className="codex-btn tarot-no-glow" onClick={() => navigate('/lor')}>
-                <BookOpen size={18} /> Полный лор
-              </button>
-            </div>
-
-            <div className="codex-stats" aria-label="Состав архива">
-              <span><b>{characters.length}</b><small>героев</small></span>
-              <span><b>{tarotCards.length}</b><small>арканов</small></span>
-              <span><b>2</b><small>карты мира</small></span>
-              <span><b>∞</b><small>сцен</small></span>
             </div>
           </motion.div>
 
@@ -141,18 +125,17 @@ const HomePage: React.FC = () => {
             initial={{ opacity: 0, x: 32 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.75, delay: 0.15 }}
-            aria-label="Герои Драконьей Саги"
+            aria-label="Рубашки карт Таро Драконьей Саги"
           >
-            <div className="codex-card-altar">
-              {tarotCards.slice(0, 5).map((card, index) => (
+            <div className="codex-card-altar codex-card-altar--backs">
+              {Array.from({ length: 5 }).map((_, index) => (
                 <img
-                  key={card.id}
-                  src={card.tarot}
-                  alt={card.name}
+                  key={`tarot-back-${index}`}
+                  src={tarotBackImage}
+                  alt="Рубашка карты Таро"
                   loading="eager"
                   decoding="async"
                   draggable={false}
-                  onError={applyImageFallback}
                   style={{ '--i': index } as React.CSSProperties}
                 />
               ))}
@@ -160,96 +143,29 @@ const HomePage: React.FC = () => {
           </motion.div>
         </section>
 
-        <nav className="codex-quick-nav" aria-label="Быстрая навигация">
-          <button type="button" onClick={() => scrollTo('characters-section')}><Users size={15} /> Герои</button>
-          <button type="button" onClick={() => scrollTo('tarot-section')}><Sparkles size={15} /> Таро</button>
-          <button type="button" onClick={() => scrollTo('world-section')}><Compass size={15} /> Мир</button>
-          <button type="button" onClick={() => navigate('/activities')}><Dices size={15} /> Активности</button>
-          <button type="button" onClick={() => navigate('/letopis')}><ScrollText size={15} /> Летопись</button>
+        {/* Быстрая навигация: только то, что нужно посетителю. */}
+        <nav className="codex-quick-nav codex-quick-nav--simple" aria-label="Быстрая навигация">
+          <button type="button" onClick={() => scrollTo('tarot-section')}><Sparkles size={15} /> Герои и Таро</button>
+          <button type="button" onClick={() => navigate('/lorebook')}><BookOpen size={15} /> Лор</button>
+          <button type="button" onClick={() => scrollTo('videos-section')}><Youtube size={15} /> YouTube</button>
         </nav>
 
-        <section id="characters-section" className="codex-section scroll-mt-16">
-          <div className="codex-section-head">
-            <span className="codex-kicker"><Swords size={16} /> Персонажи</span>
-            <h2>Пять героев, пять личных легенд</h2>
-            <p>Карточки работают как страницы персонажей на сайтах больших вселенных: портрет, роль, быстрый лор и связанные материалы без лишнего шума.</p>
-          </div>
-
-          <div className="codex-character-grid">
-            {characters.map((character, index) => (
-              <motion.article
-                key={character.id}
-                className="codex-character-card"
-                style={{ '--character-color': character.color } as React.CSSProperties}
-                initial={{ opacity: 1, y: 0 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.04 }}
-              >
-                <button type="button" className="codex-card-lore tarot-no-glow" onClick={() => navigate(character.lorePath)}>
-                  ↗ Полный лор
-                </button>
-                <div className="codex-character-card__image">
-                  <img src={character.tarot} alt={character.name} loading="eager" decoding="async" draggable={false} onError={applyImageFallback} />
-                </div>
-                <div className="codex-character-card__body">
-                  <span>{character.title}</span>
-                  <h3>{character.name}</h3>
-                  <p>{character.desc}</p>
-                  <div className="codex-chip-row">
-                    {character.pages.slice(0, 3).map((page) => (
-                      <button key={page.path} type="button" className="tarot-no-glow" onClick={() => navigate(page.path)}>{page.label}</button>
-                    ))}
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </section>
-
+        {/* Единый блок: герои + Таро. Карты открывают краткий лор и ссылки на страницы героев. */}
         <section id="tarot-section" className="codex-section codex-section--wide scroll-mt-16">
           <div className="codex-section-head">
-            <span className="codex-kicker"><Sparkles size={16} /> Оракул</span>
-            <h2>Таро героев без битых лицевых сторон</h2>
-            <p>Колода использует корректные пути, одну рубашку и fallback на PNG. Раскройте все карты или выберите одну, чтобы рассмотреть аркан.</p>
+            <span className="codex-kicker"><Sparkles size={16} /> Герои и карты</span>
+            <h2>Пять героев партии</h2>
+            <p>Раскройте веер карт, рассмотрите героя, переверните рубашку и перейдите на его страницу лора.</p>
           </div>
           <TarotFan onExpandedChange={setExpandedCard} />
         </section>
 
-        <section id="world-section" className="codex-section scroll-mt-16">
-          <div className="codex-section-head">
-            <span className="codex-kicker"><Castle size={16} /> Атлас мира</span>
-            <h2>Лор, летопись и карты соединены в один маршрут</h2>
-            <p>Раздел мира теперь ощущается как навигационный центр: куда идти игроку, где искать историю и что открыть ведущему.</p>
-          </div>
-          <div className="codex-world-grid">
-            {worldLinks.map(({ title, desc, path, icon: Icon }) => (
-              <button key={path} type="button" className="codex-world-card tarot-no-glow" onClick={() => navigate(path)}>
-                <Icon size={24} />
-                <strong>{title}</strong>
-                <span>{desc}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="codex-section codex-activity-band">
-          <div className="codex-section-head">
-            <span className="codex-kicker"><Dices size={16} /> Инструменты партии</span>
-            <h2>Активности стали отдельным залом управления сценами</h2>
-            <p>Оракул, нити героев, маршрут и архив собраны как быстрые инструменты мастера.</p>
-          </div>
-          <div className="codex-actions codex-actions--center">
-            <button type="button" className="codex-btn codex-btn--primary tarot-no-glow" onClick={() => navigate('/activities')}>
-              Открыть активности
-            </button>
-          </div>
-        </section>
-
+        {/* Видео: две ключевые записи, автолента канала и отдельный вход в Shorts. */}
         <section className="codex-section" id="videos-section">
           <div className="codex-section-head">
-            <span className="codex-kicker"><Play size={16} /> Хроники</span>
-            <h2>Записи приключений</h2>
-            <p>Сессии проигрываются прямо на сайте. Автолента канала показывает новые загрузки YouTube без ручного обновления списка.</p>
+            <span className="codex-kicker"><Play size={16} /> YouTube</span>
+            <h2>Записи игровых сессий</h2>
+            <p>Смотрите полные записи прямо на сайте или откройте канал, чтобы следить за новыми выпусками.</p>
           </div>
 
           <div className="codex-video-tabs" role="tablist" aria-label="Категории видео">
@@ -295,11 +211,11 @@ const HomePage: React.FC = () => {
               <div className="codex-shorts-card">
                 <Youtube size={28} />
                 <h3>Shorts Dragon Saga</h3>
-                <p>Shorts вынесены отдельно, чтобы короткие нарезки не смешивались с полными сессиями. YouTube не даёт стабильную отдельную embed-ленту Shorts без API, поэтому кнопка ведёт прямо в раздел Shorts канала.</p>
+                <p>Короткие нарезки вынесены отдельно, чтобы не смешивать их с полными сессиями.</p>
                 <a className="codex-btn codex-btn--primary tarot-no-glow" href={youtubeShortsUrl} target="_blank" rel="noopener noreferrer">Открыть Shorts</a>
               </div>
               <div className="codex-shorts-note">
-                <strong>Автообновление:</strong> новые shorts также попадают в общую автоленту канала, если YouTube добавляет их в uploads-плейлист.
+                <strong>Автообновление:</strong> новые shorts также могут попадать в общую автоленту канала, если YouTube добавляет их в uploads-плейлист.
               </div>
             </div>
           )}
@@ -337,7 +253,7 @@ const HomePage: React.FC = () => {
               </a>
             ))}
           </div>
-          <div className="codex-footer__mark"><Shield size={16} /> BLOOD ICE</div>
+          <div className="codex-footer__mark"><Shield size={16} /> D&D CHRONICLES</div>
         </footer>
       </main>
     </Layout>

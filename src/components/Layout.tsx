@@ -6,6 +6,7 @@ import BackButton from './BackButton';
 import LoadingScreen from './LoadingScreen';
 import Particles from './Particles';
 import MythicVeil from './MythicVeil';
+import AdminTextEditor from './AdminTextEditor';
 import { getThemeByPath } from '@/types/theme';
 import type { ColorTheme } from '@/types/theme';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -82,6 +83,7 @@ const Layout: React.FC<LayoutProps> = ({
       <MusicButton theme={theme} />
       {showBack && !overlayMode && <BackButton theme={theme} />}
       <LoadingScreen theme={theme} isLoading={isLoading} />
+      <AdminTextEditor />
 
       <div className="relative z-[1]">
         {children}

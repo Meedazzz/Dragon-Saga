@@ -18,6 +18,12 @@ const publicAssets = [
   'videos/thumbnail.jpg',
   'map_sever.png',
   'map_northwind.png',
+  'maps/north_full_atlas.jpg',
+  'maps/north_humans.jpg',
+  'maps/north_elves.jpg',
+  'maps/north_dwarves.jpg',
+  'docs/astaria.pdf',
+  'docs/pursuing-peace-orcs.pdf',
 ];
 
 let failed = false;

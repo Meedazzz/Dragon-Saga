@@ -5,12 +5,15 @@
 ## Где менять чаще всего
 
 - **Динамика, дизайн, адаптив:** `src/index.css`
+- **Карты Севера:** `src/pages/MapPage.tsx`, `public/maps/`
+- **Документы Брина:** `src/pages/BrinDocumentPage.tsx`, `public/docs/astaria.pdf`, `public/docs/pursuing-peace-orcs.pdf`
 - **Главная и видео-вкладки:** `src/pages/HomePage.tsx`
+- **Редактирование текста с сайта:** `src/components/AdminTextEditor.tsx`, `src/pages/AdminPage.tsx`, `public/content-overrides.json`
 - **Новый лорбук/бестиарий/НПС/военные машины:** `src/data/lorebook.ts`, `src/pages/LorebookIndexPage.tsx`, `src/pages/LorebookEntryPage.tsx`
 - **Лор Валерия:** `src/pages/LorePage.tsx`
 - **Таро:** `src/components/TarotFan.tsx`, `src/data/tarot.ts`
 - **Цвета героев:** `src/types/theme.ts`, `src/data/characters.ts`
-- **UI-прогон:** `playwright.config.ts`, `tests/ui-smoke.spec.ts`
+- **UI-прогон:** `playwright.config.ts`, `playwright.all.config.ts`, `tests/ui-smoke.spec.ts`, команда `npm run test:ui:critical`
 
 ## Все файлы
 
@@ -44,8 +47,15 @@
 - `public/avatar_stive.png` — Публичное изображение. Используется через BASE_URL.
 - `public/avatar_tallis.png` — Публичное изображение. Используется через BASE_URL.
 - `public/avatar_valery.png` — Публичное изображение. Используется через BASE_URL.
+- `public/content-overrides.json` — JSON-файл постоянных текстовых правок редактора. Если положить сюда экспорт из `/admin`, правки увидят все после деплоя.
 - `public/docs/Fenomenologia_Chernogo_lda.pdf` — PDF/документ для сайта.
 - `public/favicon.png` — Публичное изображение. Используется через BASE_URL.
+- `public/maps/north_full_atlas.jpg` — объединённый длинный атлас всего Севера: люди → эльфы → дворфы.
+- `public/maps/north_humans.jpg` — карта людской части Севера.
+- `public/maps/north_elves.jpg` — карта эльфийской части Севера.
+- `public/maps/north_dwarves.jpg` — карта дворфийской части Севера.
+- `public/docs/astaria.pdf` — PDF-документ Брина «Астария».
+- `public/docs/pursuing-peace-orcs.pdf` — PDF-документ Брина «Мирный план с орками».
 - `public/map_northwind.png` — Публичное изображение. Используется через BASE_URL.
 - `public/map_sever.png` — Публичное изображение. Используется через BASE_URL.
 - `public/music/ambient.mp3` — Фоновая музыка.
@@ -81,6 +91,7 @@
 - `src/components/BackButton.tsx` — Кнопка «Назад» на десктопе.
 - `src/components/CharacterCardDeck.tsx` — Альтернативная/старая колода с раскладами и текстовыми толкованиями.
 - `src/components/HeroNav.tsx` — Навигация на страницах персонажей, включая «Полный лор».
+- `src/components/AdminTextEditor.tsx` — Локальный редактор текста прямо на страницах: включается через `/admin` или `?admin=1`, сохраняет правки в localStorage, экспортирует `content-overrides.json`.
 - `src/components/Layout.tsx` — Общий каркас страниц: меню, музыка, загрузчик, частицы, MythicVeil.
 - `src/components/LoadingScreen.tsx` — Загрузчик: общий уроборос и созвездия персонажей.
 - `src/components/MusicButton.tsx` — Кнопка фоновой музыки и промо-сообщения соцсетей.
@@ -152,10 +163,12 @@
 - `src/lib/routeHref.ts` — Создаёт правильные href с учётом `/Dragon-Saga/`.
 - `src/lib/utils.ts` — Утилита `cn` для объединения className.
 - `src/main.tsx` — Точка входа React. BrowserRouter использует basename `/Dragon-Saga`.
+- `src/pages/AdminPage.tsx` — Страница-инструкция для локального редактора текста. Объясняет, как редактировать и экспортировать JSON для публикации.
 - `src/pages/ActivitiesPage.tsx` — Страница активностей: оракул, связи, маршруты, архив, модальные инструменты.
 - `src/pages/ArantirPage.tsx` — Страница `ArantirPage`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/pages/BerghheimPage.tsx` — Страница `BerghheimPage`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/pages/BlackIceResearchPage.tsx` — Страница `BlackIceResearchPage`: личное умение, подкласс, дом, клан или связанный лор.
+- `src/pages/BrinDocumentPage.tsx` — PDF-страницы архива Брина: «Астария» и «Мирный план с орками».
 - `src/pages/BrinPage.tsx` — Страница `BrinPage`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/pages/BrinSubclassPage.tsx` — Страница `BrinSubclassPage`: личное умение, подкласс, дом, клан или связанный лор.
 - `src/pages/DarkbainPage.tsx` — Страница `DarkbainPage`: личное умение, подкласс, дом, клан или связанный лор.
@@ -184,3 +197,5 @@
 - `tsconfig.node.json` — Служебный файл проекта.
 - `videos/thumbnail.jpg` — Медиа-ассет/исходник.
 - `vite.config.ts` — Настройка Vite. Ключевое: `base: /Dragon-Saga/` для GitHub Pages.
+
+- `scripts/cross-browser-smoke.mjs` — Критический кросс-браузерный smoke-тест Chromium/Firefox/WebKit для главной, лорбука, карт и документов Брина.
