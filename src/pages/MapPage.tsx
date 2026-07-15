@@ -25,37 +25,30 @@ const mapsData: Record<string, MapInfo> = {
   'full-north': {
     title: 'Атлас всего Севера',
     image: `${BASE}maps/north_full_atlas.jpg`,
-    description: 'Единая длинная карта Севера: сначала людские земли, затем север эльфов и ниже владения дворфов. Используйте переключатели ниже, чтобы открыть каждый слой отдельно.',
-    aspect: '1505 / 2256',
+    description: 'Единый разворот всего Севера слева направо: территория людей, земли эльфов и владения дворфов. Переключатели ниже открывают каждый слой отдельно.',
+    aspect: '4583 / 704',
     short: 'Весь Север',
   },
   'north-humans': {
-    title: 'Людской Север',
+    title: 'Территория людей на Севере',
     image: `${BASE}maps/north_humans.jpg`,
-    description: 'Людская часть северных земель: Нортвинд, Остюр, Бергхейм, орочьи племена, Ринхолд и ледяные рубежи Terra Borealis.',
+    description: 'Человеческая часть северных земель: Нортвинд, Остюр, Бергхейм, орочьи племена, Ринхолд и ледяные рубежи Terra Borealis.',
     aspect: '1505 / 704',
     short: 'Люди',
   },
   'north-elves': {
-    title: 'Север эльфов',
+    title: 'Земли эльфов на Севере',
     image: `${BASE}maps/north_elves.jpg`,
     description: 'Эльфийский север: Эхуил, Амон Анго и древние лесные пути за хребтами.',
     aspect: '1505 / 704',
     short: 'Эльфы',
   },
   'north-dwarves': {
-    title: 'Север дворфов',
+    title: 'Владения дворфов на Севере',
     image: `${BASE}maps/north_dwarves.jpg`,
     description: 'Дворфийская часть Севера: горные дороги, Зирак-дум, восточные хребты и выходы к морю.',
     aspect: '1505 / 704',
     short: 'Дворфы',
-  },
-  sever: {
-    title: 'Старая карта Севера',
-    image: `${BASE}map_sever.png`,
-    description: 'Старая карта северных земель. Сохранена как архивная версия, чтобы не терять прежние ориентиры.',
-    aspect: '2400 / 1123',
-    short: 'Архив',
   },
   northwind: {
     title: 'Карта Нортвинда',
@@ -66,7 +59,7 @@ const mapsData: Record<string, MapInfo> = {
   },
 };
 
-const mapOrder = ['full-north', 'north-humans', 'north-elves', 'north-dwarves', 'sever', 'northwind'];
+const mapOrder = ['full-north', 'north-humans', 'north-elves', 'north-dwarves', 'northwind'];
 
 const MapPage: React.FC = () => {
   const { mapId } = useParams<{ mapId: string }>();

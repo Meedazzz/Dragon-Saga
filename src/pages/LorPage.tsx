@@ -25,11 +25,10 @@ const allItems = [
   { title: 'Военные машины Иллирии', desc: 'Доктрина империи, скорпионы, баллисты, требушеты, башни, тараны и редкие магические машины.', path: '/lorebook/illyria-war-machines-doctrine', category: 'lorebook' as const, icon: '' },
   { title: 'Активности', desc: 'Оракул, связи персонажей, маршруты и печати для быстрых сцен партии.', path: '/activities', category: 'activities' as const, icon: '' },
   { title: 'Атлас всего Севера', desc: 'Единая длинная карта: людской север, север эльфов и владения дворфов.', path: '/map/full-north', category: 'maps' as const, icon: '' },
-  { title: 'Людской Север', desc: 'Отдельный слой карты с Нортвиндом, Бергхеймом, Ринхолдом и орочьими племенами.', path: '/map/north-humans', category: 'maps' as const, icon: '' },
-  { title: 'Север эльфов', desc: 'Отдельный слой карты с Эхуилом, Амон Анго и эльфийскими землями.', path: '/map/north-elves', category: 'maps' as const, icon: '' },
-  { title: 'Север дворфов', desc: 'Отдельный слой карты с Зирак-думом и восточными горными дорогами.', path: '/map/north-dwarves', category: 'maps' as const, icon: '' },
+  { title: 'Территория людей на Севере', desc: 'Отдельный слой карты с Нортвиндом, Бергхеймом, Ринхолдом и орочьими племенами.', path: '/map/north-humans', category: 'maps' as const, icon: '' },
+  { title: 'Земли эльфов на Севере', desc: 'Отдельный слой карты с Эхуилом, Амон Анго и эльфийскими землями.', path: '/map/north-elves', category: 'maps' as const, icon: '' },
+  { title: 'Владения дворфов на Севере', desc: 'Отдельный слой карты с Зирак-думом и восточными горными дорогами.', path: '/map/north-dwarves', category: 'maps' as const, icon: '' },
   { title: 'Карта Нортвинда', desc: 'Карта Нортвинда — оплота севера и его окрестностей.', path: '/map/northwind', category: 'maps' as const, icon: '' },
-  { title: 'Старая карта Севера', desc: 'Архивная версия старой карты северных земель.', path: '/map/sever', category: 'maps' as const, icon: '' },
 ];
 
 const categoryLabels: Record<string, string> = { characters: 'Персонажи', lore: 'Лор', lorebook: 'Лорбук', activities: 'Активности', maps: 'Карты' };

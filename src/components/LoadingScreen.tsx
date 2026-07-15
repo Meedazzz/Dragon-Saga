@@ -392,7 +392,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ theme, isLoading }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
           className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
-          style={{ background: theme.void }}
+          style={{ background: theme.void, pointerEvents: isLoading ? 'auto' : 'none' }}
         >
           {activeConstellation ? (
             <div className="relative w-full h-full flex flex-col items-center justify-center">

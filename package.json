@@ -12,7 +12,7 @@
     "test:assets": "node scripts/asset-smoke-test.mjs",
     "test:ui": "npm run build && playwright test",
     "test:ui:all": "npm run build && playwright test --config=playwright.all.config.ts",
-    "test:ui:critical": "npm run build && node scripts/cross-browser-smoke.mjs"
+    "test:ui:critical": "npm run build && sh -c 'npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/dragon-saga-critical-preview.log 2>&1 & pid=$!; sleep 1; node scripts/cross-browser-smoke.mjs; status=$?; kill $pid 2>/dev/null || true; exit $status'"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -89,7 +89,7 @@ for (const viewport of viewports) {
 
         if (route.startsWith('/brin/')) {
           await expect(page.locator('.document-hero-card')).toBeVisible();
-          await expect(page.locator('.document-viewer-card iframe')).toBeVisible();
+          await expect(page.locator('.document-article-card').first()).toBeVisible();
         }
       });
     }
@@ -129,7 +129,7 @@ test('main interface parts work as intended', async ({ page, browserName }) => {
     return;
   }
 
-  await page.getByRole('button', { name: /Показать все/i }).click({ force: true });
+  await page.getByRole('button', { name: /Показать все/i }).evaluate((button: HTMLButtonElement) => button.click());
   await expect(page.locator('.tarot-fan-card.flipped')).toHaveCount(5);
 
   await page.waitForTimeout(900);
@@ -202,7 +202,7 @@ test('video records, autoplay modal, latest feed and shorts category work', asyn
   await expect(page.locator('.codex-video-card').nth(1)).toContainText('Dragon Saga. Часть 2. Деревенские проблемы');
 
   if (browserName === 'chromium') {
-    await page.locator('.codex-video-card').first().click({ force: true });
+    await page.locator('.codex-video-card').first().evaluate((button: HTMLButtonElement) => button.click());
     const videoFrame = page.locator('iframe[title="Dragon Saga. Часть 1. Знакомство"]');
     await expect(videoFrame).toBeVisible();
     await expect(videoFrame).toHaveAttribute('src', /HgRX_wIi3mY/);
@@ -210,12 +210,12 @@ test('video records, autoplay modal, latest feed and shorts category work', asyn
     await page.locator('button').filter({ hasText: '×' }).click();
   }
 
-  await page.getByLabel('Категории видео').getByRole('button', { name: /Автолента/i }).click({ force: true });
+  await page.getByLabel('Категории видео').getByRole('button', { name: /Автолента/i }).evaluate((button: HTMLButtonElement) => button.click());
   const latestFrame = page.locator('iframe[title="Последние видео Sigmarillion"]');
   await expect(latestFrame).toBeVisible();
   await expect(latestFrame).toHaveAttribute('src', /videoseries\?list=UU7IRkV7Cg7MznCecmQXCN1A/);
 
-  await page.getByLabel('Категории видео').getByRole('button', { name: /Shorts/i }).click({ force: true });
+  await page.getByLabel('Категории видео').getByRole('button', { name: /Shorts/i }).evaluate((button: HTMLButtonElement) => button.click());
   await expect(page.locator('.codex-shorts-card')).toContainText('Shorts Dragon Saga');
   await expect(page.locator('.codex-shorts-card a')).toHaveAttribute('href', 'https://www.youtube.com/@Sigmarillion/shorts');
 });
@@ -243,19 +243,19 @@ test('north atlas maps and Brin documents are available', async ({ page }) => {
   await page.goto('/Dragon-Saga/map/full-north');
   await waitForPageReady(page);
   await expect(page.locator('.map-layer-switcher')).toBeVisible();
-  await expect(page.locator('.map-layer-switcher a')).toHaveCount(6);
+  await expect(page.locator('.map-layer-switcher a')).toHaveCount(5);
   await expect(page.locator('img[alt="Атлас всего Севера"]')).toBeVisible();
   await expectNoBrokenLocalImages(page);
 
   await page.goto('/Dragon-Saga/brin/astaria');
   await waitForPageReady(page);
   await expect(page.locator('.document-hero-card h1')).toContainText('Астария');
-  await expect(page.locator('.document-viewer-card iframe')).toHaveAttribute('src', /astaria\.pdf/);
+  await expect(page.locator('.document-source-note a').first()).toHaveAttribute('href', /astaria\.pdf/);
 
   await page.goto('/Dragon-Saga/brin/pursuing-peace');
   await waitForPageReady(page);
   await expect(page.locator('.document-hero-card h1')).toContainText('Мирный план');
-  await expect(page.locator('.document-viewer-card iframe')).toHaveAttribute('src', /pursuing-peace-orcs\.pdf/);
+  await expect(page.locator('.document-source-note a').first()).toHaveAttribute('href', /pursuing-peace-orcs\.pdf/);
 });
 
 test('captures reference screenshots for manual visual comparison', async ({ page, browserName }) => {

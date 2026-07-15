@@ -20,7 +20,7 @@ interface TarotFanProps {
 const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
+  const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
@@ -32,33 +32,27 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
     if (isDragging) return;
     if (selectedIndex === index) {
       // Flip the card
-      setFlippedCards(prev => {
-        const next = new Set(prev);
-        if (next.has(index)) {
-          next.delete(index);
-        } else {
-          next.add(index);
-        }
-        return next;
-      });
+      setFlippedCards((previous) => previous.includes(index)
+        ? previous.filter((item) => item !== index)
+        : [...previous, index]);
     } else {
       setSelectedIndex(index);
-      setFlippedCards(new Set());
+      setFlippedCards([]);
       onExpandedChange?.(tarotCards[index]);
     }
   };
 
   const handleClose = () => {
     setSelectedIndex(null);
-    setFlippedCards(new Set());
+    setFlippedCards([]);
     onExpandedChange?.(null);
   };
 
   const handleFlipAll = () => {
-    if (flippedCards.size === tarotCards.length) {
-      setFlippedCards(new Set());
+    if (flippedCards.length === tarotCards.length) {
+      setFlippedCards([]);
     } else {
-      setFlippedCards(new Set(tarotCards.map((_, i) => i)));
+      setFlippedCards(tarotCards.map((_, index) => index));
     }
   };
 
@@ -130,8 +124,8 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
       {/* Controls */}
       <div className="tarot-fan-controls">
         <button onClick={handleFlipAll} className="tarot-fan-btn" type="button">
-          {flippedCards.size === tarotCards.length ? <EyeOff size={16} /> : <Eye size={16} />}
-          <span>{flippedCards.size === tarotCards.length ? 'Скрыть все' : 'Показать все'}</span>
+          {flippedCards.length === tarotCards.length ? <EyeOff size={16} /> : <Eye size={16} />}
+          <span>{flippedCards.length === tarotCards.length ? 'Скрыть все' : 'Показать все'}</span>
         </button>
         <button onClick={handleClose} className="tarot-fan-btn" type="button" disabled={selectedIndex === null}>
           <RotateCcw size={16} />
@@ -154,7 +148,7 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
         <div className="tarot-fan-stage">
           {tarotCards.map((card, index) => {
             const isSelected = selectedIndex === index;
-            const isFlipped = flippedCards.has(index);
+            const isFlipped = flippedCards.includes(index);
             const style = getCardStyle(index, tarotCards.length);
 
             return (
@@ -223,7 +217,7 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
                 <X size={24} />
               </button>
 
-              <div className={`tarot-detail-card ${flippedCards.has(selectedIndex) ? 'flipped' : ''}`}>
+              <div className={`tarot-detail-card ${flippedCards.includes(selectedIndex) ? 'flipped' : ''}`}>
                 <div className="tarot-card-inner">
                   <div className="tarot-card-face">
                     <img 
@@ -272,17 +266,14 @@ const TarotFan: React.FC<TarotFanProps> = ({ onExpandedChange }) => {
                 <button 
                   className="tarot-flip-btn"
                   onClick={() => {
-                    setFlippedCards(prev => {
-                      const next = new Set(prev);
-                      if (next.has(selectedIndex)) next.delete(selectedIndex);
-                      else next.add(selectedIndex);
-                      return next;
-                    });
+                    setFlippedCards((previous) => previous.includes(selectedIndex)
+                      ? previous.filter((item) => item !== selectedIndex)
+                      : [...previous, selectedIndex]);
                   }}
                   type="button"
                 >
-                  {flippedCards.has(selectedIndex) ? <Eye size={18} /> : <EyeOff size={18} />}
-                  {flippedCards.has(selectedIndex) ? 'Показать лицо' : 'Показать рубашку'}
+                  {flippedCards.includes(selectedIndex) ? <Eye size={18} /> : <EyeOff size={18} />}
+                  {flippedCards.includes(selectedIndex) ? 'Показать лицо' : 'Показать рубашку'}
                 </button>
               </div>
             </motion.div>
