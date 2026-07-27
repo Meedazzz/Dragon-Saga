@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тень Повелителя Демонов — Полное руководство</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--v:#0a0a0f;--p:#e8e0d0;--d:#a09888;--g:#c9a84c;--gg:#e8d5a3;--fd:'Cormorant Garamond',serif;--fb:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--v);color:var(--p);overflow-x:hidden}
+::selection{background:#c9a84c4d;color:#fff}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--v)}::-webkit-scrollbar-thumb{background:#c9a84c4d;border-radius:3px}
+.hero{position:relative;text-align:center;padding:5rem 1.5rem 3rem;border-bottom:1px solid #c9a84c38;background:radial-gradient(circle at 18% 20%,#8b000038,transparent 34rem),radial-gradient(circle at 84% 18%,#c9a84c25,transparent 30rem),var(--v)}
+.hero::before{content:'ᚠ ᚱ ᚢ ᚨ ᛟ ᛞ ᛗ ᛉ';position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:#c9a84c28;letter-spacing:20px;font-family:var(--fd);font-size:1.2rem}
+.hero h1{font-family:var(--fd);font-size:clamp(2.5rem,8vw,5rem);font-weight:700;line-height:.88;letter-spacing:-.04em;background:linear-gradient(180deg,#fff3df,#c9a84c 48%,#8c6b29);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:.8rem}
+.hero .sub{font-family:var(--fd);color:var(--d);font-size:clamp(1rem,2vw,1.25rem);line-height:1.6;max-width:760px;margin:0 auto}
+.hero .eye{display:inline-block;color:var(--g);font-size:.75rem;letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;font-weight:700}
+.tab-bar{position:sticky;top:0;z-index:200;display:flex;justify-content:center;flex-wrap:wrap;gap:.3rem;padding:.5rem .8rem;background:#08080cef;backdrop-filter:blur(18px);border-bottom:1px solid #c9a84c38;box-shadow:0 12px 40px #0000005c}
+.tb{display:inline-flex;align-items:center;gap:.3rem;border:1px solid #c9a84c2e;border-radius:999px;background:transparent;color:var(--d);cursor:pointer;padding:.55rem .75rem;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:all .3s;font-family:var(--fb)}
+.tb:hover,.tb.active{color:#110d07;border-color:transparent;background:linear-gradient(135deg,#c9a84c,#f1dba4,#8b621d)}
+.mn{max-width:1060px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.tp{display:none}.tp.active{display:block}
+.cd{border:1px solid #c9a84c2e;border-radius:24px;background:radial-gradient(circle at 0 0,#8b000015,transparent 34%),linear-gradient(145deg,#ffffff0b,#ffffff04);box-shadow:inset 0 0 34px #00000057,0 18px 44px #00000029;padding:clamp(1.2rem,3vw,2.2rem);margin-bottom:1.5rem;transition:transform .3s,border-color .3s}
+.cd:hover{transform:translateY(-2px);border-color:#c9a84c55}
+.cd h2{font-family:var(--fd);font-size:clamp(1.5rem,3vw,2.3rem);color:var(--g);margin-bottom:.9rem;line-height:1.1}
+.cd h3{font-family:var(--fd);font-size:1.15rem;color:var(--gg);margin:1.3rem 0 .5rem}
+.cd h4{font-size:.95rem;color:var(--p);margin:.9rem 0 .3rem;font-weight:600}
+.cd p,.cd li{color:var(--d);font-family:var(--fd);font-size:1.02rem;line-height:1.75}
+.cd ul,.cd ol{padding-left:1.2rem;display:grid;gap:.35rem}
+.cd li::marker{color:var(--g)}
+.cd ol{counter-reset:step}.cd ol>li{counter-increment:step}.cd ol>li::marker{content:counter(step) ". ";color:var(--g);font-weight:700}
+table.t{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.86rem}
+table.t th{background:#c9a84c18;color:var(--g);font-family:var(--fd);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.5rem .65rem;text-align:left;border-bottom:1px solid #c9a84c3a}
+table.t td{padding:.45rem .65rem;border-bottom:1px solid #ffffff08;color:var(--d);font-family:var(--fb);vertical-align:top}
+table.t tr:hover td{background:#c9a84c0a}table.t strong{color:var(--p)}
+.sp{border:1px solid #c9a84c1a;border-radius:14px;padding:1rem 1.2rem;margin:.5rem 0;background:#00000029;transition:border-color .3s}
+.sp:hover{border-color:#c9a84c44}
+.sp-h{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.3rem}
+.sp-n{font-family:var(--fd);font-size:1.1rem;color:var(--p);font-weight:700}
+.sp-l{font-size:.6rem;color:var(--g);font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.sp-m{font-size:.75rem;color:var(--d);margin-bottom:.35rem}.sp-m span{margin-right:.8rem}.sp p{color:var(--d);font-size:.9rem;line-height:1.5}
+.step{border-left:3px solid var(--g);padding-left:1.2rem;margin:1rem 0 1.5rem}.step h4{color:var(--gg);font-family:var(--fd);font-size:1.15rem;margin-bottom:.3rem}
+.warn{background:#8b000018;border:1px solid #8b000040;border-radius:12px;padding:.8rem 1rem;margin:.6rem 0}.warn p{color:#ff8888!important}
+.tip{background:#c9a84c12;border:1px solid #c9a84c30;border-radius:12px;padding:.8rem 1rem;margin:.6rem 0}.tip p{color:var(--gg)!important}
+.ex{background:#22aa4412;border:1px solid #22aa4430;border-radius:12px;padding:.8rem 1rem;margin:.6rem 0}.ex p{color:#88dd88!important}
+.cs{border:2px solid var(--g);border-radius:18px;background:linear-gradient(145deg,#0d0c12,#0a0a0f);padding:2rem;position:relative}
+.cs::before{content:'';position:absolute;inset:0;border:1px solid #c9a84c14;border-radius:16px;margin:8px;pointer-events:none}
+.cs-t{text-align:center;font-family:var(--fd);font-size:1.8rem;color:var(--g);margin-bottom:.3rem;letter-spacing:2px}
+.cs-s{text-align:center;font-size:.7rem;color:var(--d);letter-spacing:3px;text-transform:uppercase;margin-bottom:1.5rem}
+.cr{display:flex;gap:1rem;margin-bottom:.7rem;flex-wrap:wrap}.cf{flex:1;min-width:120px}
+.cf label{display:block;font-size:.6rem;color:var(--g);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.2rem;font-weight:700}
+.cf input,.cf select,.cf textarea{width:100%;background:#ffffff08;border:1px solid #c9a84c38;border-radius:10px;color:var(--p);padding:.45rem .65rem;font-size:.85rem;font-family:var(--fb);transition:border-color .3s}
+.cf input:focus,.cf select:focus,.cf textarea:focus{outline:none;border-color:var(--g);background:#ffffff0d}
+.cf select option{background:#12121a;color:var(--p)}.cf textarea{resize:vertical;min-height:55px;line-height:1.5}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:.7rem 0}
+.ab{text-align:center;border:1px solid #c9a84c4a;border-radius:14px;padding:.6rem .3rem;background:radial-gradient(circle at 50% 0%,#c9a84c14,transparent 70%)}
+.ab label{display:block;font-size:.55rem;color:var(--g);text-transform:uppercase;letter-spacing:2px;margin-bottom:.3rem;font-weight:800}
+.ab input{width:48px;text-align:center;background:#0000005a;border:1px solid #c9a84c3a;border-radius:8px;color:var(--p);padding:.25rem;font-size:1.4rem;font-family:var(--fd);font-weight:700}
+.ab .md{font-size:.78rem;color:var(--d);margin-top:.1rem}
+.st{font-family:var(--fd);font-size:1.02rem;color:var(--g);border-bottom:1px solid #c9a84c25;padding-bottom:.3rem;margin:1rem 0 .6rem;letter-spacing:1px;text-transform:uppercase}
+.btns{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.btn{display:inline-flex;align-items:center;gap:.45rem;min-height:40px;padding:.6rem 1.1rem;border-radius:999px;border:1px solid #c9a84c44;background:#ffffff0b;color:var(--p);cursor:pointer;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;transition:all .3s;font-family:var(--fb)}
+.btn:hover{transform:translateY(-2px);border-color:#c9a84c80}
+.btn-g{color:#130f08;border-color:transparent;background:linear-gradient(135deg,#c9a84c,#f4dfa8 52%,#8b621d);box-shadow:0 12px 30px #c9a84c2e}
+.btn-r{border-color:#8b000080;background:#8b000025;color:#ff6b6b}
+.spn{display:inline-block;width:16px;height:16px;border:2px solid var(--g);border-top-color:transparent;border-radius:50%;animation:sp .6s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.pc{border:1px solid #c9a84c2e;border-radius:20px;background:linear-gradient(145deg,#ffffff0b,#ffffff04);box-shadow:inset 0 0 30px #00000047,0 14px 36px #00000029;padding:1.4rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.pc:hover{transform:translateY(-4px);border-color:var(--g)}
+.pc::after{content:'';position:absolute;inset:0;opacity:0;transform:translate(-120%) skew(-18deg);background:linear-gradient(105deg,transparent 20%,#ffffff1a,transparent 80%);transition:transform .85s,opacity .35s}
+.pc:hover::after{opacity:1;transform:translate(120%) skew(-18deg)}
+.pc h3{font-family:var(--fd);font-size:1.3rem;color:var(--p);margin-bottom:.1rem}
+.pc .pm{color:var(--g);font-size:.65rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:.5rem}
+.pc p{color:var(--d);font-size:.82rem;line-height:1.5}
+.pc .ps{display:grid;grid-template-columns:repeat(3,1fr);gap:.2rem;margin-top:.6rem;font-size:.75rem}
+.pc .ps span{color:var(--d)}.pc .ps strong{color:var(--p)}
+@media(max-width:640px){.g4{grid-template-columns:repeat(2,1fr)}.cr{flex-direction:column}.cs{padding:1.2rem}.hero{padding:3rem 1rem 2rem}.mn{padding:1rem}table.t{font-size:.75rem}table.t td,table.t th{padding:.35rem .45rem}.tab-bar{gap:.15rem}.tb{padding:.45rem .6rem;font-size:.58rem}}
+@media print{body{background:#fff;color:#000}.hero,.tab-bar,.btns,.btn{display:none!important}.cs{border-color:#000;background:#fff}.mn{max-width:100%;padding:0}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="eye">Драконья Сага · Расширение</div>
+<h1>Тень Повелителя<br>Демонов</h1>
+<p class="sub">Полное руководство для абсолютных новичков. Каждая механика, каждый термин, каждый шаг — объяснены так, что даже полный чайник разберётся.</p>
+</div>
+
+<div class="tab-bar">
+<button class="tb active" data-tab="intro">Введение</button>
+<button class="tb" data-tab="attrs">Атрибуты</button>
+<button class="tb" data-tab="prof">Владения</button>
+<button class="tb" data-tab="create">Создание</button>
+<button class="tb" data-tab="classes">Классы</button>
+<button class="tb" data-tab="combat">Бой</button>
+<button class="tb" data-tab="magic">Магия</button>
+<button class="tb" data-tab="levelup">Прокачка</button>
+<button class="tb" data-tab="gm">Мастеру</button>
+<button class="tb" data-tab="sheet">Чарник</button>
+<button class="tb" data-tab="ready">Готовые</button>
+</div>
+
+<div class="mn">
+
+<!-- ===================== ВВЕДЕНИЕ ===================== -->
+<div class="tp active" id="tab-intro">
+<div class="cd">
+<h2>Что такое настольная ролевая игра?</h2>
+<p>Представьте, что вы с друзьями сидите за столом и <strong>вместе рассказываете историю</strong>. Один человек — <strong>Мастер</strong> — описывает мир и события. Остальные управляют своими <strong>персонажами</strong> — героями этой истории.</p>
+<p>Но в отличие от обычного рассказа, <strong>исход событий решают кубики</strong>. Хотите ударить монстра? Бросаете кубик. Хотите прыгнуть через пропасть? Бросаете кубик. Хотите убедить торговца? Бросаете кубик.</p>
+
+<h3>Роли за столом</h3>
+<ul>
+<li><strong>Мастер (Мастер игры, GM)</strong> — описывает мир, говорит что делают монстры и неигровые персонажи, объявляет последствия. Он НЕ ваш враг — он рассказчик.</li>
+<li><strong>Игроки</strong> — каждый управляет одним персонажем. Решает, куда идти, что делать, как сражаться.</li>
+</ul>
+
+<h3>Что нужно для игры</h3>
+<ul>
+<li><strong>Люди:</strong> 1 Мастер + 2-5 игроков</li>
+<li><strong>Кубики:</strong> d4, d6, d8, d10, d12, d20 (можно купить набор или использовать телефон)</li>
+<li><strong>Листы персонажей</strong> (есть в разделе «Чарник»)</li>
+<li><strong>Карандаши и бумага</strong></li>
+<li><strong>Эти правила</strong></li>
+</ul>
+
+<h3>Как читаются кубики</h3>
+<p><strong>d</strong> = «кубик», число = количество граней. <strong>d20</strong> = двадцатигранный кубик. <strong>2d6</strong> = два шестигранных кубика, сложить результаты.</p>
+<table class="t">
+<tr><th>Кубик</th><th>Внешний вид</th><th>Когда используется</th></tr>
+<tr><td><strong>d4</strong></td><td>Тетраэдр (4 грани)</td><td>Урон мелкого оружия</td></tr>
+<tr><td><strong>d6</strong></td><td>Обычный кубик</td><td>Урон, инициатива, HP при прокачке</td></tr>
+<tr><td><strong>d8</strong></td><td>Октаэдр (8 граней)</td><td>Урон среднего оружия</td></tr>
+<tr><td><strong>d10</strong></td><td>10 граней</td><td>Урон тяжёлого оружия</td></tr>
+<tr><td><strong>d12</strong></td><td>12 граней</td><td>Урон самого мощного оружия</td></tr>
+<tr><td><strong>d20</strong></td><td>20 граней (икосаэдр)</td><td>Все проверки, атаки, уклонение</td></tr>
+</table>
+</div>
+
+<div class="cd">
+<h2>Основная механика — как решается всё</h2>
+<p>В этой игре <strong>почти всё</strong> решается одним броском:</p>
+<div style="text-align:center;margin:1.2rem 0;padding:1rem;border:2px solid var(--g);border-radius:14px;background:#c9a84c08">
+<p style="font-size:1.4rem;color:var(--p);font-weight:700;margin:0;font-family:var(--fb)">Бросаю d20 + модификатор атрибута</p>
+<p style="font-size:1.1rem;color:var(--d);margin:.3rem 0 0">Если сумма >= 10 — успех. Если < 10 — провал.</p>
+</div>
+
+<div class="ex">
+<p><strong>Пример 1:</strong> Вы хотите ударить монстра мечом. Ваша Сила = 14, значит модификатор = +2. Бросаете d20, выпало 11. Складываете: 11 + 2 = 13. Это >= 10 — попадание!</p>
+</div>
+<div class="ex">
+<p><strong>Пример 2:</strong> Вы хотите спрятаться от стражи. Ваша Ловкость = 12, модификатор = +1. Бросаете d20, выпало 6. Складываете: 6 + 1 = 7. Это < 10 — провал! Стражник вас заметил.</p>
+</div>
+
+<h3>Критический успех и провал</h3>
+<ul>
+<li><strong>На d20 выпало 20:</strong> критический успех! Двойной урон, максимальный эффект, что-то эпичное.</li>
+<li><strong>На d20 выпало 1:</strong> критический провал. Что-то пошло очень плохо.</li>
+</ul>
+
+<h3>Благословение (Boon) и Проклятие (Bane)</h3>
+<p>Иногда условия благоприятны (помощь союзника, высокая позиция) — вы получаете <strong>Благословение</strong>.</p>
+<p>Иногда условия против вас (плохая видимость, ранение) — вы получаете <strong>Проклятие</strong>.</p>
+<p><strong>Благословение:</strong> бросаете дополнительный d6 и <strong>ПРИБАВЛЯЕТЕ</strong> к результату d20.</p>
+<p><strong>Проклятие:</strong> бросаете дополнительный d6 и <strong>ВЫЧИТАЕТЕ</strong> из результата d20.</p>
+<p>Если у вас и то, и другое — они <strong>уничтожают друг друга</strong>.</p>
+<div class="ex"><p><strong>Пример:</strong> Вы стреляете из лука. Ваш союзник светит факелом на цель (это Благословение). Бросаете d20 = 8, мод. +2, дополнительно d6 = 4. Итого: 8 + 2 + 4 = 14. Успех!</p></div>
+</div>
+
+<div class="cd">
+<h2>Частые вопросы новичков</h2>
+<h3>Я никогда не играл в НРИ. Смогу?</h3>
+<p>Да! Просто читайте по порядку. Каждая механика объяснена с примерами.</p>
+<h3>Что если я не понимаю правило?</h3>
+<p>Мастер решает. Он может посмотреть в правилах или решить на месте. Не останавливайте игру из-за споров.</p>
+<h3>Можно ли делать что угодно?</h3>
+<p>Да! Вы можете попробовать что угодно. Мастер скажет, нужен ли бросок и какая сложность.</p>
+<h3>Что если персонаж умрёт?</h3>
+<p>Это возможно — мир мрачен. Вы создаёте нового и возвращаетесь в игру.</p>
+<h3>Обязательно ли отыгрывать голоса?</h3>
+<p>Нет! Можно просто описывать действия: «Мой персонаж говорит торговцу...»</p>
+<h3>Сколько длится одна игра?</h3>
+<p>3-4 часа = одна сессия. Кампания = несколько сессий.</p>
+</div>
+</div><!-- /intro -->
+
+<!-- ===================== АТРИБУТЫ ===================== -->
+<div class="tp" id="tab-attrs">
+<div class="cd">
+<h2>Четыре атрибута — основа всего</h2>
+<p>У каждого персонажа есть <strong>4 атрибута</strong>. Это характеристики, описывающие сильные и слабые стороны вашего героя. Каждый атрибут — это число от 1 до 20.</p>
+<p>Но в бросках используется не само число, а <strong>МОДИФИКАТОР</strong> — число, которое вы прибавляете к броску d20.</p>
+
+<h3>Как узнать модификатор?</h3>
+<p>Посмотрите в таблицу:</p>
+<table class="t">
+<tr><th>Атрибут</th><th>Модификатор</th><th>Атрибут</th><th>Модификатор</th></tr>
+<tr><td>1</td><td>-5</td><td>12-13</td><td>+1</td></tr>
+<tr><td>2-3</td><td>-4</td><td>14-15</td><td>+2</td></tr>
+<tr><td>4-5</td><td>-3</td><td>16-17</td><td>+3</td></tr>
+<tr><td>6-7</td><td>-2</td><td>18-19</td><td>+4</td></tr>
+<tr><td>8-9</td><td>-1</td><td>20</td><td>+5</td></tr>
+<tr><td>10-11</td><td>0</td><td></td><td></td></tr>
+</table>
+<div class="tip"><p>Запомните: <strong>10-11 = модификатор 0</strong> (среднее). Всё выше = бонус. Всё ниже = штраф.</p></div>
+
+<h3><span style="display:inline-flex;align-items:center;justify-content:center;width:1.3em;height:1.3em;border-radius:4px;font-size:.7em;font-weight:800;background:#c9a84c22;color:#c9a84c;border:1px solid #c9a84c44;font-family:var(--fd)">S</span> Сила (СИЛА, STR)</h3>
+<p><strong>Что это:</strong> физическая мощь. Насколько ваш персонаж силён физически.</p>
+<p><strong>Когда бросаете d20 + Сила:</strong></p>
+<ul>
+<li>Атака ближнего боя мечом, топором, булавой, копьём</li>
+<li>Поднятие тяжестей, толкание, разрушение</li>
+<li>Прыжки через пропасти</li>
+<li>Сопротивление захвату (когда вас пытаются схватить)</li>
+</ul>
+<p><strong>Также определяет:</strong> урон ближнего боя (прибавляете мод. Силы к кубику оружия).</p>
+<p><strong>Кому нужна высокая:</strong> Воинам. Если вы хотите сражаться в ближнем бою — кидайте сюда высокие числа.</p>
+
+<h3><span style="display:inline-flex;align-items:center;justify-content:center;width:1.3em;height:1.3em;border-radius:4px;font-size:.7em;font-weight:800;background:#c9a84c22;color:#c9a84c;border:1px solid #c9a84c44;font-family:var(--fd)">A</span> Ловкость (ЛОВКОСТЬ, AGI)</h3>
+<p><strong>Что это:</strong> скорость, координация, рефлексы.</p>
+<p><strong>Когда бросаете d20 + Ловкость:</strong></p>
+<ul>
+<li>Стрельба из лука, арбалета, метание кинжалов</li>
+<li>Атака рапирой или кинжалом (фехтовальное оружие)</li>
+<li>Уклонение от атак (Defense Roll — когда по вас бьют)</li>
+<li>Скрытность (спрятаться, подкрасться)</li>
+<li>Акробатика (перекат, сальто, удержание равновесия)</li>
+<li>Взлом замков, карманные кражи</li>
+<li>Инициатива (кто ходит первым в бою)</li>
+</ul>
+<p><strong>Кому нужна высокая:</strong> Ворам. Если вы хотите быть ловким, незаметным и точным.</p>
+
+<h3><span style="display:inline-flex;align-items:center;justify-content:center;width:1.3em;height:1.3em;border-radius:4px;font-size:.7em;font-weight:800;background:#c9a84c22;color:#c9a84c;border:1px solid #c9a84c44;font-family:var(--fd)">I</span> Интеллект (ИНТЕЛЛЕКТ, INT)</h3>
+<p><strong>Что это:</strong> рассудок, знания, восприятие, память.</p>
+<p><strong>Когда бросаете d20 + Интеллект:</strong></p>
+<ul>
+<li>Магические атаки для Магов</li>
+<li>Знание о монстрах, истории, местности, магии</li>
+<li>Обнаружение ловушек, секретных дверей, скрытых предметов</li>
+<li>Расследование (поиск улик, логические выводы)</li>
+<li>Сопротивление иллюзиям и обману</li>
+</ul>
+<p><strong>Также определяет:</strong> количество известных традиций магии (для Магов).</p>
+<p><strong>Кому нужна высокая:</strong> Магам. Если вы хотите колдовать и знать многое.</p>
+
+<h3><span style="display:inline-flex;align-items:center;justify-content:center;width:1.3em;height:1.3em;border-radius:4px;font-size:.7em;font-weight:800;background:#c9a84c22;color:#c9a84c;border:1px solid #c9a84c44;font-family:var(--fd)">W</span> Воля (ВОЛЯ, WILL)</h3>
+<p><strong>Что это:</strong> сила духа, стойкость, харизма, решимость.</p>
+<p><strong>Когда бросаете d20 + Воля:</strong></p>
+<ul>
+<li>Магические атаки для Священников</li>
+<li>Сопротивление магии (когда по вам кастуют заклинание)</li>
+<li>Сопротивление страху, очарованию, контролю разума</li>
+<li>Убеждение (убедить кого-то)</li>
+<li>Запугивание (напугать кого-то)</li>
+<li>Проверки на Безумие (когда видите что-то ужасное)</li>
+</ul>
+<p><strong>Кому нужна высокая:</strong> Священникам. Если вы хотите исцелять и сопротивляться тьме.</p>
+
+<h3>Здоровье (HP) — вычисляется из атрибутов</h3>
+<p><strong>HP = 10 + мод. Силы + мод. Воли + бонус пути + бонус расы</strong></p>
+<p>Когда ваше HP падает до 0 — вы ранены. Когда падает ниже 0 на величину вашего макс. HP — вы мертвы.</p>
+
+<h3>Защита (Defense) — вычисляется из брони</h3>
+<p><strong>Защита = 10 + бонус брони + бонус щита</strong></p>
+<p>Когда по вас атакуют, атакующий должен набрать >= вашей Защиты.</p>
+</div>
+</div><!-- /attrs -->
+
+<!-- ===================== ВЛАДЕНИЯ ===================== -->
+<div class="tp" id="tab-prof">
+<div class="cd">
+<h2>Система владений — что это и как работает</h2>
+<p><strong>Владение (Proficiency)</strong> — это навык, которому ваш персонаж обучен. Если вы <strong>владеете</strong> чем-то — вы хорошо это делаете. Если <strong>не владеете</strong> — вы делаете это плохо или не можете вообще.</p>
+
+<h3>Владение оружием</h3>
+<p>В SotDL каждый путь (класс) даёт <strong>обученность определённым видам оружия</strong>.</p>
+<ul>
+<li><strong>Если вы обучены оружием:</strong> бросаете d20 + модификатор атрибута как обычно.</li>
+<li><strong>Если вы НЕ обучены оружием:</strong> бросаете с <strong>Проклятием</strong> (дополнительный d6, вычитаете худший результат). Это серьёзный штраф!</li>
+</ul>
+<table class="t">
+<tr><th>Путь (Класс)</th><th>Обучен оружию</th></tr>
+<tr><td><strong>Воин</strong></td><td>ВСЕ виды оружия (простое и воинское, ближний и дальний бой)</td></tr>
+<tr><td><strong>Вор</strong></td><td>Простое оружие (кинжалы, дубинки, посохи, короткие луки)</td></tr>
+<tr><td><strong>Маг</strong></td><td>Только посохи и кинжалы</td></tr>
+<tr><td><strong>Священник</strong></td><td>Простое оружие (кинжалы, дубинки, боевые молоты, копья)</td></tr>
+</table>
+<div class="warn"><p><strong>Важно:</strong> если Маг попытается использовать двуручный меч — он получит Проклятие на все атаки этим мечом. Это не значит, что он не может — просто будет хуже.</p></div>
+
+<h3>Владение бронёй</h3>
+<p>Та же система — каждый путь обучен определённым типам брони.</p>
+<ul>
+<li><strong>Если вы обучены бронёй:</strong> носите без штрафов.</li>
+<li><strong>Если вы НЕ обучены бронёй:</strong> получаете <strong>Проклятие на все действия</strong>, пока носите эту броню.</li>
+</ul>
+<table class="t">
+<tr><th>Путь (Класс)</th><th>Обучен броне</th></tr>
+<tr><td><strong>Воин</strong></td><td>ВСЕ виды брони и щиты</td></tr>
+<tr><td><strong>Вор</strong></td><td>Только лёгкая броня (кожаная)</td></tr>
+<tr><td><strong>Маг</strong></td><td>Никакой брони (только мантия)</td></tr>
+<tr><td><strong>Священник</strong></td><td>Средняя броня (кольчуга) и щиты</td></tr>
+</table>
+
+<h3>Навыки (Проверки атрибутов)</h3>
+<p>В SotDL <strong>нет списка навыков</strong> как в D&D (нет «Атлетики», «Скрытности», «Убеждения» и т.д. отдельными строками).</p>
+<p>Вместо этого, когда вы хотите что-то сделать, Мастер говорит: <strong>«Брось d20 + модификатор такого-то атрибута»</strong>.</p>
+
+<h4>Примеры проверок</h4>
+<table class="t">
+<tr><th>Действие</th><th>Атрибут</th><th>Пояснение</th></tr>
+<tr><td>Ударить мечом</td><td>Сила</td><td>Физическая мощь оружия</td></tr>
+<tr><td>Выстрелить из лука</td><td>Ловкость</td><td>Точность и координация</td></tr>
+<tr><td>Спрятаться</td><td>Ловкость</td><td>Незаметность</td></tr>
+<tr><td>Подкрасться к врагу</td><td>Ловкость</td><td>Тихое перемещение</td></tr>
+<tr><td>Взломать замок</td><td>Ловкость</td><td>Ловкость рук</td></tr>
+<tr><td>Прыгнуть через пропасть</td><td>Сила</td><td>Физическая мощь ног</td></tr>
+<tr><td>Поднять тяжёлый камень</td><td>Сила</td><td>Грубая сила</td></tr>
+<tr><td>Найти ловушку</td><td>Интеллект</td><td>Внимательность</td></tr>
+<tr><td>Вспомнить что-то о монстре</td><td>Интеллект</td><td>Знания</td></tr>
+<tr><td>Расследовать место преступления</td><td>Интеллект</td><td>Анализ улик</td></tr>
+<tr><td>Убедить стражника пройти</td><td>Воля</td><td>Харизма и красноречие</td></tr>
+<tr><td>Напугать врага</td><td>Воля</td><td>Сила воли и угроза</td></tr>
+<tr><td>Сопротивляться магии</td><td>Воля</td><td>Стойкость разума</td></tr>
+<tr><td>Сопротивляться яду</td><td>Сила</td><td>Физическая выносливость</td></tr>
+<tr><td>Не сойти с ума от ужаса</td><td>Воля</td><td>Психическая стойкость</td></tr>
+</table>
+
+<div class="tip"><p><strong>Запомните:</strong> в SotDL нет «навыков» — есть только <strong>атрибуты</strong>. Когда Мастер говорит «брось на Ловкость» — это значит «брось d20 + мод. Ловкости». Если вы получаете Благословение — добавляете ещё d6.</p></div>
+
+<h3>Традиции магии — как владение</h3>
+<p>Традиции магии работают как владение. Если ваш путь даёт вам <strong>3 традиции</strong> — вы можете выбирать заклинания из этих 3 традиций. Не можете колдовать из традиций, которых у вас нет.</p>
+<table class="t">
+<tr><th>Путь</th><th>Количество традиций</th></tr>
+<tr><td><strong>Маг</strong></td><td>3 традиции</td></tr>
+<tr><td><strong>Священник</strong></td><td>2 традиции</td></tr>
+<tr><td><strong>Воин</strong></td><td>0 (не колдует)</td></tr>
+<tr><td><strong>Вор</strong></td><td>0 (не колдует)</td></tr>
+</table>
+</div>
+</div><!-- /prof -->
+
+<!-- ===================== СОЗДАНИЕ ===================== -->
+<div class="tp" id="tab-create">
+<div class="cd">
+<h2>Пошаговое создание персонажа</h2>
+
+<div class="step">
+<h4>Шаг 1: Выберите происхождение (расу)</h4>
+<p>Происхождение — это раса вашего персонажа. Оно даёт <strong>бонусы к атрибутам</strong> и <strong>уникальные способности</strong>.</p>
+</div>
+
+<div class="step">
+<h4>Шаг 2: Распределите атрибуты</h4>
+<p>У вас есть числа: <strong>10, 10, 10, 10</strong>. Распределите их между четырьмя атрибутами (Сила, Ловкость, Интеллект, Воля), затем прибавьте бонусы расы.</p>
+<div class="ex"><p><strong>Пример:</strong> Вы играете Воина-человека. Воину нужна высокая Сила. Распределяете: Сила 13, Ловкость 10, Интеллект 10, Воля 10. Раса «Человек» даёт +1 к одному атрибуту — выбираете Силу. Итого: Сила 14, остальные 10.</p></div>
+</div>
+
+<div class="step">
+<h4>Шаг 3: Запишите модификаторы</h4>
+<p>Посмотрите в таблицу модификаторов и запишите модификатор каждого атрибута.</p>
+<div class="ex"><p>Сила 14 = модификатор +2. Ловкость 10 = модификатор 0. Интеллект 10 = модификатор 0. Воля 10 = модификатор 0.</p></div>
+</div>
+
+<div class="step">
+<h4>Шаг 4: Выберите начальный путь (класс)</h4>
+<p>Путь — это класс вашего персонажа. Четыре варианта: Воин, Вор, Маг, Священник. Подробности — в разделе «Классы».</p>
+</div>
+
+<div class="step">
+<h4>Шаг 5: Вычислите Здоровье (HP)</h4>
+<p><strong>HP = 10 + мод. Силы + мод. Воли + бонус пути + бонус расы</strong></p>
+<table class="t">
+<tr><th>Путь</th><th>Бонус к HP</th></tr>
+<tr><td>Воин</td><td>+9</td></tr>
+<tr><td>Священник</td><td>+7</td></tr>
+<tr><td>Вор</td><td>+6</td></tr>
+<tr><td>Маг</td><td>+4</td></tr>
+</table>
+<p>Расовые бонусы: Дварф и Орк = +5 HP. Кобольд = -5 HP. Остальные = 0.</p>
+<div class="ex"><p><strong>Пример:</strong> Человек-Воин, Сила 14 (мод. +2), Воля 10 (мод. 0). HP = 10 + 2 + 0 + 9 + 0 = <strong>21 HP</strong>.</p></div>
+</div>
+
+<div class="step">
+<h4>Шаг 6: Вычислите Защиту (Defense)</h4>
+<p><strong>Защита = 10 + бонус брони + бонус щита</strong></p>
+<div class="ex"><p><strong>Пример:</strong> Кольчуга (+3) + каплевидный щит (+2). Защита = 10 + 3 + 2 = <strong>15</strong>.</p></div>
+</div>
+
+<div class="step">
+<h4>Шаг 7: Определите скорость</h4>
+<p>Большинство рас: <strong>10</strong>. Дварфы, халфлинги, гоблины, кобольды: <strong>8</strong>.</p>
+</div>
+
+<div class="step">
+<h4>Шаг 8: Получите снаряжение</h4>
+<p>В зависимости от пути. Плюс бросьте <strong>2d6</strong> — стартовые золотые монеты.</p>
+</div>
+
+<div class="step">
+<h4>Шаг 9: Заполните черты характера</h4>
+<ul>
+<li><strong>Личность:</strong> каков персонаж? (смелый, жадный, весёлый, мрачный...)</li>
+<li><strong>Убеждение:</strong> во что верит? (справедливость, сила, знание, бог...)</li>
+<li><strong>Связь:</strong> кто дорог? (семья, друг, наставник...)</li>
+<li><strong>Безумие:</strong> что пугает? (темнота, пауки, одиночество...)</li>
+</ul>
+</div>
+
+<div class="step">
+<h4>Шаг 10: Имя и предыстория</h4>
+<p>Откуда персонаж? Почему стал авантюристом? Что хочет?</p>
+</div>
+</div>
+
+<div class="cd">
+<h2>Расы — полное описание</h2>
+
+<h3>ЧЕЛОВЕК</h3>
+<p>Самая многочисленная раса. Адаптивны, встречаются повсюду.</p>
+<table class="t"><tr><th>Бонус</th><th>Способность</th><th>Скорость</th><th>Зрение</th></tr><tr><td>+1 к ОДНОМУ атрибуту на ваш выбор</td><td><strong>Человеческая решимость:</strong> 1 раз за сессию перебросьте любой бросок кубика</td><td>10</td><td>Обычное</td></tr></table>
+
+<h3>ЭЛЬФ</h3>
+<p>Грациозные долгоживущие существа. Связь с природой и магией.</p>
+<table class="t"><tr><th>Бонус</th><th>Способности</th><th>Скорость</th><th>Зрение</th></tr><tr><td>+1 к Ловкости</td><td><strong>Ночное зрение 20</strong> (видят в темноте). <strong>Сопротивление очарованию.</strong> <strong>Магия природы:</strong> 1 заклинание 0 ур. из традиции Природы (1/сессия)</td><td>10</td><td>Ночное 20</td></tr></table>
+
+<h3>ДВАРФ</h3>
+<p>Крепкие подземные жители. Мастера кузнечного дела.</p>
+<table class="t"><tr><th>Бонус</th><th>Способности</th><th>Скорость</th><th>Зрение</th></tr><tr><td>+1 к Силе</td><td><strong>Сопротивление яду [Благословение]</strong> (броски против яда с доп. d6). <strong>Тёмное зрение 20.</strong> <strong>+5 к HP.</strong></td><td>8</td><td>Тёмное 20</td></tr></table>
+
+<h3>ХАЛФЛИНГ</h3>
+<p>Маленькие ловкие и удачливые.</p>
+<table class="t"><tr><th>Бонус</th><th>Способности</th><th>Скорость</th><th>Зрение</th></tr><tr><td>+1 к Ловкости</td><td><strong>Удача:</strong> 1 переброс любого броска/сессия. <strong>Скрытность [Благословение]</strong>. <strong>Маленький рост.</strong></td><td>8</td><td>Обычное</td></tr></table>
+
+<h3>ОРК</h3>
+<p>Мощные воины. Общество построено на силе.</p>
+<table class="t"><tr><th>Бонус</th><th>Способности</th><th>Скорость</th><th>Зрение</th></tr><tr><td>+1 к Силе</td><td><strong>+5 к HP.</strong> <strong>Ярость:</strong> когда впервые ранен в бою, +1d6 к урону, но -2 к Защите. <strong>Тёмное зрение 20.</strong></td><td>10</td><td>Тёмное 20</td></tr></table>
+
+<h3>ГОБЛИН</h3>
+<p>Мелкие хитрые существа. Умные и изворотливые.</p>
+<table class="t"><tr><th>Бонус</th><th>Способности</th><th>Скорость</th><th>Зрение</th></tr><tr><td>+1 к Интеллекту</td><td><strong>Хитрость [Благословение]</strong> (обман и хитрость с доп. d6). <strong>Тёмное зрение 20.</strong> <strong>Маленький рост.</strong></td><td>8</td><td>Тёмное 20</td></tr></table>
+
+<h3>КОБОЛЬД</h3>
+<p>Маленькие рептилоиды. Слабые поодиночке, опасные группой.</p>
+<table class="t"><tr><th>Бонус</th><th>Способности</th><th>Скорость</th><th>Зрение</th></tr><tr><td>+1 к Интеллекту</td><td><strong>Стайная тактика [Благословение]</strong> (атаки с доп. d6 если рядом союзник). <strong>Тёмное зрение 20.</strong> <strong>Хрупкий:</strong> -5 к HP.</td><td>8</td><td>Тёмное 20</td></tr></table>
+<div class="warn"><p><strong>Внимание:</strong> кобольды начинают с -5 HP. На 1 уровне это делает их очень хрупкими!</p></div>
+</div>
+</div><!-- /create -->
+
+<!-- ===================== КЛАССЫ ===================== -->
+<div class="tp" id="tab-classes">
+<div class="cd">
+<h2>ВОИН — мастер боя</h2>
+<p><strong>Бонус:</strong> HP +9, +1 к Силе. <strong>Кубик HP при прокачке:</strong> d8.</p>
+<p><strong>Владение оружием:</strong> ВСЕ виды (простое, воинское, ближний, дальний бой).</p>
+<p><strong>Владение бронёй:</strong> ВСЕ виды брони и щиты.</p>
+
+<h3>Способности Воина — подробно</h3>
+
+<h4>Боевая подготовка</h4>
+<p>Вы обучены <strong>всем видам оружия и брони</strong>. Это значит:</p>
+<ul>
+<li>Вы можете использовать любое оружие без штрафа</li>
+<li>Вы можете носить любую броню без штрафа</li>
+<li>Вы можете использовать щиты</li>
+<li>Другие классы получают Проклятие, если используют необученное оружие/броню</li>
+</ul>
+
+<h4>Удар наверняка (1 раз за сессию)</h4>
+<p><strong>Что делает:</strong> один раз за сессию вы можете объявить «Удар наверняка». Вы <strong>автоматически попадаете</strong> по цели без броска d20. Урон бросается как обычно.</p>
+<p><strong>Когда использовать:</strong> в критический момент — когда нужно гарантированно попасть. Когда противник почти мёртв и вы не хотите рисковать промахом.</p>
+<div class="ex"><p><strong>Пример:</strong> Орк почти мёртв, осталось мало HP. Вы говорите: «Использую Удар наверняка!» — автоматически попадаете, бросаете урон d8+2 = 7. Орк мёртв.</p></div>
+
+<h4>Стойкость</h4>
+<p><strong>Что делает:</strong> когда вы ранены (HP = 0) и каждый раунд бросаете d20 чтобы не умереть, вы бросаете с <strong>Благословением</strong> (дополнительный d6, берёте лучший результат).</p>
+<p><strong>Почему важно:</strong> другие классы бросают один d20. Вы — два и берёте лучший. Это значительно повышает шанс выжить.</p>
+
+<h3>Таланты Воина (выберите 1)</h3>
+<h4>Атака щитом</h4>
+<p>Вы можете использовать щит как оружие: <strong>d6 урона</strong>. Это позволяет атаковать, даже если основное оружие занято. Атака щитом использует Силу.</p>
+
+<h4>Контратака</h4>
+<p>Когда вражеская ближняя атака по вам <strong>промахивается</strong>, вы можете немедленно <strong>контратаковать</strong> (1/раунд). Это бесплатная атака! Бросаете d20 + Сила как обычно.</p>
+
+<h4>Двуручное мастерство</h4>
+<p>При использовании двуручного оружия (двуручный меч, алебарда, двуручный топор) вы получаете <strong>+2 к урону</strong>. Это делает двуручное оружие ещё мощнее.</p>
+
+<h4>Щитовая защита</h4>
+<p><strong>+1 к Защите</strong> при использовании щита. Круглый щит обычно даёт +1 — с этим талантом будет +2. Каплевидный +2 станет +3.</p>
+
+<h4>Быстрая атака</h4>
+<p>Вы можете совершить <strong>две атаки</strong> в раунд, но каждая с <strong>Проклятием</strong> (дополнительный d6, вычитаете худший). Хорошо, если нужно много ударить, но менее точно.</p>
+
+<h4>Устрашение</h4>
+<p>Проверки запугивания с <strong>Благословением</strong>. Вы можете пугать врагов, заставляя их бежать или подчиняться.</p>
+</div>
+
+<div class="cd">
+<h2>ВОР — мастер скрытности</h2>
+<p><strong>Бонус:</strong> HP +6, +1 к Ловкости. <strong>Кубик HP при прокачке:</strong> d6.</p>
+<p><strong>Владение оружием:</strong> простое оружие (кинжалы, дубинки, посохи, короткие луки, дротики).</p>
+<p><strong>Владение бронёй:</strong> только лёгкая броня (кожаная, кожаная с заклёпками).</p>
+
+<h3>Способности Вора — подробно</h3>
+
+<h4>Скрытая атака (+1d6 урона)</h4>
+<p><strong>Что делает:</strong> если вы атакуете цель, которая <strong>не видит вас</strong> или <strong>не ожидает атаки</strong>, вы наносите дополнительно <strong>+1d6 урона</strong>.</p>
+<p><strong>Когда срабатывает:</strong></p>
+<ul>
+<li>Вы спрятались и атакуете из укрытия</li>
+<li>Вы подкрались незаметно</li>
+<li>Цель не знает, что вы рядом</li>
+<li>Союзник отвлёк цель (по решению Мастера)</li>
+</ul>
+<p><strong>Когда НЕ срабатывает:</strong> если цель видит вас и готова к бою.</p>
+<div class="ex"><p><strong>Пример:</strong> Вы спрятались за деревом. Монстр проходит мимо. Вы выпрыгиваете и бьёте кинжалом: d20+3 = 14 (попадание!), урон: d4 (кинжал) + 1d6 (скрытая атака) + 2 (Ловкость) = 2+4+2 = 8 урона!</p></div>
+
+<h4>Хитрость [Благословение]</h4>
+<p><strong>Что делает:</strong> все проверки обмана, скрытности и взлома вы делаете с <strong>Благословением</strong> (дополнительный d6, прибавляете лучший).</p>
+<p><strong>На что влияет:</strong></p>
+<ul>
+<li><strong>Обман:</strong> соврать, обмануть, притвориться кем-то другим</li>
+<li><strong>Скрытность:</strong> спрятаться, подкрасться, двигаться незаметно</li>
+<li><strong>Взлом:</strong> открыть замок, обезвредить ловушку</li>
+</ul>
+
+<h3>Таланты Вора — подробно</h3>
+
+<h4>Отравитель</h4>
+<p>Вы умеете применять яды. Когда используете яд, бросаете с <strong>Благословением</strong>. Яды можно покупать или готовить.</p>
+
+<h4>Ловкость рук</h4>
+<p>Карманные кражи и фокусы с <strong>Благословением</strong>. Вы можете незаметно вытащить кошелёк у прохожего.</p>
+
+<h4>Уклонение</h4>
+<p>Когда вы получаете <strong>урон от области</strong> (взрыв, огненное дыхание, ледяная буря), бросьте d20. Если >= 10 — <strong>полное уклонение</strong> (нет урона). Это спасает жизнь!</p>
+
+<h4>Удар в спину</h4>
+<p>Бонус к скрытой атаке увеличивается до <strong>+2d6</strong> вместо +1d6. Вы наносите ещё больше урона из укрытия.</p>
+
+<h4>Акробатика</h4>
+<p>Проверки акробатики с <strong>Благословением</strong>. Падение с высоты до 20 футов не наносит урона.</p>
+
+<h4>Маскировка</h4>
+<p>Переодевание и обман внешности с <strong>Благословением</strong>. Вы можете изменить внешность, чтобы пройти незамеченным.</p>
+</div>
+
+<div class="cd">
+<h2>МАГ — мастер тайных искусств</h2>
+<p><strong>Бонус:</strong> HP +4, +1 к Интеллекту. <strong>Кубик HP при прокачке:</strong> d6.</p>
+<p><strong>Владение оружием:</strong> только посохи и кинжалы.</p>
+<p><strong>Владение бронёй:</strong> никакой брони (только мантия — не броня).</p>
+<div class="warn"><p><strong>Маг — самый хрупкий класс.</strong> Мало HP, нет брони, мало оружия. Но магия — невероятно мощный инструмент.</p></div>
+
+<h3>Способности Мага — подробно</h3>
+
+<h4>Магическое мастерство</h4>
+<p>Вы знаете <strong>3 традиции магии</strong> и <strong>3 заклинания 0 уровня</strong>.</p>
+<p><strong>Что это значит:</strong> вы выбрали 3 направления магии (например: Огонь, Иллюзии, Прорицание). Из этих традиций вы можете выбирать заклинания.</p>
+<p><strong>3 заклинания 0 уровня</strong> — это трюки, которые вы можете использовать бесплатно, без траты слотов.</p>
+
+<h4>Слоты заклинаний</h4>
+<p><strong>Количество слотов = мод. Интеллекта + уровень персонажа</strong> (минимум 1).</p>
+<p><strong>Что такое слоты:</strong> это «заряды» магии. Каждое заклинание (кроме 0 уровня) тратит 1 слот. Когда слоты кончились — не можете колдовать до отдыха.</p>
+<div class="ex"><p><strong>Пример:</strong> Маг с Интеллектом 16 (мод. +3), уровень 1. Слоты = 3+1 = <strong>4 слота</strong>. Может наложить 4 заклинания 1 уровня, потом нужен отдых 8 часов.</p></div>
+
+<h3>Таланты Мага — подробно</h3>
+
+<h4>Быстрое колдовство</h4>
+<p>Вы можете наложить заклинание как <strong>бонусное действие</strong> (в addition к обычному действию). Это позволяет в одном раунде: наложить заклинание + атаковать или наложить два заклинания.</p>
+
+<h4>Расширенная память</h4>
+<p>Вы знаете на <strong>2 заклинания больше</strong>. Если обычно знаете 3 — теперь 5.</p>
+
+<h4>Магическая защита</h4>
+<p><strong>+1 к Защите от магических атак.</strong> Когда по вам кастуют заклинание, атакующий должен набрать на 1 больше.</p>
+
+<h4>Широкие знания</h4>
+<p>Вы обучаетесь <strong>ещё одной традиции магии</strong>. Если обычно знаете 3 — теперь 4.</p>
+
+<h4>Каналование</h4>
+<p>Потратив <strong>действие</strong>, следующее заклинание в этом раунде будет наложено с <strong>Благословением</strong> (дополнительный d6 к магической атаке).</p>
+
+<h4>Устойчивость к магии</h4>
+<p>Сопротивление магии — проверки с <strong>Благословением</strong>. Когда по вас кастуют, вы бросаете с доп. d6.</p>
+</div>
+
+<div class="cd">
+<h2>СВЯЩЕННИК — проводник бога</h2>
+<p><strong>Бонус:</strong> HP +7, +1 к Воле. <strong>Кубик HP при прокачке:</strong> d8.</p>
+<p><strong>Владение оружием:</strong> простое оружие (булавы, боевые молоты, копья, кинжалы).</p>
+<p><strong>Владение бронёй:</strong> средняя броня (кольчуга) и щиты.</p>
+
+<h3>Способности Священника — подробно</h3>
+
+<h4>Божественная магия</h4>
+<p>Вы знаете <strong>2 традиции магии</strong> и <strong>2 заклинания 0 уровня</strong>. Это меньше, чем у Мага, но вы компенсируете исцелением.</p>
+
+<h4>Исцеление (1 раз за раунд, бесплатно!)</h4>
+<p><strong>Что делает:</strong> 1 раз за раунд вы можете потратить действие, чтобы восстановить <strong>1d6 + мод. Воли HP</strong> одному союзнику.</p>
+<p><strong>Почему это важно:</strong></p>
+<ul>
+<li>Это <strong>бесплатно</strong> — не тратит слоты заклинаний</li>
+<li>Работает <strong>каждый раунд</strong></li>
+<li>Не требует касания (можете лечить на расстоянии)</li>
+<li>Это ваш главный инструмент — вы единственный целитель в группе</li>
+</ul>
+<div class="ex"><p><strong>Пример:</strong> Ваш друг-Воин потерял 15 HP. Вы тратите действие: бросаете d6 = 4, мод. Воли = +2. Восстанавливаете 4+2 = 6 HP.</p></div>
+
+<h3>Таланты Священника — подробно</h3>
+
+<h4>Усиленное исцеление</h4>
+<p>Исцеление восстанавливает <strong>2d6 + мод. Воли</strong> вместо 1d6. Это значительно больше — в среднем 7+ вместо 3.5+.</p>
+
+<h4>Священный щит</h4>
+<p>1 раз за раунд вы можете наложить щит на союзника: <strong>+1 к Защите</strong> до вашего следующего хода.</p>
+
+<h4>Изгнание нежити</h4>
+<p>Проверки изгнания нежити с <strong>Благословением</strong>. Вы можете заставить скелетов и зомби бежать.</p>
+
+<h4>Благословение</h4>
+<p>1 раз за сессию вы можете благословить союзника: он получает <strong>Благословение</strong> к следующему броску (дополнительный d6).</p>
+
+<h4>Божественная ярость</h4>
+<p>Ваше следующее заклинание наносит <strong>+1d6 урона</strong>.</p>
+
+<h4>Твёрдая вера</h4>
+<p>Проверки против страха и безумия с <strong>Благословением</strong>. Вы невосприимчивы к ужасу.</p>
+</div>
+</div><!-- /classes -->
+
+<!-- ===================== БОЙ ===================== -->
+<div class="tp" id="tab-combat">
+<div class="cd">
+<h2>Боевая система — пошагово</h2>
+
+<h3>Шаг 1: Инициатива (кто ходит первым)</h3>
+<p>Каждый раунд каждый участник бросает <strong>d6 + мод. Ловкости</strong>. Высокий результат ходит первым.</p>
+<div class="ex"><p>Ваша Ловкость 14 (мод. +2). Бросаете d6 = 4. Итого: 4+2 = 6. Монстр бросил d6 = 3. Вы ходите первым.</p></div>
+
+<h3>Шаг 2: В вашем ходу</h3>
+<ul>
+<li><strong>1 действие:</strong> атака, заклинание, использование предмета, помощь союзнику</li>
+<li><strong>1 движение:</strong> перемещение до вашей скорости (обычно 10 ярдов)</li>
+<li><strong>1 реакция:</strong> вне вашего хода (контратака, щит). Восстанавливается в начале вашего следующего хода</li>
+</ul>
+
+<h3>Шаг 3: Атака</h3>
+<p>Бросаете <strong>d20 + модификатор</strong>:</p>
+<ul>
+<li><strong>Ближний бой:</strong> d20 + мод. Силы (или мод. Ловкости для фехтовального оружия)</li>
+<li><strong>Дальний бой:</strong> d20 + мод. Ловкости</li>
+<li><strong>Магическая атака:</strong> d20 + мод. Интеллекта (Маг) или мод. Воли (Священник)</li>
+</ul>
+<p>Результат >= Защита цели = попадание.</p>
+
+<h3>Шаг 4: Уклонение (Defense Roll)</h3>
+<p>Когда по вас атакуют, <strong>вы</strong> бросаете d20 + мод. Ловкости >= результат атакующего = уклонились!</p>
+<div class="ex"><p>Монстр атакует: d20+3 = 14. Вы защищаетесь: d20+2 = 16. 16 >= 14 — уклонились!</p></div>
+
+<h3>Шаг 5: Урон</h3>
+<p>При попадании: кубик оружия + мод. атрибута. Крит (20 на d20) = двойной урон.</p>
+
+<h3>Укрытия</h3>
+<table class="t"><tr><th>Укрытие</th><th>+Защита</th><th>Примеры</th></tr>
+<tr><td>Частичное</td><td>+1</td><td>Дерево, забор</td></tr>
+<tr><td>Трёхчетвертное</td><td>+2</td><td>Бочка, колонна</td></tr>
+<tr><td>Полное</td><td>Невозможно атаковать</td><td>Стена</td></tr></table>
+</div>
+
+<div class="cd">
+<h2>Смерть и исцеление</h2>
+<h3>Раны (HP = 0)</h3>
+<p>Каждый раунд бросаете d20: 10+ = стабилизация, 1-9 = +1d6 урона, 20 = восстановление с 1d6 HP.</p>
+<h3>Смерть (HP = -(макс. HP))</h3>
+<h3>Исцеление</h3>
+<ul>
+<li><strong>Продолжительный отдых</strong> (8 часов): полное HP и слоты</li>
+<li><strong>Короткий отдых</strong> (1 час): 1/4 HP</li>
+<li><strong>Заклинания:</strong> мгновенно</li>
+<li><strong>Зелья:</strong> мгновенно</li>
+</ul>
+</div>
+
+<div class="cd">
+<h2>Безумие и Коррупция</h2>
+<h3>Безумие</h3>
+<p>При виде ужасного: проверка Воли. Провал = 1d6 Безумия.</p>
+<table class="t"><tr><th>Очки</th><th>Эффект</th></tr>
+<tr><td>1-10</td><td>Лёгкая тревога</td></tr>
+<tr><td>11-20</td><td>Приступ страха [Проклятие к следующему броску]</td></tr>
+<tr><td>21-30</td><td>Фобия</td></tr>
+<tr><td>31-40</td><td>Паника (не действуете 1 раунд)</td></tr>
+<tr><td>41-50</td><td>Помешательство</td></tr>
+<tr><td>51+</td><td>Потеря контроля</td></tr></table>
+<h3>Коррупция</h3>
+<p>При магии Порчи, убийстве невинных: 1d6 Коррупции.</p>
+<table class="t"><tr><th>Очки</th><th>Эффект</th></tr>
+<tr><td>1-10</td><td>Бледная кожа, красные глаза</td></tr>
+<tr><td>11-20</td><td>Отвращение к свету</td></tr>
+<tr><td>21-30</td><td>Физические мутации</td></tr>
+<tr><td>31-50</td><td>Почти монстр</td></tr>
+<tr><td>51+</td><td>Потеря персонажа</td></tr></table>
+</div>
+</div><!-- /combat -->
+
+<!-- ===================== МАГИЯ ===================== -->
+<div class="tp" id="tab-magic">
+<div class="cd">
+<h2>Как работает магия</h2>
+<p>Магия разделена по <strong>традициям</strong> (школам). Заклинания от 0 до 10 уровня.</p>
+<h3>Кто колдует?</h3>
+<table class="t"><tr><th>Класс</th><th>Традиции</th><th>Заклинания 0 ур.</th><th>Атрибут</th></tr>
+<tr><td>Маг</td><td>3</td><td>3</td><td>Интеллект</td></tr>
+<tr><td>Священник</td><td>2</td><td>2</td><td>Воля</td></tr></table>
+<h3>Слоты</h3>
+<p>Маг: мод. INT + уровень. Священник: мод. WILL + уровень. Восстановление: 8 часов отдыха.</p>
+</div>
+
+<div class="cd">
+<h2>14 традиций</h2>
+<table class="t">
+<tr><th>Традиция</th><th>Что делает</th></tr>
+<tr><td>Огонь</td><td>Урон огнём, взрывы, поджог</td></tr>
+<tr><td>Лёд</td><td>Заморозка, замедление, урон холодом</td></tr>
+<tr><td>Гром</td><td>Молнии, ветер, электричество</td></tr>
+<tr><td>Некромантия</td><td>Смерть, нежить, урон жизненной силе</td></tr>
+<tr><td>Природа</td><td>Растения, животные, исцеление</td></tr>
+<tr><td>Иллюзии</td><td>Обман, очарование, видимости</td></tr>
+<tr><td>Прорицание</td><td>Знание, предвидение, обнаружение</td></tr>
+<tr><td>Защита</td><td>Щиты, барьеры, исцеление</td></tr>
+<tr><td>Тьма</td><td>Тени, страх, скрытие</td></tr>
+<tr><td>Свет</td><td>Освещение, изгнание, исцеление</td></tr>
+<tr><td>Порча</td><td>Разрушение (увеличивает Коррупцию!)</td></tr>
+<tr><td>Хаос</td><td>Случайные эффекты, телепортация</td></tr>
+<tr><td>Телепатия</td><td>Мысли, контроль разума</td></tr>
+<tr><td>Телекинез</td><td>Перемещение предметов, полёт</td></tr>
+</table>
+</div>
+
+<div class="cd">
+<h2>Заклинания</h2>
+
+<h3>0 уровень (бесплатные трюки)</h3>
+<div class="sp"><div class="sp-h"><span class="sp-n">Искра</span><span class="sp-l">Огонь</span></div><div class="sp-m"><span>1 действие</span><span>5 ярдов</span><span>Мгнов.</span></div><p>Поджигает горючий материал.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Фонарь</span><span class="sp-l">Свет</span></div><div class="sp-m"><span>1 действие</span><span>Касание</span><span>1 час</span></div><p>Предмет светится, освещая 10 ярдов.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Крохотная иллюзия</span><span class="sp-l">Иллюзии</span></div><div class="sp-m"><span>1 действие</span><span>10 ярдов</span><span>1 минута</span></div><p>Звук или изображение в 1 куб. ярде.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Чтение мыслей</span><span class="sp-l">Телепатия</span></div><div class="sp-m"><span>1 действие</span><span>5 ярдов</span><span>1 раунд</span></div><p>Ощущаете поверхностные мысли. Воля или узнаёте эмоцию.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Ледяное прикосновение</span><span class="sp-l">Лёд</span></div><div class="sp-m"><span>1 действие</span><span>Касание</span><span>Мгнов.</span></div><p>1d3 урона холодом.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Мёртвая хватка</span><span class="sp-l">Некромантия</span></div><div class="sp-m"><span>1 действие</span><span>Касание</span><span>Мгнов.</span></div><p>1d3+1 урона. Не работает на нежити.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Дуновение ветра</span><span class="sp-l">Гром</span></div><div class="sp-m"><span>1 действие</span><span>5 ярдов</span><span>Мгнов.</span></div><p>Порыв ветра: тушит свечи, раскачивает предметы.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Послание</span><span class="sp-l">Телепатия</span></div><div class="sp-m"><span>1 действие</span><span>30 ярдов</span><span>1 раунд</span></div><p>Телепатическое сообщение одному существу.</p></div>
+
+<h3>1 уровень</h3>
+<div class="sp"><div class="sp-h"><span class="sp-n">Огненный шар</span><span class="sp-l">Огонь</span></div><div class="sp-m"><span>1 действие</span><span>20 ярдов</span><span>Мгнов.</span></div><p><strong>2d6 + 1d6 за уровень выше 1</strong> урона огнём.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Исцеление</span><span class="sp-l">Защита</span></div><div class="sp-m"><span>1 действие</span><span>Касание</span><span>Мгнов.</span></div><p><strong>2d6 + мод. Воли HP</strong>. +1d6 за уровень выше 1.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Магическая стрела</span><span class="sp-l">Хаос</span></div><div class="sp-m"><span>1 действие</span><span>20 ярдов</span><span>Мгнов.</span></div><p>3 стрелы по <strong>1d6+1</strong>. Можно по разным целям.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Щит</span><span class="sp-l">Защита</span></div><div class="sp-m"><span>1 реакция</span><span>Личная</span><span>1 раунд</span></div><p><strong>+5 к Защите</strong> до следующего хода.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Сон</span><span class="sp-l">Иллюзии</span></div><div class="sp-m"><span>1 действие</span><span>10 ярдов</span><span>1 минута</span></div><p>До 2d6 существ засыпают. HP > 15 = иммунитет.</p></div>
+
+<h3>3 уровень</h3>
+<div class="sp"><div class="sp-h"><span class="sp-n">Огненный шторм</span><span class="sp-l">Огонь</span></div><div class="sp-m"><span>1 действие</span><span>40 ярдов</span><span>Мгнов.</span></div><p>Взрыв, сфера 4 ярда. <strong>6d6</strong> огнём. +2d6 за уровень выше 3.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Полёт</span><span class="sp-l">Телекинез</span></div><div class="sp-m"><span>1 действие</span><span>Касание</span><span>10 минут</span></div><p>Скорость полёта = обычная скорость.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Воскрешение</span><span class="sp-l">Свет</span></div><div class="sp-m"><span>1 минута</span><span>Касание</span><span>Мгнов.</span></div><p>Возвращает к жизни существо, умершее менее часа назад, с 1d6 HP.</p></div>
+
+<h3>5 уровень</h3>
+<div class="sp"><div class="sp-h"><span class="sp-n">Ледяная буря</span><span class="sp-l">Лёд</span></div><div class="sp-m"><span>1 действие</span><span>40 ярдов</span><span>Мгнов.</span></div><p>Град льда, сфера 4 ярда. <strong>8d6</strong> холода + замедление.</p></div>
+<div class="sp"><div class="sp-h"><span class="sp-n">Телепортация</span><span class="sp-l">Прорицание</span></div><div class="sp-m"><span>1 действие</span><span>40 ярдов</span><span>Мгнов.</span></div><p>Мгновенное перемещение + до 3 союзников.</p></div>
+
+<h3>10 уровень</h3>
+<div class="sp"><div class="sp-h"><span class="sp-n">Метеоритный дождь</span><span class="sp-l">Огонь</span></div><div class="sp-m"><span>1 действие</span><span>80 ярдов</span><span>Мгнов.</span></div><p>4 метеорита, каждый сфера 4 ярда. <strong>20d6</strong> огнём.</p></div>
+</div>
+</div><!-- /magic -->
+
+<!-- ===================== ПРОКАЧКА ===================== -->
+<div class="tp" id="tab-levelup">
+<div class="cd">
+<h2>Система прокачки — от 0 до 10 уровня</h2>
+<p>Персонаж растёт с 0 до 10 уровня. Мастер решает, когда повышать (обычно каждые 2-3 сессии).</p>
+
+<h3>Что происходит при каждом уровне</h3>
+<table class="t">
+<tr><th>Уровень</th><th>Что получаете</th><th>HP</th></tr>
+<tr><td>0</td><td>Происхождение + атрибуты</td><td>—</td></tr>
+<tr><td>1</td><td>Начальный путь (Воин/Вор/Маг/Священник)</td><td>10 + мод. + бонус пути + бонус расы</td></tr>
+<tr><td>2</td><td>Новый талант начального пути</td><td>+d6 (Маг/Вор) или d8 (Воин/Свящ.) + мод. Силы</td></tr>
+<tr><td>3</td><td>Экспертный путь (второй класс!)</td><td>+d6/d8 + мод. Силы</td></tr>
+<tr><td>4</td><td>Талант экспертного пути</td><td>+d6/d8 + мод. Силы</td></tr>
+<tr><td>5</td><td>Улучшенный талант начального пути</td><td>+d6/d8 + мод. Силы</td></tr>
+<tr><td>6</td><td>Талант экспертного пути</td><td>+d6/d8 + мод. Силы</td></tr>
+<tr><td>7</td><td>Мастерский путь (третий класс!)</td><td>+d6/d8 + мод. Силы</td></tr>
+<tr><td>8</td><td>Талант мастерского пути</td><td>+d6/d8 + мод. Силы</td></tr>
+<tr><td>9</td><td>Улучшенный талант экспертного пути</td><td>+d6/d8 + мод. Силы</td></tr>
+<tr><td>10</td><td>Эпическая мощь, финальные черты</td><td>+d6/d8 + мод. Силы</td></tr>
+</table>
+
+<div class="tip"><p><strong>Ключевая идея:</strong> на 3 уровне вы берёте экспертный путь, на 7 — мастерский. Итого у вас <strong>3 пути</strong>, которые комбинируются! Воин + Паладин + Чемпион = непробиваемый рыцарь. Вор + Ассасин + Убийца = невидимый убийца.</p></div>
+
+<h3>Экспертные пути (3 уровень)</h3>
+<table class="t">
+<tr><th>Путь</th><th>HP/ур.</th><th>Ключевая способность</th></tr>
+<tr><td>Ассасин</td><td>+3</td><td>Скрытая атака +2d6, невидимость 1/сессия, яды [Б]</td></tr>
+<tr><td>Берсерк</td><td>+5</td><td>Ярость +2d6, игнорирование штрафов от ран</td></tr>
+<tr><td>Воин-Мудрец</td><td>+4</td><td>Заклинание + атака в раунде, магическое оружие</td></tr>
+<tr><td>Паладин</td><td>+5</td><td>Исцеляющая аура, перенаправление урона, +1 Def</td></tr>
+<tr><td>Следопыт</td><td>+4</td><td>Меткий выстрел [Б], следопытство [Б], +2 скорости</td></tr>
+<tr><td>Чародей</td><td>+3</td><td>+3 заклинания, каналование (HP -> +2d6 урона)</td></tr>
+<tr><td>Некромант</td><td>+3</td><td>Поднятие нежити 1d4/день, касание смерти 2d6</td></tr>
+<tr><td>Скиталец</td><td>+4</td><td>Знание мира [Б], дипломатия [Б], удача 1/сессия</td></tr>
+<tr><td>Плотник</td><td>+4</td><td>Создание маг. предметов, взрывчатка 2d6</td></tr>
+<tr><td>Теневой Маг</td><td>+3</td><td>Теневой шаг (телепортация 20 ярд), невидимость в тенях</td></tr>
+</table>
+
+<h3>Мастерские пути (7 уровень)</h3>
+<table class="t">
+<tr><th>Категория</th><th>Пути</th></tr>
+<tr><td>Воинские</td><td>Чемпион (+3d6 урона), Гладиатор, Рыцарь (+2 Def), Мастер оружия (+2d6 урона)</td></tr>
+<tr><td>Воровские</td><td>Акробат (+3 AGI), Взломщик, Убийца (+4d6 скрытой атаки), Мошенник, Разведчик</td></tr>
+<tr><td>Магические</td><td>Архимаг (10+ традиций), Алхимик (зелья), Призыватель, Видящий</td></tr>
+<tr><td>Священнические</td><td>Архиепископ, Инквизитор, Монах, Провидец, Темпларий</td></tr>
+</table>
+</div>
+</div><!-- /levelup -->
+
+<!-- ===================== МАСТЕРУ ===================== -->
+<div class="tp" id="tab-gm">
+<div class="cd">
+<h2>Бестиарий</h2>
+<table class="t">
+<tr><th>Существо</th><th>STR</th><th>AGI</th><th>HP</th><th>Def</th><th>Атака</th><th>Особенности</th></tr>
+<tr><td>Скелет</td><td>10</td><td>10</td><td>10</td><td>10</td><td>Меч d6</td><td>Имм. яд/страх</td></tr>
+<tr><td>Зомби</td><td>12</td><td>6</td><td>15</td><td>8</td><td>Удар d6+1</td><td>Медленный</td></tr>
+<tr><td>Гоблин</td><td>8</td><td>14</td><td>8</td><td>11</td><td>Клинок d6</td><td>Скрытность [Б]</td></tr>
+<tr><td>Орк</td><td>14</td><td>10</td><td>18</td><td>12</td><td>Топор d8</td><td>Ярость</td></tr>
+<tr><td>Волк</td><td>12</td><td>14</td><td>12</td><td>12</td><td>Укус d6+1</td><td>Стая [Б]</td></tr>
+<tr><td>Оборотень</td><td>16</td><td>14</td><td>30</td><td>14</td><td>Когти d8+2</td><td>Реген. (кроме серебра)</td></tr>
+<tr><td>Тролль</td><td>20</td><td>8</td><td>50</td><td>12</td><td>Удар d10+4</td><td>Реген. (кроме огня)</td></tr>
+<tr><td>Демон</td><td>16</td><td>12</td><td>25</td><td>14</td><td>Когти d8+2</td><td>Аура страха</td></tr>
+<tr><td>Дракон</td><td>24</td><td>12</td><td>100</td><td>18</td><td>Укус d12+6</td><td>Дыхание 6d6</td></tr></table>
+</div>
+</div><!-- /gm -->
+
+<!-- ===================== ЧАРНИК ===================== -->
+<div class="tp" id="tab-sheet">
+<div class="btns">
+<button class="btn btn-g" onclick="exportPDF()">Скачать PDF</button>
+<button class="btn" onclick="rollAll()">Заролить всё</button>
+<button class="btn btn-r" onclick="clearSheet()">Очистить</button>
+</div>
+<div id="C" class="cs">
+<div class="cs-t">Лист Персонажа</div>
+<div class="cs-s">Shadow of the Demon Lord</div>
+<div class="cr"><div class="cf"><label>Имя</label><input id="s-name" placeholder="Имя"></div><div class="cf"><label>Происхождение</label><select id="s-race"><option>Человек</option><option>Эльф</option><option>Дварф</option><option>Халфлинг</option><option>Орк</option><option>Гоблин</option><option>Кобольд</option></select></div><div class="cf"><label>Уровень</label><input id="s-lv" type="number" value="1" min="0" max="10"></div></div>
+<div class="cr"><div class="cf"><label>Нач. путь</label><select id="s-n"><option>Воин</option><option>Вор</option><option>Маг</option><option>Священник</option></select></div><div class="cf"><label>Эксперт.</label><input id="s-e" placeholder=""></div><div class="cf"><label>Мастер.</label><input id="s-m" placeholder=""></div></div>
+<div class="st">Атрибуты</div>
+<div class="g4"><div class="ab"><label>Сила</label><input id="a-s" type="number" value="10" min="1" max="20"><div class="md" id="m-s">+0</div></div><div class="ab"><label>Ловкость</label><input id="a-a" type="number" value="10" min="1" max="20"><div class="md" id="m-a">+0</div></div><div class="ab"><label>Интеллект</label><input id="a-i" type="number" value="10" min="1" max="20"><div class="md" id="m-i">+0</div></div><div class="ab"><label>Воля</label><input id="a-w" type="number" value="10" min="1" max="20"><div class="md" id="m-w">+0</div></div></div>
+<div class="st">Здоровье и защита</div>
+<div class="cr"><div class="cf"><label>HP текущ.</label><input id="s-hp" type="number" value="10"></div><div class="cf"><label>HP макс.</label><input id="s-hpm" type="number" value="10"></div><div class="cf"><label>Защита</label><input id="s-def" type="number" value="10"></div><div class="cf"><label>Скорость</label><input id="s-spd" type="number" value="10"></div></div>
+<div class="st">Безумие и Коррупция</div>
+<div class="cr"><div class="cf"><label>Безумие</label><input id="s-ins" type="number" value="0" min="0"></div><div class="cf"><label>Коррупция</label><input id="s-cor" type="number" value="0" min="0"></div><div class="cf"><label>Золото</label><input id="s-gld" type="number" value="0" min="0"></div></div>
+<div class="st">Оружие</div>
+<div class="cr"><div class="cf"><label>Оружие 1</label><input id="s-w1" placeholder="Длинный меч"></div><div class="cf"><label>Урон</label><input id="s-d1" placeholder="d8"></div><div class="cf"><label>Свойства</label><input id="s-p1" placeholder=""></div></div>
+<div class="cr"><div class="cf"><label>Оружие 2</label><input id="s-w2" placeholder=""></div><div class="cf"><label>Урон</label><input id="s-d2" placeholder=""></div><div class="cf"><label>Свойства</label><input id="s-p2" placeholder=""></div></div>
+<div class="st">Броня</div>
+<div class="cr"><div class="cf"><label>Тип</label><input id="s-arm" placeholder="Кожаная"></div><div class="cf"><label>Щит</label><input id="s-sh" placeholder=""></div></div>
+<div class="st">Заклинания</div>
+<div class="cr"><div class="cf"><label>Традиции</label><input id="s-trd" placeholder="Огонь, Природа"></div><div class="cf"><label>Слоты</label><input id="s-slt" placeholder="0 / 0"></div></div>
+<div class="cf" style="margin-bottom:.7rem"><label>Известные заклинания</label><textarea id="s-spl" rows="2" placeholder="Искра (0), Огненный шар (1)"></textarea></div>
+<div class="st">Черты характера</div>
+<div class="cr"><div class="cf"><label>Личность</label><input id="s-per" placeholder="Смелый"></div><div class="cf"><label>Убеждение</label><input id="s-bel" placeholder="Справедливость"></div><div class="cf"><label>Связь</label><input id="s-bnd" placeholder="Моя сестра"></div></div>
+<div class="st">Снаряжение и способности</div>
+<div class="cf" style="margin-bottom:.7rem"><label>Инвентарь</label><textarea id="s-inv" rows="2" placeholder="Факел, верёвка..."></textarea></div>
+<div class="cf"><label>Способности</label><textarea id="s-abi" rows="2" placeholder="Удар наверняка (1/сессия)"></textarea></div>
+</div>
+</div><!-- /sheet -->
+
+<!-- ===================== ГОТОВЫЕ ===================== -->
+<div class="tp" id="tab-ready">
+<div class="pg" id="PG"></div>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.tb').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.tb').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tp').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('tab-'+b.dataset.tab).classList.add('active');window.scrollTo({top:document.querySelector('.tab-bar').offsetTop,behavior:'smooth'})})});
+function cm(v){if(v<=1)return-5;if(v<=3)return-4;if(v<=5)return-3;if(v<=7)return-2;if(v<=9)return-1;if(v<=11)return 0;if(v<=13)return 1;if(v<=15)return 2;if(v<=17)return 3;if(v<=19)return 4;return 5}
+function fm(m){return m>=0?'+'+m:''+m}
+function $$(s){return document.getElementById(s)}
+function upM(){['s','a','i','w'].forEach(x=>{$$('m-'+x).textContent=fm(cm(+$$('a-'+x).value))});upD()}
+function upD(){const sm=cm(+$$('a-s').value),wm=cm(+$$('a-w').value),n=$$('s-n').value,r=$$('s-r').value;const hb={Воин:9,Вор:6,Маг:4,Священник:7};const rh=(r=='Дварф'||r=='Орк')?5:(r=='Кобольд')?-5:0;const rs=(r=='Дварф'||r=='Халфлинг'||r=='Гоблин'||r=='Кобольд')?8:10;const hp=10+sm+wm+(hb[n]||0)+rh;$$('s-hpm').value=hp;$$('s-hp').value=hp;$$('s-spd').value=rs}
+['s','a','i','w'].forEach(x=>{$$('a-'+x).addEventListener('input',upM)});$$('s-n').addEventListener('change',upD);$$('s-r').addEventListener('change',upD);
+function rollAll(){['s','a','i','w'].forEach(x=>{let r=[1,2,3,4].map(()=>Math.floor(Math.random()*6)+1);r.sort((a,b)=>b-a);$$('a-'+x).value=r[0]+r[1]+r[2]});upM();$$('s-gld').value=Math.floor(Math.random()*6)+Math.floor(Math.random()*6)+2;const nm=['Зикк','Крик','Шнырь','Пшик','Клык','Шип','Копа','Зыбь','Визг','Шкряб','Чирк','Жабо','Грызь','Плюх','Шмяк'];$$('s-name').value=nm[Math.floor(Math.random()*nm.length)]}
+function clearSheet(){['name','e','m','arm','sh','trd','slt','per','bel','bnd','inv','abi','w1','d1','p1','w2','d2','p2','spl'].forEach(x=>{$$('s-'+x).value=''});['s','a','i','w'].forEach(x=>{$$('a-'+x).value=10});$$('s-lv').value=1;$$('s-gld').value=0;$$('s-ins').value=0;$$('s-cor').value=0;$$('s-hp').value=10;$$('s-hpm').value=10;$$('s-def').value=10;$$('s-spd').value=10;upM()}
+async function exportPDF(){const el=$$('C'),btn=event.target;btn.innerHTML='<span class="spn"></span> Генерация...';btn.disabled=true;try{const cv=await html2canvas(el,{scale:2,backgroundColor:'#0a0a0f',useCORS:true});const{jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');const img=cv.toDataURL('image/png');const w=pdf.internal.pageSize.getWidth()-20;const h=(cv.height*w)/cv.width;pdf.addImage(img,'PNG',10,10,w,h);pdf.save(($$('s-name').value||'Персонаж')+'_SotDL.pdf')}catch(e){alert('Ошибка: '+e.message)}btn.innerHTML='Скачать PDF';btn.disabled=false}
+
+const PM=[
+{name:'Зикк Маленький',race:'Кобольд',path:'Вор',lv:1,desc:'Хитрый кобольд-воришка. Выжил в стае благодаря ловкости. Ворует для пропитания.',str:8,agi:16,int:11,will:8,hp:7,def:12,spd:8,w1:'Короткий меч',d1:'d6',p1:'Фехтовальное',armor:'Кожаная',shield:'',abils:'Скрытая атака (+1d6), Хитрость [Б], Стайная тактика [Б], Ловкость рук [Б]',pers:'Трусливый, но хитрый',bel:'Лучше украсть, чем убить',bond:'Мой брат Крык ждёт в норе',trad:'',slt:'',spl:''},
+{name:'Крык Огненный',race:'Кобольд',path:'Маг',lv:1,desc:'Кобольд-шаман с древним гримуаром. Верит, что огонь спасёт стаю.',str:6,agi:10,int:14,will:10,hp:5,def:10,spd:8,w1:'Посох',d1:'d4',p1:'Двуручное',armor:'Мантия',shield:'',abils:'Магическое мастерство, Стайная тактика [Б], Каналование [Б]',pers:'Фанатичный',bel:'Огонь очищает всё',bond:'Гримуар — мой единственный друг',trad:'Огонь, Иллюзии, Хаос',slt:'3 / 3',spl:'Искра (0), Крохотная иллюзия (0), Дуновение ветра (0), Огненный шар (1), Жгучие руки (1), Магическая стрела (1)'},
+{name:'Шкряб Камнелап',race:'Кобольд',path:'Воин',lv:1,desc:'Кобольд-воин, закалённый в подземных битвах. Сражается двумя кинжалами.',str:14,agi:12,int:8,will:8,hp:10,def:12,spd:8,w1:'Кинжал',d1:'d4',p1:'Лёгкое',armor:'Кожаная',shield:'',abils:'Удар наверняка (1/сессия), Стайная тактика [Б], Быстрая атака (2 атаки [Проклятие])',pers:'Злобный, но преданный',bel:'Кобольды не трусы',bond:'Моя стая — моя семья',trad:'',slt:'',spl:''},
+{name:'Пшик Ядовитый',race:'Гоблин',path:'Вор',lv:1,desc:'Гоблин-алхимик и отравитель. Готовит яды из подземных грибов.',str:7,agi:15,int:12,will:9,hp:8,def:11,spd:8,w1:'Кинжал',d1:'d4',p1:'Лёгкое',armor:'Кожаная',shield:'',abils:'Скрытая атака (+1d6), Хитрость [Б], Отравитель [Б], Маскировка [Б]',pers:'Тихий, незаметный',bel:'Яд — оружие мудрых',bond:'Мой яд спасёт мир',trad:'',slt:'',spl:''},
+{name:'Визг Безумный',race:'Гоблин',path:'Маг',lv:1,desc:'Гоблин-шаман, заглянувший в Бездну. Его магия хаотична.',str:7,agi:11,int:14,will:12,hp:8,def:10,spd:8,w1:'Посох',d1:'d4',p1:'Двуручное',armor:'Мантия',shield:'',abils:'Магическое мастерство, Хитрость [Б], Каналование [Б]',pers:'Смеётся без причины',bel:'Хаос — единственный порядок',bond:'Бездна шепчет мне',trad:'Хаос, Тьма, Порча',slt:'4 / 4',spl:'Дуновение ветра (0), Послание (0), Крохотная иллюзия (0), Жгучие руки (1), Магическая стрела (1), Огненный шар (1), Сон (1)'},
+{name:'Грызь Теньплюх',race:'Гоблин',path:'Священник',lv:1,desc:'Гоблин-жрец, поклоняющийся забытому богу теней. Исцеляет стаю.',str:9,agi:10,int:10,will:14,hp:8,def:12,spd:8,w1:'Палица',d1:'d6',p1:'',armor:'Кожаная',shield:'',abils:'Исцеление (1d6+1, 1/раунд), Хитрость [Б], Твёрдая вера [Б], Изгнание нежити [Б]',pers:'Мрачный, но заботливый',bel:'Тень — не зло, а покой',bond:'Мой бог шепчет мне',trad:'Тьма, Защита',slt:'3 / 3',spl:'Фонарь (0), Мёртвая хватка (0), Исцеление (1), Щит (1)'}
+];
+const G=$$('PG');G.innerHTML=PM.map((c,i)=>`<div class="pc" onclick="LP(${i})"><div class="pm">${c.race} \u00b7 ${c.path} \u00b7 \u0423\u0440. ${c.lv}</div><h3>${c.name}</h3><p>${c.desc}</p><div class="ps"><span>STR <strong>${c.str}</strong></span><span>AGI <strong>${c.agi}</strong></span><span>INT <strong>${c.int}</strong></span><span>WILL <strong>${c.will}</strong></span><span>HP <strong>${c.hp}</strong></span><span>Def <strong>${c.def}</strong></span></div></div>`).join('');
+function LP(i){const c=PM[i];document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));document.querySelector('[data-tab="sheet"]').classList.add('active');$$('tab-sheet').classList.add('active');$$('s-name').value=c.name;$$('s-race').value=c.race;$$('s-n').value=c.path;$$('s-lv').value=c.lv;$$('a-s').value=c.str;$$('a-a').value=c.agi;$$('a-i').value=c.int;$$('a-w').value=c.will;$$('s-hp').value=c.hp;$$('s-hpm').value=c.hp;$$('s-def').value=c.def;$$('s-spd').value=c.spd;$$('s-arm').value=c.armor;$$('s-sh').value=c.shield;$$('s-w1').value=c.w1;$$('s-d1').value=c.d1;$$('s-p1').value=c.p1;$$('s-abi').value=c.abils;$$('s-per').value=c.pers;$$('s-bel').value=c.bel;$$('s-bnd').value=c.bond;$$('s-trd').value=c.trad;$$('s-slt').value=c.slt;$$('s-spl').value=c.spl;upM();window.scrollTo({top:document.querySelector('.tab-bar').offsetTop,behavior:'smooth'})}
+upM();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a21c3bfc4f77e91b',t:'MTc4NTE2MTQ5Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
